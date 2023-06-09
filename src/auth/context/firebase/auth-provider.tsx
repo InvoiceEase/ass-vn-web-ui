@@ -130,7 +130,6 @@ export function AuthProvider({ children }: Props) {
 
   // LOGIN
   const login = useCallback(async (email: string, password: string) => {
-    debugger
     await signInWithEmailAndPassword(AUTH, email, password);
   }, []);
 
