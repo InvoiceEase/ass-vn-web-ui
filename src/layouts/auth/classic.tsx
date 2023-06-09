@@ -1,21 +1,30 @@
 // @mui
+
 import { alpha, useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import Logo from 'src/components/logo';
+import { RouterLink } from 'src/routes/components';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
-// routes
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
-// hooks
-import { useResponsive } from 'src/hooks/use-responsive';
-// theme
 import { bgGradient } from 'src/theme/css';
+import { paths } from 'src/routes/paths';
+import { useAuthContext } from 'src/auth/hooks';
+import { useResponsive } from 'src/hooks/use-responsive';
+
+// auth
+
+// routes
+
+
+// hooks
+
+// theme
+
 // components
-import Logo from 'src/components/logo';
+
 
 // ----------------------------------------------------------------------
 
@@ -68,6 +77,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       }}
     />
   );
+  console.log('hello Thuan mat cac')
 
   const renderContent = (
     <Stack
@@ -106,7 +116,7 @@ export default function AuthClassicLayout({ children, image, title }: Props) {
       <Box
         component="img"
         alt="auth"
-        src={image || '/assets/illustrations/illustration_dashboard.png'}
+        src={image || '/assets/illustrations/ASS_Light_Mode.svg'}
         sx={{ maxWidth: 720 }}
       />
 
