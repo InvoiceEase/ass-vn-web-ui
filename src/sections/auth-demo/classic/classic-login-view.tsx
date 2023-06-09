@@ -74,10 +74,8 @@ export default function ClassicLoginView() {
   const firebaseApp = initializeApp(FIREBASE_API);
   const onSubmit = useCallback(async (data: FormValuesProps) => {
     try {
-      debugger
       // console.log(user)
       signInWithEmailAndPassword(getAuth(firebaseApp), data.email, data.password).then((userCredential)=>{
-        debugger
         const user1 = userCredential.user;
         console.log(user1)
         router.push("https://docs.minimals.cc/components/badge-status");
@@ -85,9 +83,7 @@ export default function ClassicLoginView() {
         const errorCode = error.code;
     const errorMessage = error.message;
     alert("Djt me sai roi", errorCode)
-    debugger
 
-    console.log();
       })
       // login(data.email, data.password).then(()=>{console.log("Test")})
       debugger
