@@ -1,29 +1,47 @@
 'use client';
 
 import * as Yup from 'yup';
-import { useCallback,} from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-// routes
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// components
-import Iconify from 'src/components/iconify';
+
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-// import { AuthContext } from 'src/auth/context/amplify';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
+
 import { FIREBASE_API } from 'src/config-global';
+import IconButton from '@mui/material/IconButton';
+import Iconify from 'src/components/iconify';
+import InputAdornment from '@mui/material/InputAdornment';
+import Link from '@mui/material/Link';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { RouterLink } from 'src/routes/components';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { initializeApp } from 'firebase/app';
+import { paths } from 'src/routes/paths';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { useCallback, } from 'react';
+import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+// @mui
+
+
+
+
+
+
+// routes
+
+
+// hooks
+
+// components
+
+
+// import { AuthContext } from 'src/auth/context/amplify';
+
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +100,7 @@ export default function ClassicLoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Start up Land</Typography>
+      <Typography variant="h4" align='center'>Sign in to Accountant Solution System</Typography>
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
