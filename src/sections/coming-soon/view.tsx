@@ -1,28 +1,34 @@
 'use client';
 
 // @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-// hooks
-import { useCountdownDate } from 'src/hooks/use-countdown';
-// _mock
-import { _socials } from 'src/_mock';
-// assets
 import { ComingSoonIllustration } from 'src/assets/illustrations';
-// components
+import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { _socials } from 'src/_mock';
+import { alpha } from '@mui/material/styles';
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
+import { useCountdownDate } from 'src/hooks/use-countdown';
+
+// hooks
+
+// _mock
+
+// assets
+
+// components
+
 
 // ----------------------------------------------------------------------
 
 export default function ComingSoonView() {
-  const { days, hours, minutes, seconds } = useCountdownDate(new Date('07/07/2024 21:30'));
+  const { days, hours, minutes, seconds } = useCountdownDate(new Date('09/31/2023 24:00'));
 
   return (
     <>
