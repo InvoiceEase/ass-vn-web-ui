@@ -1,7 +1,7 @@
 'use client';
 
 import * as Yup from 'yup';
-import { useCallback, useContext } from 'react';
+import { useCallback,} from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -19,7 +19,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { AuthContext } from 'src/auth/context/amplify';
+// import { AuthContext } from 'src/auth/context/amplify';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { FIREBASE_API } from 'src/config-global';
@@ -55,42 +55,23 @@ export default function ClassicLoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const {
-    user,
-    method,
-    loading,
-    authenticated,
-    unauthenticated,
-    login,
-    logout,
-    register,
-    forgotPassword,
-    loginWithGoogle,
-    loginWithGithub,
-    loginWithTwitter,
-  }= useContext(AuthContext)
   const router = useRouter();
 
   const firebaseApp = initializeApp(FIREBASE_API);
   const onSubmit = useCallback(async (data: FormValuesProps) => {
     try {
-      debugger
       // console.log(user)
       signInWithEmailAndPassword(getAuth(firebaseApp), data.email, data.password).then((userCredential)=>{
-        debugger
         const user1 = userCredential.user;
         console.log(user1)
         router.push("https://docs.minimals.cc/components/badge-status");
       }).catch((error)=>{
-        const errorCode = error.code;
-    const errorMessage = error.message;
-    alert("Djt me sai roi", errorCode)
-    debugger
+    //     const errorCode = error.code;
+    // const errorMessage = error.message;
+    alert("Djt me sai roi")
 
-    console.log();
       })
       // login(data.email, data.password).then(()=>{console.log("Test")})
-      debugger
       // memoizedValue.login(data.email, data.password).then(()=>{console.log("S")})
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
