@@ -68,7 +68,7 @@ export default function ClassicLoginView() {
       }).catch((error)=>{
     //     const errorCode = error.code;
     // const errorMessage = error.message;
-    alert("Djt me sai roi")
+    alert("Djt me sai roi do thang lol")
 
       })
       // login(data.email, data.password).then(()=>{console.log("Test")})
