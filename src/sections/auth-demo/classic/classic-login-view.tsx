@@ -82,7 +82,7 @@ export default function ClassicLoginView() {
       signInWithEmailAndPassword(getAuth(firebaseApp), data.email, data.password).then((userCredential)=>{
         const user1 = userCredential.user;
         console.log(user1)
-        router.push("https://docs.minimals.cc/components/badge-status");
+        router.push("/coming-soon");
       }).catch((error)=>{
     //     const errorCode = error.code;
     // const errorMessage = error.message;
