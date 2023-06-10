@@ -117,7 +117,7 @@ export default function FirebaseRegisterView() {
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2"> Already have an account? </Typography>
 
-        <Link href={paths.auth.firebase.login} component={RouterLink} variant="subtitle2">
+        <Link href="" component={RouterLink} variant="subtitle2">
           Sign in
         </Link>
       </Stack>
@@ -182,7 +182,7 @@ export default function FirebaseRegisterView() {
 
   const renderLoginOption = (
     <div>
-      <Divider
+      {/* <Divider
         sx={{
           my: 2.5,
           typography: 'overline',
@@ -193,9 +193,9 @@ export default function FirebaseRegisterView() {
         }}
       >
         OR
-      </Divider>
+      </Divider> */}
 
-      <Stack direction="row" justifyContent="center" spacing={2}>
+      {/* <Stack direction="row" justifyContent="center" spacing={2}>
         <IconButton onClick={handleGoogleLogin}>
           <Iconify icon="eva:google-fill" color="#DF3E30" />
         </IconButton>
@@ -207,7 +207,7 @@ export default function FirebaseRegisterView() {
         <IconButton onClick={handleTwitterLogin}>
           <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
         </IconButton>
-      </Stack>
+      </Stack> */}
     </div>
   );
 

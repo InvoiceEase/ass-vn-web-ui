@@ -18,7 +18,7 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import { useSearchParams } from 'src/routes/hook';
 // config
-import { PATH_AFTER_LOGIN } from 'src/config-global';
+// import { PATH_AFTER_LOGIN } from 'src/config-global';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // auth
@@ -26,6 +26,7 @@ import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
@@ -66,12 +67,18 @@ export default function FirebaseLoginView() {
     formState: { isSubmitting },
   } = methods;
 
+  const router = useRouter();
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await login?.(data.email, data.password);
+        await login?.(data.email, data.password)
+          .then(() => {
+            router.prefetch('coming-soon');
+            router.push('coming-soon');
+          })
+          .catch(() => {alert(`Bạn đã nhập sai thông tin.`)});
 
-        window.location.href = returnTo || PATH_AFTER_LOGIN;
+        // window.location.href = returnTo || PATH_AFTER_LOGIN;
       } catch (error) {
         console.error(error);
         reset();
@@ -107,7 +114,7 @@ export default function FirebaseLoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Minimal</Typography>
+      <Typography variant="h4">Sign in to ASS</Typography>
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
@@ -166,7 +173,7 @@ export default function FirebaseLoginView() {
 
   const renderLoginOption = (
     <div>
-      <Divider
+      {/* <Divider
         sx={{
           my: 2.5,
           typography: 'overline',
@@ -191,7 +198,7 @@ export default function FirebaseLoginView() {
         <IconButton onClick={handleTwitterLogin}>
           <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
         </IconButton>
-      </Stack>
+      </Stack> */}
     </div>
   );
 

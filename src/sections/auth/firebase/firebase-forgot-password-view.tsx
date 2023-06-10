@@ -80,7 +80,7 @@ export default function FirebaseForgotPasswordView() {
 
       <Link
         component={RouterLink}
-        href={paths.auth.firebase.login}
+        href=""
         color="inherit"
         variant="subtitle2"
         sx={{

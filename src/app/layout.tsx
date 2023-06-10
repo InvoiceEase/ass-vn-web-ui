@@ -42,7 +42,7 @@ import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
 // import { AuthProvider, AuthConsumer } from 'src/auth/context/amplify';
 import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
 // import AuthClassicLayout from 'src/layouts/auth/classic';
-import Layout from './auth-demo/classic/login/layout';
+import Layout from './auth/firebase/login/layout';
 
 // ----------------------------------------------------------------------
 
