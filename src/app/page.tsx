@@ -1,8 +1,8 @@
 // sections
 // import { HomeView } from 'src/sections/home/view';
 
-// import { FirebaseLoginView } from 'src/sections/auth/firebase';
-import ClassicLoginPage from './auth-demo/classic/login/page';
+import { FirebaseLoginView } from 'src/sections/auth/firebase';
+// import ClassicLoginPage from './auth-demo/classic/login/page';
 
 // ----------------------------------------------------------------------
 
@@ -11,5 +11,5 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <ClassicLoginPage />;
+  return <FirebaseLoginView />;
 }
