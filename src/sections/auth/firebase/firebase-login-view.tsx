@@ -27,6 +27,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useRouter } from 'next/navigation';
+import { red } from '@mui/material/colors';
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +77,9 @@ export default function FirebaseLoginView() {
             router.prefetch('coming-soon');
             router.push('coming-soon');
           })
-          .catch(() => {alert(`Bạn đã nhập sai thông tin.`)});
+          .catch(() => {
+            setErrorMsg("Bạn đã nhập sai email hoặc mật khẩu. Vui lòng thử lại!");
+          });
 
         // window.location.href = returnTo || PATH_AFTER_LOGIN;
       } catch (error) {
@@ -114,13 +117,13 @@ export default function FirebaseLoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to ASS</Typography>
+      <Typography variant="h4">Đăng nhập</Typography>
 
       <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2">New user?</Typography>
+        <Typography variant="body2">Chưa có tài khoản?</Typography>
 
         <Link component={RouterLink} href={paths.auth.firebase.register} variant="subtitle2">
-          Create an account
+          Đăng ký ngay
         </Link>
       </Stack>
     </Stack>
@@ -128,13 +131,13 @@ export default function FirebaseLoginView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
-      <RHFTextField name="email" label="Email address" />
+
+      <RHFTextField name="email" label="Email" />
 
       <RHFTextField
         name="password"
-        label="Password"
+        label="Mật khẩu"
         type={password.value ? 'text' : 'password'}
         InputProps={{
           endAdornment: (
@@ -155,9 +158,9 @@ export default function FirebaseLoginView() {
         underline="always"
         sx={{ alignSelf: 'flex-end' }}
       >
-        Forgot password?
+        Quên mật khẩu?
       </Link>
-
+      {!!errorMsg && <Alert severity="error" >{errorMsg}</Alert>}
       <LoadingButton
         fullWidth
         color="inherit"
@@ -166,7 +169,7 @@ export default function FirebaseLoginView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Login
+        Đăng nhập
       </LoadingButton>
     </Stack>
   );
