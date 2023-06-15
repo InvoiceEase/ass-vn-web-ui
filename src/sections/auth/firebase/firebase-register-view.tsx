@@ -24,14 +24,16 @@ import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { aW } from '@fullcalendar/core/internal-common';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
   email: string;
+  phoneNumber: string;
+  name: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  role: string;
 };
 
 export default function FirebaseRegisterView() {
@@ -71,12 +73,24 @@ export default function FirebaseRegisterView() {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await register?.(data.email, data.password, data.firstName, data.lastName);
-        const searchParams = new URLSearchParams({ email: data.email }).toString();
+        console.log("Vào")
+        const response = await register?.('test@gmail.com', '0123456789', 'Thuan', '123456', 'ADMIN');
+        if (response) {
+          // const searchParams = new URLSearchParams({ email: data.email }).toString();
 
-        const href = `${paths.auth.firebase.verify}?${searchParams}`;
+          // const href = `${paths.auth.firebase.verify}?${searchParams}`;
 
-        router.push(href);
+          // router.push(href);
+          alert("Đăng ký được rồi thằng lol à")
+        }
+        // const searchParams = new URLSearchParams({ email: data.email }).toString();
+
+        // const href = `${paths.auth.firebase.verify}?${searchParams}`;
+
+        // router.push(href);
+        else{
+          alert("Ko đăng ký được thằng lol à")
+        }
       } catch (error) {
         console.error(error);
         reset();

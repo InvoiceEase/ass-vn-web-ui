@@ -21,6 +21,7 @@ import { FIREBASE_API } from 'src/config-global';
 //
 import { AuthContext } from './auth-context';
 import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -153,17 +154,38 @@ export function AuthProvider({ children }: Props) {
 
   // REGISTER
   const register = useCallback(
-    async (email: string, password: string, firstName: string, lastName: string) => {
-      const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
+    async (email: string, phoneNumber: string, name: string, password: string, role: string) => {
+      // const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
 
-      await sendEmailVerification(newUser.user);
+      // await sendEmailVerification(newUser.user);
 
-      const userProfile = doc(collection(DB, 'users'), newUser.user?.uid);
+      // const userProfile = doc(collection(DB, 'users'), newUser.user?.uid);
       // await setDoc(userProfile, {
       //   uid: newUser.user?.uid,
       //   email,
       //   displayName: `${firstName} ${lastName}`,
       // });
+      const body = {
+        version: 0,
+        email,
+        phoneNumber,
+        name,
+        password,
+        role,
+      };
+      try {
+        let response = false;
+        if (role === "ADMIN"){
+          console.log('Thuan log response: ', email);
+           response = true;
+           return response;
+        }
+        return response;
+        // const response = await axios.post('/users', body);
+        // console.log('Thuan log response: ', response);
+      } catch (error) {
+        console.error(error);
+      }
     },
     []
   );
