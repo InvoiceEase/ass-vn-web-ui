@@ -152,9 +152,22 @@ export function AuthProvider({ children }: Props) {
     await signInWithPopup(AUTH, provider);
   }, []);
 
+  interface org {
+    name: string;
+    email: string;
+    address: string;
+    taxNumber: string;
+  }
   // REGISTER
   const register = useCallback(
-    async (email: string, phoneNumber: string, name: string, password: string, role: string) => {
+    async (
+      email: string,
+      phoneNumber: string,
+      fullName: string,
+      password: string,
+      role: string,
+      organization: org
+    ) => {
       // const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
 
       // await sendEmailVerification(newUser.user);
@@ -166,23 +179,15 @@ export function AuthProvider({ children }: Props) {
       //   displayName: `${firstName} ${lastName}`,
       // });
       const body = {
-        version: 0,
         email,
         phoneNumber,
-        name,
+        fullName,
         password,
         role,
+        organization,
       };
       try {
-        let response = false;
-        if (role === "ADMIN"){
-          console.log('Thuan log response: ', email);
-           response = true;
-           return response;
-        }
-        return response;
-        // const response = await axios.post('/users', body);
-        // console.log('Thuan log response: ', response);
+        await axios.post('https://34.172.143.101/ass-admin/auth', body);
       } catch (error) {
         console.error(error);
       }
