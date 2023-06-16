@@ -41,7 +41,7 @@ type FormValuesProps = {
   role: string;
   taxNumber: string;
 };
-const phoneRegExp = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
+// const phoneRegExp = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
 export default function FirebaseRegisterView() {
   const { register, loginWithGoogle, loginWithGithub, loginWithTwitter } = useAuthContext();
 
@@ -59,7 +59,7 @@ export default function FirebaseRegisterView() {
     password: Yup.string().required('Password is required'),
     phoneNumber: Yup.string()
       .required('Phone Number is required')
-      .matches(phoneRegExp, 'Phone number is not valid'),
+      // .matches(phoneRegExp, 'Phone number is not valid'),
   });
 
   const defaultValues = {
@@ -167,6 +167,11 @@ export default function FirebaseRegisterView() {
   const [userRole, setUserRole] = useState("ACCOUNTANT");
   const roleRef = useRef();
   const role=["ACCOUNTANT", "ORGANIZATION"]
+  const handleAutoComplete = ()=>{
+    if(roleRef.current){
+      setUserRole(roleRef.current);
+    }
+  }
   const renderForm = (
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
@@ -196,7 +201,7 @@ export default function FirebaseRegisterView() {
         id="free-solo-demo"
         ref={roleRef}
         options={role}
-        onBlur={()=>setUserRole(roleRef.current.value)}
+        onBlur={()=>handleAutoComplete()}
         defaultValue="ACCOUNTANT"
         renderInput={(params) => <RHFTextField name="role" {...params}  label="ROLE" />}
       />
