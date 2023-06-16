@@ -74,7 +74,7 @@ export default function JwtRegisterView() {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await register?.(data.email, data.password, data.firstName, data.lastName);
+        // await register?.(data.email, data.password, data.firstName, data.lastName);
         window.location.href = returnTo || PATH_AFTER_LOGIN;
       } catch (error) {
         console.error(error);

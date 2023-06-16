@@ -21,6 +21,7 @@ import { FIREBASE_API } from 'src/config-global';
 //
 import { AuthContext } from './auth-context';
 import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -151,19 +152,45 @@ export function AuthProvider({ children }: Props) {
     await signInWithPopup(AUTH, provider);
   }, []);
 
+  interface org {
+    name: string;
+    email: string;
+    address: string;
+    taxNumber: string;
+  }
   // REGISTER
   const register = useCallback(
-    async (email: string, password: string, firstName: string, lastName: string) => {
-      const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
+    async (
+      email: string,
+      phoneNumber: string,
+      fullName: string,
+      password: string,
+      role: string,
+      organization: org
+    ) => {
+      // const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
 
-      await sendEmailVerification(newUser.user);
+      // await sendEmailVerification(newUser.user);
 
-      const userProfile = doc(collection(DB, 'users'), newUser.user?.uid);
+      // const userProfile = doc(collection(DB, 'users'), newUser.user?.uid);
       // await setDoc(userProfile, {
       //   uid: newUser.user?.uid,
       //   email,
       //   displayName: `${firstName} ${lastName}`,
       // });
+      const body = {
+        email,
+        phoneNumber,
+        fullName,
+        password,
+        role,
+        organization,
+      };
+      try {
+        await axios.post('https://34.172.143.101/ass-admin/auth', body);
+      } catch (error) {
+        console.error(error);
+      }
     },
     []
   );

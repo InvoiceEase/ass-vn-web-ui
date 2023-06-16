@@ -2,43 +2,51 @@
 
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
 import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import axios from 'axios';
+
+import Button from '@mui/material/Button';
+import { Autocomplete, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
+  address: string;
   email: string;
-  password: string;
+  emailOrg: string;
+  phoneNumber: string;
   firstName: string;
   lastName: string;
+  nameOrg: string;
+  password: string;
+  role: string;
+  taxNumber: string;
 };
-
+// const phoneRegExp = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
 export default function FirebaseRegisterView() {
   const { register, loginWithGoogle, loginWithGithub, loginWithTwitter } = useAuthContext();
 
   const [errorMsg, setErrorMsg] = useState('');
-
+  const [isSubmit, setIsSubmit] = useState(false);
   const router = useRouter();
 
   const password = useBoolean();
@@ -47,7 +55,11 @@ export default function FirebaseRegisterView() {
     firstName: Yup.string().required('First name required'),
     lastName: Yup.string().required('Last name required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    emailOrg: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
+    phoneNumber: Yup.string()
+      .required('Phone Number is required')
+      // .matches(phoneRegExp, 'Phone number is not valid'),
   });
 
   const defaultValues = {
@@ -55,6 +67,7 @@ export default function FirebaseRegisterView() {
     lastName: '',
     email: '',
     password: '',
+    phoneNumber: '',
   };
 
   const methods = useForm<FormValuesProps>({
@@ -71,12 +84,23 @@ export default function FirebaseRegisterView() {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await register?.(data.email, data.password, data.firstName, data.lastName);
-        const searchParams = new URLSearchParams({ email: data.email }).toString();
-
-        const href = `${paths.auth.firebase.verify}?${searchParams}`;
-
-        router.push(href);
+        const body = {
+          email: data.email,
+          phoneNumber: `+84${data.phoneNumber.substring(1)}`,
+          fullName:  `${data.firstName} ${data.lastName}`,
+          password: data.password,
+          role: userRole,
+          organization: {
+            name: data.nameOrg,
+            email: data.emailOrg,
+            address: data.address,
+            taxNumber: data.taxNumber,
+          },
+        };
+        const response = await axios.post('http://34.172.143.101/ass-admin/auth', body);
+        if(response.status === 201){
+          router.push("")
+        }
       } catch (error) {
         console.error(error);
         reset();
@@ -112,7 +136,7 @@ export default function FirebaseRegisterView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
-      <Typography variant="h4">Get started absolutely free</Typography>
+      <Typography variant="h2">Register</Typography>
 
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2"> Already have an account? </Typography>
@@ -140,16 +164,23 @@ export default function FirebaseRegisterView() {
       .
     </Typography>
   );
-
+  const [userRole, setUserRole] = useState("ACCOUNTANT");
+  const roleRef = useRef();
+  const role=["ACCOUNTANT", "ORGANIZATION"]
+  const handleAutoComplete = ()=>{
+    if(roleRef.current){
+      setUserRole(roleRef.current);
+    }
+  }
   const renderForm = (
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-
+      <Typography variant="h5">Information</Typography>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <RHFTextField name="firstName" label="First name" />
         <RHFTextField name="lastName" label="Last name" />
       </Stack>
-
+      <RHFTextField name="phoneNumber" label="Phone Number" />
       <RHFTextField name="email" label="Email address" />
 
       <RHFTextField
@@ -166,7 +197,39 @@ export default function FirebaseRegisterView() {
           ),
         }}
       />
+      <Autocomplete
+        id="free-solo-demo"
+        ref={roleRef}
+        options={role}
+        onBlur={()=>handleAutoComplete()}
+        defaultValue="ACCOUNTANT"
+        renderInput={(params) => <RHFTextField name="role" {...params}  label="ROLE" />}
+      />
 
+
+      <Button
+        fullWidth
+        color="inherit"
+        variant="contained"
+        size="large"
+        onClick={() => {
+          setIsSubmit(true);
+        }}
+      >
+        Next
+      </Button>
+    </Stack>
+  );
+
+  const renderForm2 = (
+    <Stack spacing={2.5}>
+      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
+      <Typography variant="h5">Organization Information</Typography>
+
+      <RHFTextField name="nameOrg" label="Organization Name" />
+      <RHFTextField name="emailOrg" label="Email address" />
+      <RHFTextField name="address" label="Address" />
+      <RHFTextField name="taxNumber" type="number" label="Tax Number" />
       <LoadingButton
         fullWidth
         color="inherit"
@@ -179,7 +242,6 @@ export default function FirebaseRegisterView() {
       </LoadingButton>
     </Stack>
   );
-
   const renderLoginOption = (
     <div>
       {/* <Divider
@@ -215,7 +277,7 @@ export default function FirebaseRegisterView() {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       {renderHead}
 
-      {renderForm}
+      {isSubmit ? renderForm2 : renderForm}
 
       {renderTerms}
 

@@ -27,9 +27,11 @@ type CanRemove = {
   login?: (email: string, password: string) => Promise<void>;
   register?: (
     email: string,
+    phoneNumber: string,
+    name: string,
     password: string,
-    firstName: string,
-    lastName: string
+    role: string,
+    organization: org,
   ) => Promise<void>;
   //
   loginWithGoogle?: () => Promise<void>;
@@ -55,7 +57,12 @@ export type JWTContextType = CanRemove & {
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   logout: () => Promise<void>;
 };
-
+interface org {
+  name:string,
+  email:string,
+  address:string,
+  taxNumber: string,
+}
 export type FirebaseContextType = CanRemove & {
   user: AuthUserType;
   method: string;
@@ -68,7 +75,14 @@ export type FirebaseContextType = CanRemove & {
   loginWithTwitter: () => Promise<void>;
   forgotPassword?: (email: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  register: (
+    email: string,
+    phoneNumber: string,
+    name: string,
+    password: string,
+    role: string,
+    organization: org
+  ) => Promise<void>;
 };
 
 export type AmplifyContextType = CanRemove & {
