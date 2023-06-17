@@ -1,31 +1,50 @@
 'use client';
 
 import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { useCallback, useRef, useState } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
-import Link from '@mui/material/Link';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// routes
-import { useRouter } from 'src/routes/hook';
-import { RouterLink } from 'src/routes/components';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
-// components
-import Iconify from 'src/components/iconify';
-import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
-import axios from 'axios';
 
-import Button from '@mui/material/Button';
 import { Autocomplete, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
+import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { useCallback, useRef, useState } from 'react';
+
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Iconify from 'src/components/iconify';
+import InputAdornment from '@mui/material/InputAdornment';
+import Link from '@mui/material/Link';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { RouterLink } from 'src/routes/components';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
+import { useAuthContext } from 'src/auth/hooks';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'src/routes/hook';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+// @mui
+
+
+
+
+
+
+
+// hooks
+
+// routes
+
+
+// auth
+
+// components
+
+
+
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -97,7 +116,7 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const response = await axios.post('http://34.172.143.101/ass-admin/auth', body);
+        const response = await axios.post('//34.172.143.101/ass-admin/auth', body);
         if(response.status === 201){
           router.push("")
         }
