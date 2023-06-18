@@ -21,6 +21,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     data: req.body,
   };
 
+  console.log(`Request url: ${backendURL}/${endpoint}`);
+  console.log(`Request method: ${req.method}`);
+  console.log(`Request body: ${req.body}`);
+
   try {
     const backendResponse = await axios(config);
     res.status(backendResponse.status).json(backendResponse.data);
