@@ -116,7 +116,8 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const response = await axios.post('http://34.172.143.101/ass-admin/auth', body);
+        const url = '/api/proxy/34.172.143.101/ass-admin/auth'
+        const response = await axios.post(url, body);
         if(response.status === 201){
           router.push("")
         }
