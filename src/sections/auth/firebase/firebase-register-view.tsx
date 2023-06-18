@@ -116,7 +116,7 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const response = await axios.post('//34.172.143.101/ass-admin/auth', body);
+        const response = await axios.post('http://34.172.143.101/ass-admin/auth', body);
         if(response.status === 201){
           router.push("")
         }

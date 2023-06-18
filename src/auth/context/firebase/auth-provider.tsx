@@ -193,7 +193,7 @@ export function AuthProvider({ children }: Props) {
         organization,
       };
       try {
-        await axios.post('//34.172.143.101/ass-admin/auth', body);
+        await axios.post('http://34.172.143.101/ass-admin/auth', body);
       } catch (error) {
         console.error(error);
       }
