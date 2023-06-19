@@ -28,6 +28,8 @@ import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useRouter } from 'next/navigation';
 import { red } from '@mui/material/colors';
+import AuthClassicLayout from 'src/layouts/auth/classic';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +39,7 @@ type FormValuesProps = {
 };
 
 export default function FirebaseLoginView() {
-  const { login, loginWithGoogle, loginWithGithub, loginWithTwitter } = useAuthContext();
+  const { user, login, loginWithGoogle, loginWithGithub, loginWithTwitter } = useAuthContext();
 
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -72,15 +74,40 @@ export default function FirebaseLoginView() {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await login?.(data.email, data.password)
-          .then(() => {
-            router.prefetch('coming-soon');
-            router.push('coming-soon');
-          })
-          .catch(() => {
-            setErrorMsg("Bạn đã nhập sai email hoặc mật khẩu. Vui lòng thử lại!");
-          });
+        await login?.(data.email, data.password);
+        // .then(async () => {
+        //   const config = {
+        //     headers: { Authorization: `Bearer ${user?.accessToken}` }
+        //   };
+        //   debugger
 
+        // })
+        // .catch((error) => {
+        //   setErrorMsg(typeof error === 'string' ? error : error.message);
+        // });
+        debugger
+        if (user) {
+          const config = {
+            headers: { Authorization: `Bearer ${user?.accessToken}` },
+          };
+          const resp = await axios.get(
+            `https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/users/${user?.id}/roles`,
+            config
+          );
+
+          if (resp.status === 200) {
+            if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
+              router.push('dashboard');
+            } else {
+              router.push('');
+            }
+          } else {
+            router.push('');
+          }
+        }
+        else{
+          setErrorMsg("Đã có lỗi xảy ra");
+        }
         // window.location.href = returnTo || PATH_AFTER_LOGIN;
       } catch (error) {
         console.error(error);
@@ -160,7 +187,7 @@ export default function FirebaseLoginView() {
       >
         Quên mật khẩu?
       </Link>
-      {!!errorMsg && <Alert severity="error" >{errorMsg}</Alert>}
+      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
       <LoadingButton
         fullWidth
         color="inherit"
@@ -206,12 +233,14 @@ export default function FirebaseLoginView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      {renderHead}
+    <AuthClassicLayout>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        {renderHead}
 
-      {renderForm}
+        {renderForm}
 
-      {renderLoginOption}
-    </FormProvider>
+        {renderLoginOption}
+      </FormProvider>
+    </AuthClassicLayout>
   );
 }

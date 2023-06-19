@@ -35,7 +35,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
       const href = `${loginPath}?${searchParams}`;
 
-      router.replace(href);
+      router.replace("");
     } else {
       setChecked(true);
     }
