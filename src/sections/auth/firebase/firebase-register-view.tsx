@@ -116,7 +116,7 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const url = 'http://34.172.143.101/ass-admin/auth'
+        const url = 'https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/auth'
         const response = await axios.post(url, body);
         if(response.status === 201){
           router.push("")
