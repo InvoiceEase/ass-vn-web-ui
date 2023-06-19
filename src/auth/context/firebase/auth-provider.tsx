@@ -79,7 +79,10 @@ export function AuthProvider({ children }: Props) {
     try {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
-          debugger
+            sessionStorage.setItem('uid',user.uid)
+            user.getIdToken().then((data)=>{
+              sessionStorage.setItem("token", data)
+            });
           // if (user.emailVerified) {
             const userProfile = doc(DB, 'users', user.uid);
 
@@ -98,6 +101,7 @@ export function AuthProvider({ children }: Props) {
                 },
               },
             });
+
           // } else {
           //   dispatch({
           //     type: Types.INITIAL,
@@ -198,6 +202,7 @@ export function AuthProvider({ children }: Props) {
 
   // LOGOUT
   const logout = useCallback(async () => {
+    sessionStorage.clear();
     await signOut(AUTH);
   }, []);
 

@@ -37,6 +37,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
       router.replace("");
     } else {
+      router.push("dashboard")
       setChecked(true);
     }
   }, [authenticated, method, router]);

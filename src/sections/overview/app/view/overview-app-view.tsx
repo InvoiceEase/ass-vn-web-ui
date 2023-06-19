@@ -25,11 +25,12 @@ import AppAreaInstalled from '../app-area-installed';
 import AppWidgetSummary from '../app-widget-summary';
 import AppCurrentDownload from '../app-current-download';
 import AppTopInstalledCountries from '../app-top-installed-countries';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 export default function OverviewAppView() {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const theme = useTheme();
 
@@ -57,7 +58,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Active Users"
+            title="Total Invoices"
             percent={2.6}
             total={18765}
             chart={{
@@ -68,8 +69,8 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Installed"
-            percent={0.2}
+            title="Total Value"
+            percent={-0.2}
             total={4876}
             chart={{
               colors: [theme.palette.info.light, theme.palette.info.main],
@@ -80,8 +81,8 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Downloads"
-            percent={-0.1}
+            title="Storage"
+            percent={29.4}
             total={678}
             chart={{
               colors: [theme.palette.warning.light, theme.palette.warning.main],
@@ -92,13 +93,13 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
-            title="Current Download"
+            title="Tổng số lượng hóa đơn"
             chart={{
               series: [
-                { label: 'Mac', value: 12244 },
-                { label: 'Window', value: 53345 },
-                { label: 'iOS', value: 44313 },
-                { label: 'Android', value: 78343 },
+                { label: 'Provider A', value: 12244 },
+                { label: 'Provider B', value: 53345 },
+                { label: 'Provider C', value: 44313 },
+                { label: 'Provider D', value: 78343 },
               ],
             }}
           />
@@ -106,7 +107,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={6} lg={8}>
           <AppAreaInstalled
-            title="Area Installed"
+            title="Thống kê hóa đơn"
             subheader="(+43%) than last year"
             chart={{
               categories: [
@@ -128,11 +129,11 @@ export default function OverviewAppView() {
                   year: '2019',
                   data: [
                     {
-                      name: 'Asia',
+                      name: 'HĐ đầu vào',
                       data: [10, 41, 35, 51, 49, 62, 69, 91, 148, 35, 51, 49],
                     },
                     {
-                      name: 'America',
+                      name: 'HĐ đầu ra',
                       data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 13, 56, 77],
                     },
                   ],
@@ -141,11 +142,11 @@ export default function OverviewAppView() {
                   year: '2020',
                   data: [
                     {
-                      name: 'Asia',
+                      name: 'HĐ đầu vào',
                       data: [51, 35, 41, 10, 91, 69, 62, 148, 91, 69, 62, 49],
                     },
                     {
-                      name: 'America',
+                      name: 'HĐ đầu ra',
                       data: [56, 13, 34, 10, 77, 99, 88, 45, 77, 99, 88, 77],
                     },
                   ],

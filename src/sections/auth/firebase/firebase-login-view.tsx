@@ -30,6 +30,7 @@ import { useRouter } from 'next/navigation';
 import { red } from '@mui/material/colors';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 import axios from 'axios';
+import { GuestGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
@@ -61,7 +62,7 @@ export default function FirebaseLoginView() {
 
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(LoginSchema),
-    defaultValues,
+    // defaultValues,
   });
 
   const {
@@ -75,27 +76,19 @@ export default function FirebaseLoginView() {
     async (data: FormValuesProps) => {
       try {
         await login?.(data.email, data.password);
-        // .then(async () => {
-        //   const config = {
-        //     headers: { Authorization: `Bearer ${user?.accessToken}` }
-        //   };
-        //   debugger
-
-        // })
-        // .catch((error) => {
-        //   setErrorMsg(typeof error === 'string' ? error : error.message);
-        // });
-        debugger
-        if (user) {
+        const uid = sessionStorage.getItem('uid');
+        const token = sessionStorage.getItem('token');
+        if (uid) {
           const config = {
-            headers: { Authorization: `Bearer ${user?.accessToken}` },
+            headers: { Authorization: `Bearer ${token}` },
           };
           const resp = await axios.get(
-            `https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/users/${user?.id}/roles`,
+            `https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/users/${uid}/roles`,
             config
           );
 
           if (resp.status === 200) {
+            sessionStorage.setItem('roleCode', resp.data.roleCode);
             if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
               router.push('dashboard');
             } else {
@@ -104,43 +97,41 @@ export default function FirebaseLoginView() {
           } else {
             router.push('');
           }
+        } else {
+          setErrorMsg('Đã có lỗi xảy ra');
         }
-        else{
-          setErrorMsg("Đã có lỗi xảy ra");
-        }
-        // window.location.href = returnTo || PATH_AFTER_LOGIN;
       } catch (error) {
         console.error(error);
         reset();
         setErrorMsg(typeof error === 'string' ? error : error.message);
       }
     },
-    [login, reset, returnTo]
+    [login, reset, returnTo, user]
   );
 
-  const handleGoogleLogin = async () => {
-    try {
-      await loginWithGoogle?.();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     await loginWithGoogle?.();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const handleGithubLogin = async () => {
-    try {
-      await loginWithGithub?.();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const handleGithubLogin = async () => {
+  //   try {
+  //     await loginWithGithub?.();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const handleTwitterLogin = async () => {
-    try {
-      await loginWithTwitter?.();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const handleTwitterLogin = async () => {
+  //   try {
+  //     await loginWithTwitter?.();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
@@ -158,8 +149,6 @@ export default function FirebaseLoginView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-
-
       <RHFTextField name="email" label="Email" />
 
       <RHFTextField
@@ -201,46 +190,48 @@ export default function FirebaseLoginView() {
     </Stack>
   );
 
-  const renderLoginOption = (
-    <div>
-      {/* <Divider
-        sx={{
-          my: 2.5,
-          typography: 'overline',
-          color: 'text.disabled',
-          '&::before, ::after': {
-            borderTopStyle: 'dashed',
-          },
-        }}
-      >
-        OR
-      </Divider>
+  // const renderLoginOption = (
+  //   <div>
+  //     <Divider
+  //       sx={{
+  //         my: 2.5,
+  //         typography: 'overline',
+  //         color: 'text.disabled',
+  //         '&::before, ::after': {
+  //           borderTopStyle: 'dashed',
+  //         },
+  //       }}
+  //     >
+  //       OR
+  //     </Divider>
 
-      <Stack direction="row" justifyContent="center" spacing={2}>
-        <IconButton onClick={handleGoogleLogin}>
-          <Iconify icon="eva:google-fill" color="#DF3E30" />
-        </IconButton>
+  //     <Stack direction="row" justifyContent="center" spacing={2}>
+  //       <IconButton onClick={handleGoogleLogin}>
+  //         <Iconify icon="eva:google-fill" color="#DF3E30" />
+  //       </IconButton>
 
-        <IconButton color="inherit" onClick={handleGithubLogin}>
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
+  //       <IconButton color="inherit" onClick={handleGithubLogin}>
+  //         <Iconify icon="eva:github-fill" />
+  //       </IconButton>
 
-        <IconButton onClick={handleTwitterLogin}>
-          <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
-        </IconButton>
-      </Stack> */}
-    </div>
-  );
+  //       <IconButton onClick={handleTwitterLogin}>
+  //         <Iconify icon="eva:twitter-fill" color="#1C9CEA" />
+  //       </IconButton>
+  //     </Stack>
+  //   </div>
+  // );
 
   return (
     <AuthClassicLayout>
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        {renderHead}
+      <GuestGuard>
+        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+          {renderHead}
 
-        {renderForm}
+          {renderForm}
 
-        {renderLoginOption}
-      </FormProvider>
+          {/* {renderLoginOption} */}
+        </FormProvider>
+      </GuestGuard>
     </AuthClassicLayout>
   );
 }
