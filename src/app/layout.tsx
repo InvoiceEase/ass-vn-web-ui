@@ -41,8 +41,9 @@ import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
 // import { AuthProvider, AuthConsumer } from 'src/auth/context/auth0';
 // import { AuthProvider, AuthConsumer } from 'src/auth/context/amplify';
 import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
+import { AuthGuard } from 'src/auth/guard';
 // import AuthClassicLayout from 'src/layouts/auth/classic';
-import Layout from './auth/firebase/login/layout';
+// import Layout from './layout';
 
 // ----------------------------------------------------------------------
 
@@ -104,9 +105,7 @@ export default function RootLayout({ children }: Props) {
                     <SnackbarProvider>
                       <SettingsDrawer />
                       <ProgressBar />
-                      <AuthConsumer>
-                        <Layout>{children}</Layout>
-                      </AuthConsumer>
+                      <AuthConsumer>{children}</AuthConsumer>
                     </SnackbarProvider>
                   </MotionLazy>
                 </ThemeProvider>

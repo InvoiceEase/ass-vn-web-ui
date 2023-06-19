@@ -79,7 +79,11 @@ export function AuthProvider({ children }: Props) {
     try {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
-          if (user.emailVerified) {
+            sessionStorage.setItem('uid',user.uid)
+            user.getIdToken().then((data)=>{
+              sessionStorage.setItem("token", data)
+            });
+          // if (user.emailVerified) {
             const userProfile = doc(DB, 'users', user.uid);
 
             const docSnap = await getDoc(userProfile);
@@ -97,14 +101,15 @@ export function AuthProvider({ children }: Props) {
                 },
               },
             });
-          } else {
-            dispatch({
-              type: Types.INITIAL,
-              payload: {
-                user: null,
-              },
-            });
-          }
+
+          // } else {
+          //   dispatch({
+          //     type: Types.INITIAL,
+          //     payload: {
+          //       user: null,
+          //     },
+          //   });
+          // }
         } else {
           dispatch({
             type: Types.INITIAL,
@@ -197,6 +202,7 @@ export function AuthProvider({ children }: Props) {
 
   // LOGOUT
   const logout = useCallback(async () => {
+    sessionStorage.clear();
     await signOut(AUTH);
   }, []);
 
@@ -207,7 +213,7 @@ export function AuthProvider({ children }: Props) {
 
   // ----------------------------------------------------------------------
 
-  const checkAuthenticated = state.user?.emailVerified ? 'authenticated' : 'unauthenticated';
+  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
   const status = state.loading ? 'loading' : checkAuthenticated;
 

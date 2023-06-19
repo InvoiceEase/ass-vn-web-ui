@@ -25,7 +25,15 @@ import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import axios from 'axios';
 
 import Button from '@mui/material/Button';
-import { Autocomplete, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@mui/material';
+import AuthClassicLayout from 'src/layouts/auth/classic';
 
 // ----------------------------------------------------------------------
 
@@ -55,11 +63,12 @@ export default function FirebaseRegisterView() {
     firstName: Yup.string().required('First name required'),
     lastName: Yup.string().required('Last name required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    emailOrg: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    emailOrg: Yup.string()
+      .required('Email is required')
+      .email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
-    phoneNumber: Yup.string()
-      .required('Phone Number is required')
-      // .matches(phoneRegExp, 'Phone number is not valid'),
+    phoneNumber: Yup.string().required('Phone Number is required'),
+    // .matches(phoneRegExp, 'Phone number is not valid'),
   });
 
   const defaultValues = {
@@ -87,7 +96,7 @@ export default function FirebaseRegisterView() {
         const body = {
           email: data.email,
           phoneNumber: `+84${data.phoneNumber.substring(1)}`,
-          fullName:  `${data.firstName} ${data.lastName}`,
+          fullName: `${data.firstName} ${data.lastName}`,
           password: data.password,
           role: userRole,
           organization: {
@@ -97,9 +106,9 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const response = await axios.post('http://34.172.143.101/ass-admin/auth', body);
-        if(response.status === 201){
-          router.push("")
+        const response = await axios.post('https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/auth', body);
+        if (response.status === 201) {
+          router.push('');
         }
       } catch (error) {
         console.error(error);
@@ -164,14 +173,14 @@ export default function FirebaseRegisterView() {
       .
     </Typography>
   );
-  const [userRole, setUserRole] = useState("ACCOUNTANT");
+  const [userRole, setUserRole] = useState('ACCOUNTANT');
   const roleRef = useRef();
-  const role=["ACCOUNTANT", "ORGANIZATION"]
-  const handleAutoComplete = ()=>{
-    if(roleRef.current){
+  const role = ['ACCOUNTANT', 'ORGANIZATION'];
+  const handleAutoComplete = () => {
+    if (roleRef.current) {
       setUserRole(roleRef.current);
     }
-  }
+  };
   const renderForm = (
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
@@ -201,11 +210,10 @@ export default function FirebaseRegisterView() {
         id="free-solo-demo"
         ref={roleRef}
         options={role}
-        onBlur={()=>handleAutoComplete()}
+        onBlur={() => handleAutoComplete()}
         defaultValue="ACCOUNTANT"
-        renderInput={(params) => <RHFTextField name="role" {...params}  label="ROLE" />}
+        renderInput={(params) => <RHFTextField name="role" {...params} label="ROLE" />}
       />
-
 
       <Button
         fullWidth
@@ -274,14 +282,16 @@ export default function FirebaseRegisterView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      {renderHead}
+    <AuthClassicLayout>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        {renderHead}
 
-      {isSubmit ? renderForm2 : renderForm}
+        {isSubmit ? renderForm2 : renderForm}
 
-      {renderTerms}
+        {renderTerms}
 
-      {renderLoginOption}
-    </FormProvider>
+        {renderLoginOption}
+      </FormProvider>
+    </AuthClassicLayout>
   );
 }
