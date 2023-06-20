@@ -22,38 +22,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'src/routes/hook';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-// @mui
-
-
-
-
-
-
-
-// hooks
-
-// routes
-
-
-// auth
-
-// components
-
-
-
-
-
-
-import Button from '@mui/material/Button';
-import {
-  Autocomplete,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-} from '@mui/material';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 
 // ----------------------------------------------------------------------
