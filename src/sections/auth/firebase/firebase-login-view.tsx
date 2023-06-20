@@ -82,8 +82,9 @@ export default function FirebaseLoginView() {
           const config = {
             headers: { Authorization: `Bearer ${token}` },
           };
+          const url = `${process.env.BE_ADMIN_API}/api/v1/users/${uid}/roles`
           const resp = await axios.get(
-            `https://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/users/${uid}/roles`,
+            url,
             config
           );
 
