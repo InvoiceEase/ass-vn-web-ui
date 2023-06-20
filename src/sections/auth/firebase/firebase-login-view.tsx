@@ -82,7 +82,7 @@ export default function FirebaseLoginView() {
           const config = {
             headers: { Authorization: `Bearer ${token}` },
           };
-          const url = `${process.env.BE_ADMIN_API}/api/v1/users/${uid}/roles`
+          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}/roles`
           const resp = await axios.get(
             url,
             config

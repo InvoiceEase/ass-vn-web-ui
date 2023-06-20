@@ -95,7 +95,7 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const url = `${process.env.BE_ADMIN_API}/auth`
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`
         const response = await axios.post(url, body);
         if(response.status === 201){
           router.push("")

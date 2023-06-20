@@ -22,21 +22,6 @@ import { FIREBASE_API } from 'src/config-global';
 import axios from 'axios';
 import { initializeApp } from 'firebase/app';
 
-// config
-
-//
-
-
-
-
-// ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
-// ----------------------------------------------------------------------
-
 const firebaseApp = initializeApp(FIREBASE_API);
 
 const AUTH = getAuth(firebaseApp);
