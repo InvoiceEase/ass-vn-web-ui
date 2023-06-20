@@ -1,27 +1,33 @@
 'use client';
 
-import { useEffect, useReducer, useCallback, useMemo } from 'react';
-import { initializeApp } from 'firebase/app';
+import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
 import {
-  getAuth,
-  signOut,
-  signInWithPopup,
-  onAuthStateChanged,
-  GoogleAuthProvider,
   GithubAuthProvider,
+  GoogleAuthProvider,
   TwitterAuthProvider,
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
   sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
 } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, setDoc } from 'firebase/firestore';
-// config
-import { FIREBASE_API } from 'src/config-global';
-//
+import { collection, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
+
 import { AuthContext } from './auth-context';
-import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
+import { FIREBASE_API } from 'src/config-global';
 import axios from 'axios';
+import { initializeApp } from 'firebase/app';
+
+// config
+
+//
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -79,7 +85,11 @@ export function AuthProvider({ children }: Props) {
     try {
       onAuthStateChanged(AUTH, async (user) => {
         if (user) {
-          if (user.emailVerified) {
+            sessionStorage.setItem('uid',user.uid)
+            user.getIdToken().then((data)=>{
+              sessionStorage.setItem("token", data)
+            });
+          // if (user.emailVerified) {
             const userProfile = doc(DB, 'users', user.uid);
 
             const docSnap = await getDoc(userProfile);
@@ -97,14 +107,15 @@ export function AuthProvider({ children }: Props) {
                 },
               },
             });
-          } else {
-            dispatch({
-              type: Types.INITIAL,
-              payload: {
-                user: null,
-              },
-            });
-          }
+
+          // } else {
+          //   dispatch({
+          //     type: Types.INITIAL,
+          //     payload: {
+          //       user: null,
+          //     },
+          //   });
+          // }
         } else {
           dispatch({
             type: Types.INITIAL,
@@ -187,7 +198,7 @@ export function AuthProvider({ children }: Props) {
         organization,
       };
       try {
-        await axios.post('https://34.172.143.101/ass-admin/auth', body);
+        await axios.post('http://34.172.143.101/ass-admin/auth', body);
       } catch (error) {
         console.error(error);
       }
@@ -197,6 +208,7 @@ export function AuthProvider({ children }: Props) {
 
   // LOGOUT
   const logout = useCallback(async () => {
+    sessionStorage.clear();
     await signOut(AUTH);
   }, []);
 
@@ -207,7 +219,7 @@ export function AuthProvider({ children }: Props) {
 
   // ----------------------------------------------------------------------
 
-  const checkAuthenticated = state.user?.emailVerified ? 'authenticated' : 'unauthenticated';
+  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
 
   const status = state.loading ? 'loading' : checkAuthenticated;
 

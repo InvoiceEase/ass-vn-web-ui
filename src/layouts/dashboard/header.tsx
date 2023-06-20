@@ -51,7 +51,7 @@ export default function Header({ onOpenNav }: Props) {
 
       {!lgUp && (
         <IconButton onClick={onOpenNav}>
-          <SvgColor src="/assets/icons/navbar/ic_menu_item.svg" />
+          <SvgColor src="/assets/illustrations/ASS_Light_Mode.svg" />
         </IconButton>
       )}
 
@@ -64,7 +64,7 @@ export default function Header({ onOpenNav }: Props) {
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1 }}
       >
-        <LanguagePopover />
+        {/* <LanguagePopover /> */}
 
         <NotificationsPopover />
 
