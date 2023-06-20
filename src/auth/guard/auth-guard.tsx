@@ -49,12 +49,13 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         if (resp.status === 200) {
           setChecked(true);
           sessionStorage.setItem('roleCode', resp.data.roleCode);
+          router.prefetch('dashboard/mail');
           router.prefetch('dashboard');
-          router.prefetch('dashboard/user');
           if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
-            router.replace('dashboard');
+            // if user is accountant navigate to mail as default screen
+            router.replace('dashboard/mail');
           } else {
-            router.replace('dashboard/user');
+            router.replace('dashboard');
           }
         } else {
           router.replace('');
