@@ -51,7 +51,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           sessionStorage.setItem('roleCode', resp.data.roleCode);
           router.prefetch('dashboard');
           router.prefetch('dashboard/user');
-          if (`${resp.data.roleCode}_`.includes('ACCOUNTANT1')) {
+          if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
             router.replace('dashboard');
           } else {
             router.replace('dashboard/user');
