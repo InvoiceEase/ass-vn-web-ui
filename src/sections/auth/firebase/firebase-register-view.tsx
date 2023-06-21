@@ -44,6 +44,9 @@ export default function FirebaseRegisterView() {
 
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmit, setIsSubmit] = useState(false);
+  const role = ['ACCOUNTANT', 'ORGANIZATION'];
+  const [userRole, setUserRole] = useState(role[0]);
+  const roleRef = useRef();
   const router = useRouter();
 
   const password = useBoolean();
@@ -106,7 +109,7 @@ export default function FirebaseRegisterView() {
         setErrorMsg(typeof error === 'string' ? error : error.message);
       }
     },
-    [register, reset, router]
+    [register, reset, router, userRole]
   );
 
   const handleGoogleLogin = async () => {
@@ -163,14 +166,12 @@ export default function FirebaseRegisterView() {
       .
     </Typography>
   );
-  const [userRole, setUserRole] = useState('ACCOUNTANT');
-  const roleRef = useRef();
-  const role = ['ACCOUNTANT', 'ORGANIZATION'];
-  const handleAutoComplete = () => {
-    if (roleRef.current) {
-      setUserRole(roleRef.current);
-    }
-  };
+
+  // const handleAutoComplete = () => {
+  //   if (roleRef.current) {
+  //     setUserRole(roleRef.current);
+  //   }
+  // };
   const renderForm = (
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
@@ -200,8 +201,9 @@ export default function FirebaseRegisterView() {
         id="free-solo-demo"
         ref={roleRef}
         options={role}
-        onBlur={() => handleAutoComplete()}
-        defaultValue="ACCOUNTANT"
+        onChange={(event: any, newValue: string | null) => {
+          setUserRole(newValue || role[0]);
+        }}
         renderInput={(params) => <RHFTextField name="role" {...params} label="ROLE" />}
       />
 
