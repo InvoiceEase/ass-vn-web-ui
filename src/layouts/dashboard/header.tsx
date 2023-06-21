@@ -23,6 +23,8 @@ import {
   ContactsPopover,
   NotificationsPopover,
 } from '../_common';
+import { RadioGroup } from '@mui/material';
+import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +47,8 @@ export default function Header({ onOpenNav }: Props) {
 
   const offsetTop = offset && !isNavHorizontal;
 
+  const role = sessionStorage.getItem('roleCode');
+
   const renderContent = (
     <>
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
@@ -55,7 +59,7 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      <Searchbar />
+      {role !== 'ACCOUNTANT' ? <Searchbar /> : <CompanySelectionDropdown />}
 
       <Stack
         flexGrow={1}

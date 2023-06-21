@@ -42,7 +42,7 @@ export default function MailNav({
 
   const renderContent = (
     <>
-      <Stack
+      {/* <Stack
         sx={{
           p: (theme) => ({
             xs: theme.spacing(2.5, 2.5, 2, 2.5),
@@ -59,7 +59,7 @@ export default function MailNav({
         >
           Compose
         </Button>
-      </Stack>
+      </Stack> */}
 
       <Scrollbar>
         <Stack
