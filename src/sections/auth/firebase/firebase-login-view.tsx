@@ -31,6 +31,7 @@ import { red } from '@mui/material/colors';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 import axios from 'axios';
 import { GuestGuard } from 'src/auth/guard';
+import { FirebaseError } from 'firebase/app';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +55,10 @@ export default function FirebaseLoginView() {
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
   });
-
+  const firebaseErrorCode = {
+    userNotFound: 'Không tìm thấy thông tin tài khoản',
+    wrongPassword: 'Sai tài khoản hoặc mật khẩu',
+  };
   const defaultValues = {
     email: '',
     password: '',
@@ -62,7 +66,7 @@ export default function FirebaseLoginView() {
 
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(LoginSchema),
-    // defaultValues,
+    defaultValues,
   });
 
   const {
@@ -71,40 +75,15 @@ export default function FirebaseLoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const router = useRouter();
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
         await login?.(data.email, data.password);
-        const uid = sessionStorage.getItem('uid');
-        const token = sessionStorage.getItem('token');
-        if (uid) {
-          const config = {
-            headers: { Authorization: `Bearer ${token}` },
-          };
-          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}/roles`
-          const resp = await axios.get(
-            url,
-            config
-          );
-
-          if (resp.status === 200) {
-            sessionStorage.setItem('roleCode', resp.data.roleCode);
-            if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
-              router.push('dashboard');
-            } else {
-              router.push('');
-            }
-          } else {
-            router.push('');
-          }
-        } else {
-          setErrorMsg('Đã có lỗi xảy ra');
-        }
       } catch (error) {
+        const errorCode = error.code.split('/');
         console.error(error);
         reset();
-        setErrorMsg(typeof error === 'string' ? error : error.message);
+        setErrorMsg('Bạn đã nhập sai tài khoản hoặc mật khẩu');
       }
     },
     [login, reset, returnTo, user]

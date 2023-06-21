@@ -98,7 +98,7 @@ export default function FirebaseRegisterView() {
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`
         const response = await axios.post(url, body);
         if(response.status === 201){
-          router.push("")
+          router.replace("")
         }
       } catch (error) {
         console.error(error);
