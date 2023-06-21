@@ -44,7 +44,7 @@ export default function FirebaseRegisterView() {
 
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmit, setIsSubmit] = useState(false);
-  const role = ['ACCOUNTANT', 'ORGANIZATION'];
+  const role = ['ACCOUNTANT', 'BUSINESS'];
   const [userRole, setUserRole] = useState(role[0]);
   const roleRef = useRef();
   const router = useRouter();
