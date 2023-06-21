@@ -37,8 +37,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   // get user's role from session storage in order to get nav data
   useEffect(() => {
-    const role = sessionStorage.getItem('roleCode')
-    setRole(role)
+    const sessionRole = sessionStorage.getItem('roleCode');
+    setRole(sessionRole);
   }, []);
 
   // get navData with role picked from sessionStorage
