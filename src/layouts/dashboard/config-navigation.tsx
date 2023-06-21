@@ -47,7 +47,7 @@ const ICONS = {
 
 // ----------------------------------------------------------------------
 
-export function useNavData(role: string | null  = 'ADMIN') {
+export function useNavData(role: string | null = 'ADMIN') {
   const { t } = useLocales();
 
   const data = useMemo(
@@ -128,32 +128,40 @@ export function useNavData(role: string | null  = 'ADMIN') {
             path: paths.dashboard.order.root,
             icon: ICONS.folder,
             children: [
-              { title: t('list'), path: paths.dashboard.order.root },
-              { title: t('details'), path: paths.dashboard.order.demo.details },
+              {
+                title: t('Báo cáo tài chính'),
+                path: paths.dashboard.order.root,
+              },
+
+              // FINANCE_REPORT_EVERY_3_MONTH
+              {
+                title: t('Báo cáo quý / tháng'),
+                path: paths.dashboard.order.root,
+              },
             ],
           },
 
           // FINANCE_REPORT
-          {
-            title: t('Báo cáo tài chính'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.analytics,
-            // children: [
-            //   { title: t('list'), path: paths.dashboard.order.root },
-            //   { title: t('details'), path: paths.dashboard.order.demo.details },
-            // ],
-          },
+          // {
+          //   title: t('Báo cáo tài chính'),
+          //   path: paths.dashboard.order.root,
+          //   icon: ICONS.analytics,
+          // children: [
+          //   { title: t('list'), path: paths.dashboard.order.root },
+          //   { title: t('details'), path: paths.dashboard.order.demo.details },
+          // ],
+          // },
 
           // FINANCE_REPORT_EVERY_3_MONTH
-          {
-            title: t('Báo cáo quý / tháng'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.menuItem,
-            // children: [
-            //   { title: t('list'), path: paths.dashboard.order.root },
-            //   { title: t('details'), path: paths.dashboard.order.demo.details },
-            // ],
-          },
+          // {
+          //   title: t('Báo cáo quý / tháng'),
+          //   path: paths.dashboard.order.root,
+          //   icon: ICONS.menuItem,
+          // children: [
+          //   { title: t('list'), path: paths.dashboard.order.root },
+          //   { title: t('details'), path: paths.dashboard.order.demo.details },
+          // ],
+          // },
           // BLOG
           // {
           //   title: t('blog'),
@@ -373,32 +381,40 @@ export function useNavData(role: string | null  = 'ADMIN') {
             path: paths.dashboard.order.root,
             icon: ICONS.folder,
             children: [
-              { title: t('list'), path: paths.dashboard.order.root },
-              { title: t('details'), path: paths.dashboard.order.demo.details },
+              {
+                title: t('Báo cáo tài chính'),
+                path: paths.dashboard.order.root,
+              },
+
+              // FINANCE_REPORT_EVERY_3_MONTH
+              {
+                title: t('Báo cáo quý / tháng'),
+                path: paths.dashboard.order.root,
+              },
             ],
           },
 
           // FINANCE_REPORT
-          {
-            title: t('Báo cáo tài chính'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.analytics,
-            // children: [
-            //   { title: t('list'), path: paths.dashboard.order.root },
-            //   { title: t('details'), path: paths.dashboard.order.demo.details },
-            // ],
-          },
+          // {
+          //   title: t('Báo cáo tài chính'),
+          //   path: paths.dashboard.order.root,
+          //   icon: ICONS.analytics,
+          // children: [
+          //   { title: t('list'), path: paths.dashboard.order.root },
+          //   { title: t('details'), path: paths.dashboard.order.demo.details },
+          // ],
+          // },
 
           // FINANCE_REPORT_EVERY_3_MONTH
-          {
-            title: t('Báo cáo quý / tháng'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.menuItem,
-            // children: [
-            //   { title: t('list'), path: paths.dashboard.order.root },
-            //   { title: t('details'), path: paths.dashboard.order.demo.details },
-            // ],
-          },
+          // {
+          //   title: t('Báo cáo quý / tháng'),
+          //   path: paths.dashboard.order.root,
+          //   icon: ICONS.menuItem,
+          // children: [
+          //   { title: t('list'), path: paths.dashboard.order.root },
+          //   { title: t('details'), path: paths.dashboard.order.demo.details },
+          // ],
+          // },
           // BLOG
           // {
           //   title: t('blog'),
@@ -564,6 +580,4 @@ export function useNavData(role: string | null  = 'ADMIN') {
     default:
       return data;
   }
-
-  return data;
 }
