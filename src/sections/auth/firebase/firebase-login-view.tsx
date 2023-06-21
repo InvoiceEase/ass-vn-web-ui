@@ -81,7 +81,7 @@ export default function FirebaseLoginView() {
         await login?.(data.email, data.password);
       } catch (error) {
         const errorCode = error.code.split('/');
-        console.error(error);
+        // console.error(error);
         reset();
         setErrorMsg('Bạn đã nhập sai tài khoản hoặc mật khẩu');
       }
