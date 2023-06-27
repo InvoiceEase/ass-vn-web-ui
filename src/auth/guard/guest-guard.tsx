@@ -4,7 +4,6 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
 //
 import { useAuthContext } from '../hooks';
-import sessionStorage from 'redux-persist/es/storage/session';
 
 // ----------------------------------------------------------------------
 
