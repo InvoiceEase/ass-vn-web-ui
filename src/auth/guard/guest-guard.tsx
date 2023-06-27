@@ -4,6 +4,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
 //
 import { useAuthContext } from '../hooks';
+import sessionStorage from 'redux-persist/es/storage/session';
 
 // ----------------------------------------------------------------------
 
@@ -16,9 +17,15 @@ export default function GuestGuard({ children }: GuestGuardProps) {
 
   const { authenticated } = useAuthContext();
 
-  const check = useCallback(() => {
+  const check = useCallback(async () => {
+    const roleCode = await sessionStorage.getItem('roleCode');
+
     if (authenticated) {
-      router.replace("dashboard");
+      if (roleCode === 'ACCOUNTANT') {
+        router.replace(paths.dashboard.mail);
+      } else {
+        router.replace(paths.dashboard.root);
+      }
     }
   }, [authenticated, router]);
 
