@@ -16,9 +16,15 @@ export default function GuestGuard({ children }: GuestGuardProps) {
 
   const { authenticated } = useAuthContext();
 
-  const check = useCallback(() => {
+  const check = useCallback(async () => {
+    const roleCode = await sessionStorage.getItem('roleCode');
+
     if (authenticated) {
-      router.replace("dashboard");
+      if (roleCode === 'ACCOUNTANT') {
+        router.replace(paths.dashboard.mail);
+      } else {
+        router.replace(paths.dashboard.root);
+      }
     }
   }, [authenticated, router]);
 
