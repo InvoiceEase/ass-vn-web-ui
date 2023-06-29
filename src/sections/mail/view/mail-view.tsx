@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -24,6 +24,17 @@ import MailList from '../mail-list';
 import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import List from '@mui/material/List';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import { Autocomplete, TextField } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -100,7 +111,9 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
-
+  useEffect(() => {
+    setOpen(true);
+  }, []);
   useEffect(() => {
     handleOpenCompose();
   }, [handleOpenCompose]);
@@ -183,17 +196,218 @@ export default function MailView() {
       )}
     </>
   );
+  const [open, setOpen] = useState(false);
+  const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
+    setOpen(true);
+    setScroll(scrollType);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const role = ['FPT University', 'Công ty nào đó tên gì đó mà dài vcl', 'CTCP Đầu tư Thế giới Di động', 'Nash Tech', 'Cyber Logitech'];
 
   return (
     <>
+      <div>
+
+        <Dialog
+          open={open}
+          scroll={scroll}
+          aria-labelledby="scroll-dialog-title"
+          aria-describedby="scroll-dialog-description"
+        >
+          <DialogTitle id="scroll-dialog-title">Chọn công ty</DialogTitle>
+          <DialogContent dividers={scroll === 'paper'}>
+            <DialogContentText
+              id="scroll-dialog-description"
+              // ref={descriptionElementRef}
+              tabIndex={-1}
+            >
+              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          FPT University
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Công ty nào đó tên gì đó mà dài vcl
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          CTCP Đầu tư Thế giới Di động
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Nash Tech
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Cyber Logitech
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Nash Tech
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Nash Tech
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+
+                <DialogActions>
+                  <ListItemButton onClick={handleClose}>
+                    <ListItemAvatar>
+                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      secondary={
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          component="span"
+                          variant="h6"
+                          color="text.primary"
+                        >
+                          Nash Tech
+                        </Typography>
+                      }
+                    />
+                  </ListItemButton>
+                </DialogActions>
+              </List>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+      </div>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <Typography
           variant="h4"
           sx={{
-            mb: { xs: 3, md: 5 },
+            width: '100%',
+            maxWidth: 280,
+            mb: { xs: 1, md: 5 },
+            ml: {xs: 1, md: 3}
           }}
         >
-          Mail
+          <Autocomplete
+            id="free-solo-demo"
+            options={role}
+            onChange={(event: any, newValue: string | null) => {
+              // setUserRole(newValue || role[0]);
+            }}
+            value="ACCOUNTANT"
+            renderInput={(params) => <TextField {...params} />}
+          />
         </Typography>
 
         <Stack
@@ -223,7 +437,7 @@ export default function MailView() {
               },
             }}
           >
-            {renderMailNav}
+            {/* {renderMailNav} */}
 
             {mailsStatus.empty ? renderEmpty : renderMailList}
 
