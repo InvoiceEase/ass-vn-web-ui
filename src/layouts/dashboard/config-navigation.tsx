@@ -7,6 +7,7 @@ import { useLocales } from 'src/locales';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
 // ----------------------------------------------------------------------
 
@@ -321,7 +322,7 @@ export function useNavData(role: string | null = 'ADMIN') {
     [t]
   );
 
-  const accountantData = useMemo(
+  const accountantStaffData = useMemo(
     () => [
       // MANAGEMENT
       // ----------------------------------------------------------------------
@@ -575,8 +576,8 @@ export function useNavData(role: string | null = 'ADMIN') {
   );
 
   switch (role) {
-    case 'ACCOUNTANT':
-      return accountantData;
+    case RoleCodeEnum.AccountantStaff:
+      return accountantStaffData;
     default:
       return data;
   }

@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 // routes
 import { useSearchParams } from 'src/routes/hook';
 // redux
+import { getMail, getMails } from 'src/redux/slices/mail';
 import { useDispatch } from 'src/redux/store';
-import { getMail, getLabels, getMails } from 'src/redux/slices/mail';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
@@ -18,12 +18,14 @@ import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
+import { InputAdornment, TextField } from '@mui/material';
+import Iconify from 'src/components/iconify/iconify';
 import { useMail } from '../hooks';
-import MailNav from '../mail-nav';
-import MailList from '../mail-list';
-import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
+import MailHeader from '../mail-header';
+import MailList from '../mail-list';
+import MailNav from '../mail-nav';
 
 // ----------------------------------------------------------------------
 
@@ -36,12 +38,14 @@ function useInitial() {
 
   const mailParam = searchParams.get('id');
 
-  const getLabelsCallback = useCallback(() => {
-    dispatch(getLabels());
-  }, [dispatch]);
+  const businessId = sessionStorage.getItem('selectedBusinessID');
+
+  // const getLabelsCallback = useCallback(() => {
+  //   dispatch(getLabels());
+  // }, [dispatch]);
 
   const getMailsCallback = useCallback(() => {
-    dispatch(getMails(labelParam));
+    dispatch(getMails(businessId, '', 0));
   }, [dispatch, labelParam]);
 
   const getMailCallback = useCallback(() => {
@@ -50,9 +54,9 @@ function useInitial() {
     }
   }, [dispatch, mailParam]);
 
-  useEffect(() => {
-    getLabelsCallback();
-  }, [getLabelsCallback]);
+  // useEffect(() => {
+  //   getLabelsCallback();
+  // }, [getLabelsCallback]);
 
   useEffect(() => {
     getMailsCallback();
@@ -100,6 +104,19 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
+
+  const dispatch = useDispatch();
+
+  const businessId = sessionStorage.getItem('selectedBusinessID');
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      if (businessId && businessId !== '0') dispatch(getMails(businessId, searchQuery));
+    }, 800);
+    return () => clearTimeout(getData);
+  }, [searchQuery]);
 
   useEffect(() => {
     handleOpenCompose();
@@ -223,9 +240,31 @@ export default function MailView() {
               },
             }}
           >
-            {renderMailNav}
+            {/* {renderMailNav} */}
+            <Stack
+              sx={{
+                width: 320,
+                flexShrink: 0,
+                borderRadius: 1.5,
+                bgcolor: 'background.default',
+              }}
+            >
+              <Stack sx={{ p: 2 }}>
+                <TextField
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search..."
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
 
-            {mailsStatus.empty ? renderEmpty : renderMailList}
+              {mailsStatus.empty ? renderEmpty : renderMailList}
+            </Stack>
 
             {mailsStatus.loading ? renderLoading : renderMailDetails}
           </Stack>

@@ -4,6 +4,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
 //
 import { useAuthContext } from '../hooks';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
 // ----------------------------------------------------------------------
 
@@ -16,17 +17,18 @@ export default function GuestGuard({ children }: GuestGuardProps) {
 
   const { authenticated } = useAuthContext();
 
-  const check = useCallback(async () => {
-    const roleCode = await sessionStorage.getItem('roleCode');
+  const roleCode = sessionStorage.getItem('roleCode');
+  
+  const check = useCallback(() => {
 
     if (authenticated) {
-      if (roleCode === 'ACCOUNTANT') {
+      if (roleCode === RoleCodeEnum.AccountantStaff) {
         router.replace(paths.dashboard.mail);
       } else {
         router.replace(paths.dashboard.root);
       }
     }
-  }, [authenticated, router]);
+  }, [authenticated, router, roleCode]);
 
   useEffect(() => {
     check();

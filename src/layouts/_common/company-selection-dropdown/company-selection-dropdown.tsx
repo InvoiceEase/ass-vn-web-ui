@@ -1,47 +1,71 @@
 'use client';
 
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 // @mui
 import { MenuItem, Select } from '@mui/material';
+import { getMails } from 'src/redux/slices/mail';
+import { useDispatch } from 'src/redux/store';
 
-const businessData = [
-  {
-    id: 1,
-    name: 'FPT University',
-  },
-  {
-    id: 2,
-    name: 'MWG',
-  },
-  {
-    id: 3,
-    name: 'Nash Tech',
-  },
-  {
-    id: 4,
-    name: 'MoMo',
-  },
-];
+interface businessItem {
+  id: string;
+  createdAt: string;
+  modifiedAt: string;
+  version: null;
+  name: string;
+  address: string;
+  website: null;
+  taxNumber: null;
+  email: string;
+  logo: null;
+  invoiceReceivedEmail: string;
+  engName: null;
+}
 
-function CompanySelectionDropdown() {
-  const [selectedCompany, setSelectedCompany] = useState(businessData[0]);
+const defaultBusinessItem: businessItem = {
+  id: '0',
+  createdAt: '',
+  modifiedAt: '',
+  version: null,
+  name: '',
+  address: '',
+  website: null,
+  taxNumber: null,
+  email: '',
+  logo: null,
+  invoiceReceivedEmail: '',
+  engName: null,
+};
+
+function CompanySelectionDropdown({ businessData }: { businessData: businessItem[] }) {
+  const dispatch = useDispatch();
+  const [selectedCompany, setSelectedCompany] = useState(defaultBusinessItem);
+
+  const handleSelectBusiness = (option: businessItem) => {
+    setSelectedCompany(option);
+    dispatch(getMails(option.id, '', 0));
+  };
+
+  useEffect(() => {
+    setSelectedCompany(businessData[0]);
+    sessionStorage.setItem('selectedBusinessID', selectedCompany.id);
+    dispatch(getMails(selectedCompany.id, '', 0));
+  }, [businessData, selectedCompany]);
+
   return (
-    <>
-      <Select
-        // multiple
-        value={selectedCompany.name}
-        // onChange={handleFilterService}
-        // input={<OutlinedInput label="Business" />}
-        // renderValue={(selected) => selected.map((value) => value).join(', ')}
-        // sx={{ textTransform: 'capitalize' }}
-      >
-        {businessData.map((option) => (
-          <MenuItem key={option.id} value={option.name} onClick={() => setSelectedCompany(option)}>
-            {option.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </>
+    <Select
+      // multiple
+      value={selectedCompany.name}
+      // onChange={handleFilterService}
+      // input={<OutlinedInput label="Business" />}
+      // renderValue={(selected) => selected.map((value) => value).join(', ')}
+      // sx={{ textTransform: 'capitalize' }}
+    >
+      {businessData.map((option: businessItem) => (
+        <MenuItem key={option.id} value={option.name} onClick={() => handleSelectBusiness(option)}>
+          {option.name}
+        </MenuItem>
+      ))}
+    </Select>
   );
 }
 

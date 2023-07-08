@@ -23,7 +23,7 @@ export const API_ENDPOINTS = {
     register: '/api/auth/register',
   },
   mail: {
-    list: '/api/mail/list',
+    list: '/api/v1/mails',
     details: '/api/mail/details',
     labels: '/api/mail/labels',
   },
