@@ -42,13 +42,17 @@ function CompanySelectionDropdown({ businessData }: { businessData: businessItem
 
   const handleSelectBusiness = (option: businessItem) => {
     setSelectedCompany(option);
-    dispatch(getMails(option.id, '', 0));
+    if (!option.id && option.id !== '0') {
+      dispatch(getMails(option.id, '', 0));
+    }
   };
 
   useEffect(() => {
     setSelectedCompany(businessData[0]);
     sessionStorage.setItem('selectedBusinessID', selectedCompany.id);
-    dispatch(getMails(selectedCompany.id, '', 0));
+    if (selectedCompany.id && selectedCompany.id !== '0') {
+      dispatch(getMails(selectedCompany.id, '', 0));
+    }
   }, [businessData, selectedCompany]);
 
   return (

@@ -45,7 +45,9 @@ function useInitial() {
   // }, [dispatch]);
 
   const getMailsCallback = useCallback(() => {
-    dispatch(getMails(businessId, '', 0));
+    if (businessId && businessId !== '0') {
+      dispatch(getMails(businessId, '', 0));
+    }
   }, [dispatch, labelParam]);
 
   const getMailCallback = useCallback(() => {
@@ -113,6 +115,7 @@ export default function MailView() {
 
   useEffect(() => {
     const getData = setTimeout(() => {
+      sessionStorage.setItem('businessSearchQuery', searchQuery);
       if (businessId && businessId !== '0') dispatch(getMails(businessId, searchQuery));
     }, 800);
     return () => clearTimeout(getData);

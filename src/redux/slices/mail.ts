@@ -1,5 +1,5 @@
-import keyBy from 'lodash/keyBy';
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
+import keyBy from 'lodash/keyBy';
 // utils
 import axios, { API_ENDPOINTS } from 'src/utils/axios';
 // types
@@ -131,6 +131,12 @@ export function getMails(businessId: string | null, searchQuery?: string, page?:
           },
         }
       );
+      sessionStorage.setItem('totalMailPage', response.data.totalPages);
+      if (page) {
+        sessionStorage.setItem('currentMailPage', page.toString());
+      } else {
+        sessionStorage.setItem('currentMailPage', '0');
+      }
       dispatch(slice.actions.getMailsSuccess(response.data.content));
     } catch (error) {
       dispatch(slice.actions.getMailsFailure(error));
