@@ -4,8 +4,6 @@ import { paths } from 'src/routes/paths';
 // locales
 import { useLocales } from 'src/locales';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
@@ -109,7 +107,7 @@ export function useNavData(role: string | null = 'ADMIN') {
             title: t('mail'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
-            info: <Label color="error">+32</Label>,
+            // info: <Label color="error">+32</Label>,
           },
           // INVOICE
           {
@@ -362,7 +360,7 @@ export function useNavData(role: string | null = 'ADMIN') {
             title: t('mail'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
-            info: <Label color="error">+32</Label>,
+            // info: <Label color="error">+32</Label>,
           },
           // INVOICE
           {
