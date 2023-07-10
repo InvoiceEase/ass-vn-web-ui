@@ -42,7 +42,7 @@ function CompanySelectionDropdown({ businessData }: { businessData: businessItem
 
   const handleSelectBusiness = (option: businessItem) => {
     setSelectedCompany(option);
-    if (!option.id && option.id !== '0') {
+    if (option.id && option.id !== '0') {
       dispatch(getMails(option.id, '', 0));
     }
   };
@@ -53,7 +53,7 @@ function CompanySelectionDropdown({ businessData }: { businessData: businessItem
     if (selectedCompany.id && selectedCompany.id !== '0') {
       dispatch(getMails(selectedCompany.id, '', 0));
     }
-  }, [businessData, selectedCompany]);
+  }, [businessData]);
 
   return (
     <Select
