@@ -5,6 +5,7 @@ import { useRouter } from 'src/routes/hook';
 //
 import { useAuthContext } from '../hooks';
 import axios from 'axios';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
 // ----------------------------------------------------------------------
 
@@ -49,13 +50,13 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         if (resp.status === 200) {
           setChecked(true);
           sessionStorage.setItem('roleCode', resp.data.roleCode);
-          router.prefetch('dashboard/mail');
-          router.prefetch('dashboard');
-          if (`${resp.data.roleCode}_`.includes('ACCOUNTANT')) {
+          if (resp.data.roleCode === RoleCodeEnum.AccountantStaff) {
             // if user is accountant navigate to mail as default screen
-            router.replace('dashboard/mail');
+            router.prefetch(paths.dashboard.mail);
+            router.replace(paths.dashboard.mail);
           } else {
-            router.replace('dashboard');
+            router.prefetch(paths.dashboard.root);
+            router.replace(paths.dashboard.root);
           }
         } else {
           router.replace('');
@@ -63,7 +64,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       } else {
         router.replace('');
       }
-
     }
   }, [authenticated, method, router]);
 
