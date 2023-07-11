@@ -25,6 +25,9 @@ import {
 } from '../_common';
 import { RadioGroup } from '@mui/material';
 import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useCallback, useEffect, useState } from 'react';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +52,29 @@ export default function Header({ onOpenNav }: Props) {
 
   const role = sessionStorage.getItem('roleCode');
 
+  const [businessData, setBusinessData] = useState([]);
+
+  const getBusinessOnContract = useCallback(async () => {
+    const token = sessionStorage.getItem('token');
+    const config = {
+      headers: {
+        accept: '*/*',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/contracts`,
+      config
+    );
+    if (response.status === 200) {
+      setBusinessData(response.data);
+    }
+  }, []);
+
+  useEffect(() => {
+    getBusinessOnContract();
+  }, []);
+
   const renderContent = (
     <>
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
@@ -59,7 +85,11 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {role !== 'ACCOUNTANT' ? <Searchbar /> : <CompanySelectionDropdown />}
+      {role !== RoleCodeEnum.AccountantStaff ? (
+        <Searchbar />
+      ) : (
+        businessData.length > 0 && <CompanySelectionDropdown businessData={businessData} />
+      )}
 
       <Stack
         flexGrow={1}

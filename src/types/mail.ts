@@ -29,18 +29,32 @@ export type IMailAttachment = {
 
 export type IMail = {
   id: string;
-  labelIds: string[];
-  folder: string | undefined;
-  isImportant: boolean;
-  isStarred: boolean;
-  isUnread: boolean;
+  createdAt: string;
+  modifiedAt: string;
+  version: number;
+  mailFrom: string;
   subject: string;
-  message: string;
-  createdAt: Date | string | number;
-  attachments: IMailAttachment[];
-  from: IMailSender;
-  to: IMailSender[];
+  body: string;
+  receivedDate: string;
+  isIncludedXml: boolean;
+  isIncludedPdf: boolean;
+  isRead: boolean;
 };
+
+// export type IMail = {
+//   id: string;
+//   labelIds: string[];
+//   folder: string | undefined;
+//   isImportant: boolean;
+//   isStarred: boolean;
+//   isUnread: boolean;
+//   subject: string;
+//   message: string;
+//   createdAt: Date | string | number;
+//   attachments: IMailAttachment[];
+//   from: IMailSender;
+//   to: IMailSender[];
+// };
 
 // ----------------------------------------------------------------------
 

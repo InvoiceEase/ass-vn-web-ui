@@ -1,5 +1,5 @@
-import keyBy from 'lodash/keyBy';
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
+import keyBy from 'lodash/keyBy';
 // utils
 import axios, { API_ENDPOINTS } from 'src/utils/axios';
 // types
@@ -30,25 +30,25 @@ const slice = createSlice({
   initialState,
   reducers: {
     // GET LABELS
-    getLabelsStart(state) {
-      state.labelsStatus.loading = true;
-      state.labelsStatus.empty = false;
-      state.labelsStatus.error = null;
-    },
-    getLabelsFailure(state, action) {
-      state.labelsStatus.loading = false;
-      state.labelsStatus.empty = false;
-      state.labelsStatus.error = action.payload;
-    },
-    getLabelsSuccess(state, action) {
-      const labels = action.payload;
+    // getLabelsStart(state) {
+    //   state.labelsStatus.loading = true;
+    //   state.labelsStatus.empty = false;
+    //   state.labelsStatus.error = null;
+    // },
+    // getLabelsFailure(state, action) {
+    //   state.labelsStatus.loading = false;
+    //   state.labelsStatus.empty = false;
+    //   state.labelsStatus.error = action.payload;
+    // },
+    // getLabelsSuccess(state, action) {
+    //   const labels = action.payload;
 
-      state.labels = labels;
+    //   state.labels = labels;
 
-      state.labelsStatus.loading = false;
-      state.labelsStatus.empty = !labels.length;
-      state.labelsStatus.error = null;
-    },
+    //   state.labelsStatus.loading = false;
+    //   state.labelsStatus.empty = !labels.length;
+    //   state.labelsStatus.error = null;
+    // },
 
     // GET MAILS
     getMailsStart(state) {
@@ -89,32 +89,55 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getLabels() {
-  return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.getLabelsStart());
+// export function getLabels() {
+//   return async (dispatch: Dispatch) => {
+//     dispatch(slice.actions.getLabelsStart());
 
-    try {
-      const response = await axios.get(API_ENDPOINTS.mail.labels);
-      dispatch(slice.actions.getLabelsSuccess(response.data.labels));
-    } catch (error) {
-      dispatch(slice.actions.getLabelsFailure(error));
-    }
-  };
-}
+//     try {
+//       const response = await axios.get(API_ENDPOINTS.mail.labels);
+//       dispatch(slice.actions.getLabelsSuccess(response.data.labels));
+//     } catch (error) {y
+//       dispatch(slice.actions.getLabelsFailure(error));
+//     }
+//   };
+// }
 
 // ----------------------------------------------------------------------
 
-export function getMails(labelId: string | null) {
+export function getMails(businessId: string | null, searchQuery?: string, page?: number) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getMailsStart());
 
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
     try {
-      const response = await axios.get(API_ENDPOINTS.mail.list, {
-        params: {
-          labelId,
-        },
-      });
-      dispatch(slice.actions.getMailsSuccess(response.data.mails));
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.list}`,
+        {
+          headers: headersList,
+          params: {
+            businessId,
+            search: searchQuery ?? '',
+            page: page ?? 0,
+            size: 10,
+            sort: [],
+          },
+        }
+      );
+      sessionStorage.setItem('totalMailPage', response.data.totalPages);
+      if (page) {
+        sessionStorage.setItem('currentMailPage', page.toString());
+      } else {
+        sessionStorage.setItem('currentMailPage', '0');
+      }
+      dispatch(slice.actions.getMailsSuccess(response.data.content));
     } catch (error) {
       dispatch(slice.actions.getMailsFailure(error));
     }
