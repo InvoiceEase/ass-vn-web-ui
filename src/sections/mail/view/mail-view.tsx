@@ -224,12 +224,17 @@ export default function MailView() {
   const handleClose = () => {
     setOpen(false);
   };
-  const role = ['FPT University', 'Công ty nào đó tên gì đó mà dài vcl', 'CTCP Đầu tư Thế giới Di động', 'Nash Tech', 'Cyber Logitech'];
+  const role = [
+    'FPT University',
+    'Công ty nào đó tên gì đó mà dài vcl',
+    'CTCP Đầu tư Thế giới Di động',
+    'Nash Tech',
+    'Cyber Logitech',
+  ];
 
   return (
     <>
       <div>
-
         <Dialog
           open={open}
           scroll={scroll}
@@ -415,7 +420,7 @@ export default function MailView() {
             width: '100%',
             maxWidth: 280,
             mb: { xs: 1, md: 5 },
-            ml: {xs: 1, md: 3}
+            ml: { xs: 1, md: 3 },
           }}
         >
           <Autocomplete
@@ -456,7 +461,7 @@ export default function MailView() {
               },
             }}
           >
-            {/* {/* {renderMailNav} */}
+            {/* {renderMailNav} */}
             <Stack
               sx={{
                 width: 320,
@@ -477,7 +482,7 @@ export default function MailView() {
                     ),
                   }}
                 />
-              </Stack> */}
+              </Stack>
 
               {mailsStatus.empty ? renderEmpty : renderMailList}
             </Stack>
