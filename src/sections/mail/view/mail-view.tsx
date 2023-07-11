@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -35,6 +35,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import { Autocomplete, TextField } from '@mui/material';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -75,7 +76,12 @@ function useInitial() {
 
   return null;
 }
-
+const lstCmp = [
+  { id: '', createdAt: '', modifiedAt: '', version: null, name: '', address: '', website: '' },
+];
+const config = {
+  headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+};
 // ----------------------------------------------------------------------
 
 export default function MailView() {
@@ -94,6 +100,14 @@ export default function MailView() {
     labelsStatus,
   } = useMail();
 
+  const [lstCmpName, setlstCmpName] = useState(['']);
+  const [page, setPage] = useState(0);
+  const [compName, setCompName] = useState('');
+  const [open, setOpen] = useState(false);
+  const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
+
+  const notInitialRender = useRef(false);
+
   const upMd = useResponsive('up', 'md');
 
   const settings = useSettingsContext();
@@ -111,13 +125,77 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
+  const infiniteScroll = () => {
+    // End of the document reached?
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      // let newPage = page;
+      // newPage ++;
+      // this.setState({
+      //   page: newPage,
+      // });
+      // this.fetchData(newPage);
+      const newPage = page + 1;
+      setPage(newPage);
+    }
+  };
   useEffect(() => {
     setOpen(true);
   }, []);
   useEffect(() => {
     handleOpenCompose();
   }, [handleOpenCompose]);
+  useEffect(() => {
+    getListCompany();
+  }, []);
+  useEffect(() => {
+    if (notInitialRender.current) {
+      window.addEventListener('scroll', infiniteScroll);
+      getListMail();
+    } else {
+      notInitialRender.current = true;
+    }
+  }, [page, compName]);
 
+  const getListMail = async () => {
+    const p = {
+      params: {
+        search: '0116328',
+        page,
+        size: 100,
+        businessId: JSON.parse(localStorage.getItem('company')).id,
+      },
+      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+    };
+    try {
+      const response = await axios.get(
+        `http://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/mails`,
+        p
+      );
+      console.log(response);
+    } catch (e) {
+      console.error('error', e);
+    }
+  };
+  const getListCompany = async () => {
+    try {
+      const response = await axios.get(
+        'http://ass-admin-dot-ass-capstone-project.df.r.appspot.com/ass-admin/api/v1/contracts',
+        config
+      );
+
+      response.data.forEach((element) => {
+        lstCmp.push(element);
+      });
+      lstCmp.shift();
+      setlstCmpName(lstCmp.map((item) => item.name));
+      setCompName(lstCmpName[0]);
+    } catch (e) {
+      console.error('e', e);
+    }
+  };
   const handleToggleCompose = useCallback(() => {
     if (openNav.value) {
       openNav.onFalse();
@@ -196,21 +274,23 @@ export default function MailView() {
       )}
     </>
   );
-  const [open, setOpen] = useState(false);
-  const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
+
   const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
     setOpen(true);
     setScroll(scrollType);
   };
-  const handleClose = () => {
+  const handleClose = (item: {}) => {
+    localStorage.setItem('company', JSON.stringify(item));
+    setCompName(item.name);
     setOpen(false);
   };
-  const role = ['FPT University', 'Công ty nào đó tên gì đó mà dài vcl', 'CTCP Đầu tư Thế giới Di động', 'Nash Tech', 'Cyber Logitech'];
-
+  const handleChangeName = (name: string) => {
+    const cmp = lstCmp.filter((item) => item.name.localeCompare(name) === 0);
+    localStorage.setItem('company', JSON.stringify(cmp[0]));
+  };
   return (
     <>
       <div>
-
         <Dialog
           open={open}
           scroll={scroll}
@@ -225,165 +305,29 @@ export default function MailView() {
               tabIndex={-1}
             >
               <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          FPT University
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Công ty nào đó tên gì đó mà dài vcl
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          CTCP Đầu tư Thế giới Di động
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Cyber Logitech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
+                <>
+                  {lstCmp.map((item) => (
+                    <DialogActions key={item.id}>
+                      <ListItemButton onClick={() => handleClose(item)}>
+                        <ListItemAvatar>
+                          <Avatar alt={item.name} src="/static/images/avatar/1.jpg" />
+                        </ListItemAvatar>
+                        <ListItemText
+                          secondary={
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="h6"
+                              color="text.primary"
+                            >
+                              {item.name}
+                            </Typography>
+                          }
+                        />
+                      </ListItemButton>
+                    </DialogActions>
+                  ))}
+                </>
               </List>
             </DialogContentText>
           </DialogContent>
@@ -396,16 +340,17 @@ export default function MailView() {
             width: '100%',
             maxWidth: 280,
             mb: { xs: 1, md: 5 },
-            ml: {xs: 1, md: 3}
+            ml: { xs: 1, md: 3 },
           }}
         >
           <Autocomplete
             id="free-solo-demo"
-            options={role}
+            options={lstCmpName}
             onChange={(event: any, newValue: string | null) => {
-              // setUserRole(newValue || role[0]);
+              setCompName(newValue || lstCmpName[0]);
+              handleChangeName(newValue || lstCmpName[0]);
             }}
-            value="ACCOUNTANT"
+            value={compName}
             renderInput={(params) => <TextField {...params} />}
           />
         </Typography>
