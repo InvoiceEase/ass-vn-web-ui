@@ -56,8 +56,15 @@ export default function InvoiceTableFiltersResult({
       </Box>
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
+
+
+        {/* {filters.status !== 'all' && (
+          <Block label="Status:">
+            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
+          </Block>
+        )} */}
         {!!filters.service.length && (
-          <Block label="Service:">
+          <Block label="Tính chất hóa đơn:">
             {filters.service.map((item) => (
               <Chip
                 key={item}
@@ -68,18 +75,11 @@ export default function InvoiceTableFiltersResult({
             ))}
           </Block>
         )}
-
-        {filters.status !== 'all' && (
-          <Block label="Status:">
-            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
-          </Block>
-        )}
-
-        {filters.startDate && filters.endDate && (
+        {/* {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
           </Block>
-        )}
+        )} */}
 
         <Button
           color="error"
