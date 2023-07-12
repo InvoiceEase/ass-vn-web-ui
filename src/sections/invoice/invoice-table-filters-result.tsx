@@ -63,7 +63,7 @@ export default function InvoiceTableFiltersResult({
             <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
           </Block>
         )} */}
-        {!!filters.service.length && (
+        {/* {!!filters.service.length && ( */}
           <Block label="Tính chất hóa đơn:">
             {filters.service.map((item) => (
               <Chip
@@ -74,7 +74,7 @@ export default function InvoiceTableFiltersResult({
               />
             ))}
           </Block>
-        )}
+        {/* )} */}
         {/* {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />

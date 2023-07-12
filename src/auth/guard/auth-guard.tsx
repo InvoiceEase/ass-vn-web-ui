@@ -6,6 +6,7 @@ import { useRouter } from 'src/routes/hook';
 import { useAuthContext } from '../hooks';
 import axios from 'axios';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { includes } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -45,15 +46,19 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
         };
-        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}/roles`;
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}`;
         const resp = await axios.get(url, config);
         if (resp.status === 200) {
           setChecked(true);
-          sessionStorage.setItem('roleCode', resp.data.roleCode);
-          if (resp.data.roleCode === RoleCodeEnum.AccountantStaff) {
+          // sessionStorage.setItem('roleCode', resp.data.roleCode);
+          sessionStorage.setItem('userId', resp.data.id);
+          sessionStorage.setItem('userName', resp.data.name);
+          sessionStorage.setItem('roleCode', resp.data.role);
+          sessionStorage.setItem('orgId', resp.data.organizationId);
+          if (resp.data.role.includes(RoleCodeEnum.AccountantStaff)) {
             // if user is accountant navigate to mail as default screen
-            router.prefetch(paths.dashboard.mail);
-            router.replace(paths.dashboard.mail);
+            router.prefetch(paths.dashboard.user.root);
+            router.replace(paths.dashboard.user.root);
           } else {
             router.prefetch(paths.dashboard.root);
             router.replace(paths.dashboard.root);
