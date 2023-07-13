@@ -1,11 +1,9 @@
-import { formatDistanceToNowStrict } from 'date-fns';
 // @mui
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
 import ListItemButton, { ListItemButtonProps } from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 // types
 import { IMail } from 'src/types/mail';
 
@@ -25,6 +23,7 @@ export default function MailItem({ mail, selected, onClickMail, sx, ...other }: 
         p: 1,
         mb: 0.5,
         borderRadius: 1,
+        // eslint-disable-next-line no-nested-ternary
         ...(selected
           ? {
               bgcolor: 'action.selected',
