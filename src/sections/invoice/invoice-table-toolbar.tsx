@@ -85,15 +85,16 @@ export default function InvoiceTableToolbar({
             width: { xs: 1, md: 180 },
           }}
         >
-          <InputLabel>Service</InputLabel>
+          <InputLabel>Tính chất hóa đơn</InputLabel>
 
           <Select
             multiple
             value={filters.service}
             onChange={handleFilterService}
-            input={<OutlinedInput label="Service" />}
+            input={<OutlinedInput label="Tính chất hóa đơn" />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             sx={{ textTransform: 'capitalize' }}
+
           >
             {serviceOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -104,7 +105,7 @@ export default function InvoiceTableToolbar({
           </Select>
         </FormControl>
 
-        <DatePicker
+        {/* <DatePicker
           label="Start date"
           value={filters.startDate}
           onChange={handleFilterStartDate}
@@ -122,7 +123,7 @@ export default function InvoiceTableToolbar({
           sx={{
             maxWidth: { md: 180 },
           }}
-        />
+        /> */}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField

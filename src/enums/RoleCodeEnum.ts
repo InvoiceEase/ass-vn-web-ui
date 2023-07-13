@@ -1,4 +1,7 @@
 export enum RoleCodeEnum {
-  AccountantStaff = 'ACCOUNTANT_STAFF',
-  Admin = 'ADMIN'
+  AccountantPrefix = 'ACCOUNTANT_',
+  BusinessPrefix = 'BUSINESS_',
+  Staff = 'STAFF',
+  Manager = 'MANAGER',
+  Admin = 'ADMIN',
 }

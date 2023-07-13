@@ -38,4 +38,7 @@ export const API_ENDPOINTS = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
+  business: {
+    list: '/api/v1/contracts',
+  },
 };

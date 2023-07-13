@@ -63,8 +63,16 @@ export type IMailListState = {
   allIds: string[];
 };
 
+export type IMailPage = {
+  numberOfElements: number;
+  page: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 export type IMailState = {
   mails: IMailListState;
+  pagination: IMailPage;
   labels: IMailLabel[];
   labelsStatus: {
     loading: boolean;

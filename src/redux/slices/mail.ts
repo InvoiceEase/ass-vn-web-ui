@@ -13,6 +13,12 @@ const initialState: IMailState = {
     byId: {},
     allIds: [],
   },
+  pagination: {
+    numberOfElements: 0,
+    page: 0,
+    totalElements: 0,
+    totalPages: 0,
+  },
   labelsStatus: {
     loading: false,
     empty: false,
@@ -62,7 +68,7 @@ const slice = createSlice({
       state.mailsStatus.error = action.payload;
     },
     getMailsSuccess(state, action) {
-      const mails = action.payload;
+      const mails = action.payload.content;
 
       state.mailsStatus.loading = false;
       state.mailsStatus.empty = !mails.length;
@@ -70,6 +76,13 @@ const slice = createSlice({
 
       state.mails.byId = keyBy(mails, 'id');
       state.mails.allIds = Object.keys(state.mails.byId);
+
+      state.pagination = {
+        numberOfElements: action.payload.numberOfElements,
+        page: action.payload.number,
+        totalElements: action.payload.totalElements,
+        totalPages: action.payload.totalPages,
+      };
     },
 
     // GET MAIL
@@ -104,7 +117,7 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getMails(businessId: string | null, searchQuery?: string, page?: number) {
+export function getMails(businessId: string | null, searchQuery?: string | null, page?: number) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getMailsStart());
 
@@ -137,7 +150,7 @@ export function getMails(businessId: string | null, searchQuery?: string, page?:
       } else {
         sessionStorage.setItem('currentMailPage', '0');
       }
-      dispatch(slice.actions.getMailsSuccess(response.data.content));
+      dispatch(slice.actions.getMailsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.getMailsFailure(error));
     }

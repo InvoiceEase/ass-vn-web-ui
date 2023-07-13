@@ -1,30 +1,21 @@
 // @mui
-import { darken, lighten, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import Collapse from '@mui/material/Collapse';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
-import ButtonBase from '@mui/material/ButtonBase';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
 // utils
 import { fDateTime } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Label from 'src/components/label';
 import Editor from 'src/components/editor';
+import EmptyContent from 'src/components/empty-content';
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
-import EmptyContent from 'src/components/empty-content';
-import FileThumbnail from 'src/components/file-thumbnail';
 // types
 import { IMail, IMailLabel } from 'src/types/mail';
 
@@ -55,7 +46,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
   const renderHead = (
     <Stack direction="row" alignItems="center" flexShrink={0} sx={{ height: 56, pl: 2, pr: 1 }}>
       <Stack direction="row" spacing={1} flexGrow={1}>
-        {mail.labelIds.map((labelId) => {
+        {/* {mail.labelIds.map((labelId) => {
           const label = renderLabel(labelId);
 
           return label ? (
@@ -72,11 +63,11 @@ export default function MailDetails({ mail, renderLabel }: Props) {
               {label.name}
             </Label>
           ) : null;
-        })}
+        })} */}
       </Stack>
 
       <Stack direction="row" alignItems="center">
-        <Checkbox
+        {/* <Checkbox
           color="warning"
           icon={<Iconify icon="eva:star-outline" />}
           checkedIcon={<Iconify icon="eva:star-fill" />}
@@ -87,7 +78,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
           icon={<Iconify icon="material-symbols:label-important-rounded" />}
           checkedIcon={<Iconify icon="material-symbols:label-important-rounded" />}
           checked={mail.isImportant}
-        />
+        /> */}
         <IconButton>
           <Iconify icon="solar:trash-bin-trash-bold" />
         </IconButton>
@@ -135,16 +126,16 @@ export default function MailDetails({ mail, renderLabel }: Props) {
         p: (theme) => theme.spacing(2, 2, 1, 2),
       }}
     >
-      <Avatar alt={mail.from.name} src={`${mail.from.avatarUrl}`} sx={{ mr: 2 }}>
-        {mail.from.name.charAt(0).toUpperCase()}
-      </Avatar>
+      {/* <Avatar alt={mail.mailFrom} src={`${mail.from.avatarUrl}`} sx={{ mr: 2 }}>
+        {mail.mailFrom.charAt(0).toUpperCase()}
+      </Avatar> */}
 
-      <ListItemText
+      {/* <ListItemText
         primary={
           <>
-            {mail.from.name}
+            {mail.mailFrom}
             <Box component="span" sx={{ typography: 'body2', color: 'text.disabled' }}>
-              {` <${mail.from.email}>`}
+              {` <${mail.mailFrom}>`}
             </Box>
           </>
         }
@@ -164,74 +155,74 @@ export default function MailDetails({ mail, renderLabel }: Props) {
           component: 'span',
           typography: 'caption',
         }}
-      />
+      /> */}
     </Stack>
   );
 
-  const renderAttachments = (
-    <Stack
-      spacing={1}
-      sx={{
-        p: 1,
-        borderRadius: 1,
-        bgcolor: 'background.neutral',
-      }}
-    >
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <ButtonBase
-          onClick={showAttachments.onToggle}
-          sx={{ color: 'text.secondary', typography: 'caption', borderRadius: 0.5 }}
-        >
-          <Iconify icon="eva:attach-2-fill" sx={{ mr: 0.5 }} />
-          {mail.attachments.length} attachments
-          <Iconify
-            icon={
-              showAttachments.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'
-            }
-            width={16}
-            sx={{ ml: 0.5 }}
-          />
-        </ButtonBase>
+  // const renderAttachments = (
+  //   <Stack
+  //     spacing={1}
+  //     sx={{
+  //       p: 1,
+  //       borderRadius: 1,
+  //       bgcolor: 'background.neutral',
+  //     }}
+  //   >
+  //     <Stack direction="row" alignItems="center" justifyContent="space-between">
+  //       <ButtonBase
+  //         onClick={showAttachments.onToggle}
+  //         sx={{ color: 'text.secondary', typography: 'caption', borderRadius: 0.5 }}
+  //       >
+  //         <Iconify icon="eva:attach-2-fill" sx={{ mr: 0.5 }} />
+  //         {mail.attachments.length} attachments
+  //         <Iconify
+  //           icon={
+  //             showAttachments.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'
+  //           }
+  //           width={16}
+  //           sx={{ ml: 0.5 }}
+  //         />
+  //       </ButtonBase>
 
-        <Button startIcon={<Iconify icon="eva:cloud-download-fill" />}>Download</Button>
-      </Stack>
+  //       <Button startIcon={<Iconify icon="eva:cloud-download-fill" />}>Download</Button>
+  //     </Stack>
 
-      <Collapse in={showAttachments.value} unmountOnExit timeout="auto">
-        <Stack direction="row" flexWrap="wrap" spacing={1}>
-          {mail.attachments.map((attachment) => (
-            <Stack
-              key={attachment.id}
-              alignItems="center"
-              justifyContent="center"
-              sx={{
-                width: 40,
-                height: 40,
-                flexShrink: 0,
-                borderRadius: 1,
-                overflow: 'hidden',
-                position: 'relative',
-                backgroundColor: 'background.neutral',
-              }}
-            >
-              <FileThumbnail
-                tooltip
-                imageView
-                file={attachment.preview}
-                onDownload={() => console.info('DOWNLOAD')}
-                sx={{ width: 24, height: 24 }}
-              />
-            </Stack>
-          ))}
-        </Stack>
-      </Collapse>
-    </Stack>
-  );
+  //     <Collapse in={showAttachments.value} unmountOnExit timeout="auto">
+  //       <Stack direction="row" flexWrap="wrap" spacing={1}>
+  //         {mail.attachments.map((attachment) => (
+  //           <Stack
+  //             key={attachment.id}
+  //             alignItems="center"
+  //             justifyContent="center"
+  //             sx={{
+  //               width: 40,
+  //               height: 40,
+  //               flexShrink: 0,
+  //               borderRadius: 1,
+  //               overflow: 'hidden',
+  //               position: 'relative',
+  //               backgroundColor: 'background.neutral',
+  //             }}
+  //           >
+  //             <FileThumbnail
+  //               tooltip
+  //               imageView
+  //               file={attachment.preview}
+  //               onDownload={() => console.info('DOWNLOAD')}
+  //               sx={{ width: 24, height: 24 }}
+  //             />
+  //           </Stack>
+  //         ))}
+  //       </Stack>
+  //     </Collapse>
+  //   </Stack>
+  // );
 
   const renderContent = (
     <Box sx={{ py: 3, overflow: 'hidden', flexGrow: 1 }}>
       <Scrollbar>
         <Markdown
-          children={mail.message}
+          children={mail.body}
           sx={{
             px: 2,
             '& p': {
@@ -294,11 +285,11 @@ export default function MailDetails({ mail, renderLabel }: Props) {
 
       {renderSender}
 
-      {!!mail.attachments.length && <Stack sx={{ px: 2 }}> {renderAttachments} </Stack>}
+      {/* {!!mail.attachments.length && <Stack sx={{ px: 2 }}> {renderAttachments} </Stack>} */}
 
       {renderContent}
 
-      {renderEditor}
+      {/* {renderEditor} */}
     </Stack>
   );
 }

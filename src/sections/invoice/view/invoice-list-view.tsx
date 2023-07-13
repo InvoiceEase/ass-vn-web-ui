@@ -126,11 +126,12 @@ export default function InvoiceListView() {
     (getInvoiceLength(status) / tableData.length) * 100;
 
   const TABS = [
-    { value: 'all', label: 'All', color: 'default', count: tableData.length },
-    { value: 'paid', label: 'Paid', color: 'success', count: getInvoiceLength('paid') },
-    { value: 'pending', label: 'Pending', color: 'warning', count: getInvoiceLength('pending') },
-    { value: 'overdue', label: 'Overdue', color: 'error', count: getInvoiceLength('overdue') },
-    { value: 'draft', label: 'Draft', color: 'default', count: getInvoiceLength('draft') },
+    { value: 'all', label: 'Tất cả', color: 'default', count: tableData.length },
+    { value: 'paid', label: 'Đã duyệt', color: 'success', count: getInvoiceLength('paid') },
+    { value: 'pending', label: 'Chưa xác thực', color: 'warning', count: getInvoiceLength('pending') },
+    { value: 'overdue', label: 'Không duyệt', color: 'error', count: getInvoiceLength('overdue') },
+    { value: 'overdue', label: 'Không duyệt', color: 'error', count: getInvoiceLength('overdue') },
+    { value: 'draft', label: 'Không xác thực', color: 'default', count: getInvoiceLength('draft') },
   ] as const;
 
   const handleFilters = useCallback(
@@ -192,8 +193,8 @@ export default function InvoiceListView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
+      {/* <Container maxWidth={settings.themeStretch ? false : 'lg'}> */}
+        {/* <CustomBreadcrumbs
           heading="List"
           links={[
             {
@@ -221,9 +222,9 @@ export default function InvoiceListView() {
           sx={{
             mb: { xs: 3, md: 5 },
           }}
-        />
+        /> */}
 
-        <Card
+        {/* <Card
           sx={{
             mb: { xs: 3, md: 5 },
           }}
@@ -280,7 +281,7 @@ export default function InvoiceListView() {
               />
             </Stack>
           </Scrollbar>
-        </Card>
+        </Card> */}
 
         <Card>
           <Tabs
@@ -427,7 +428,7 @@ export default function InvoiceListView() {
             onChangeDense={table.onChangeDense}
           />
         </Card>
-      </Container>
+      {/* </Container> */}
 
       <ConfirmDialog
         open={confirm.value}
