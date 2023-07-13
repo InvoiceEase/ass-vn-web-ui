@@ -18,7 +18,7 @@ export default function GuestGuard({ children }: GuestGuardProps) {
   const { authenticated } = useAuthContext();
 
   const roleCode = sessionStorage.getItem('roleCode');
-  
+
   const check = useCallback(() => {
 
     if (authenticated) {
