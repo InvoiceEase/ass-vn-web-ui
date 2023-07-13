@@ -2,11 +2,12 @@ import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 // slices
-import mailReducer from './slices/mail';
+import businessReducer from './slices/business';
+import calendarReducer from './slices/calendar';
 import chatReducer from './slices/chat';
 import kanbanReducer from './slices/kanban';
+import mailReducer from './slices/mail';
 import productReducer from './slices/product';
-import calendarReducer from './slices/calendar';
 
 // ----------------------------------------------------------------------
 
@@ -45,4 +46,5 @@ export const rootReducer = combineReducers({
   kanban: kanbanReducer,
   calendar: calendarReducer,
   product: persistReducer(productPersistConfig, productReducer),
+  business: businessReducer,
 });

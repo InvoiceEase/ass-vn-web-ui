@@ -1,12 +1,11 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 //
-import { useAuthContext } from '../hooks';
 import axios from 'axios';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
-import { includes } from 'lodash';
+import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
@@ -55,10 +54,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           sessionStorage.setItem('userName', resp.data.name);
           sessionStorage.setItem('roleCode', resp.data.role);
           sessionStorage.setItem('orgId', resp.data.organizationId);
-          if (resp.data.role.includes(RoleCodeEnum.AccountantStaff)) {
+          if (resp.data.role.includes(RoleCodeEnum.AccountantPrefix)) {
             // if user is accountant navigate to mail as default screen
-            router.prefetch(paths.dashboard.user.root);
-            router.replace(paths.dashboard.user.root);
+            router.prefetch(paths.dashboard.mail);
+            router.replace(paths.dashboard.mail);
           } else {
             router.prefetch(paths.dashboard.root);
             router.replace(paths.dashboard.root);

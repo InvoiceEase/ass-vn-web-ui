@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 // @mui
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 // routes
 import { useSearchParams } from 'src/routes/hook';
 // redux
@@ -18,18 +17,10 @@ import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
-import { Autocomplete, InputAdornment, TextField } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import List from '@mui/material/List';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
+import { InputAdornment, TextField } from '@mui/material';
+import BusinessPicker from 'src/components/business-picker/business-picker';
 import Iconify from 'src/components/iconify/iconify';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { useMail } from '../hooks';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
@@ -48,15 +39,23 @@ function useInitial() {
 
   const mailParam = searchParams.get('id');
 
+  const roleCode = sessionStorage.getItem('roleCode');
+
   const businessId = sessionStorage.getItem('selectedBusinessID');
+
+  const orgId = sessionStorage.getItem('orgId');
 
   // const getLabelsCallback = useCallback(() => {
   //   dispatch(getLabels());
   // }, [dispatch]);
 
   const getMailsCallback = useCallback(() => {
-    if (businessId && businessId !== '0') {
-      dispatch(getMails(businessId, '', 0));
+    if (roleCode?.includes(RoleCodeEnum.AccountantPrefix)) {
+      if (businessId && businessId !== '0') {
+        dispatch(getMails(businessId, '', 0));
+      }
+    } else if (orgId && orgId !== '0') {
+      dispatch(getMails(orgId, '', 0));
     }
   }, [dispatch, labelParam]);
 
@@ -116,10 +115,10 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
-  useEffect(() => {
-    setOpen(true);
-  }, []);
+
   const dispatch = useDispatch();
+
+  const roleCode = sessionStorage.getItem('roleCode');
 
   const businessId = sessionStorage.getItem('selectedBusinessID');
 
@@ -215,225 +214,11 @@ export default function MailView() {
       )}
     </>
   );
-  const [open, setOpen] = useState(false);
-  const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
-  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
-    setOpen(true);
-    setScroll(scrollType);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const role = [
-    'FPT University',
-    'Công ty nào đó tên gì đó mà dài vcl',
-    'CTCP Đầu tư Thế giới Di động',
-    'Nash Tech',
-    'Cyber Logitech',
-  ];
 
   return (
     <>
-      <div>
-        <Dialog
-          open={open}
-          scroll={scroll}
-          aria-labelledby="scroll-dialog-title"
-          aria-describedby="scroll-dialog-description"
-        >
-          <DialogTitle id="scroll-dialog-title">Chọn công ty</DialogTitle>
-          <DialogContent dividers={scroll === 'paper'}>
-            <DialogContentText
-              id="scroll-dialog-description"
-              // ref={descriptionElementRef}
-              tabIndex={-1}
-            >
-              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          FPT University
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Công ty nào đó tên gì đó mà dài vcl
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          CTCP Đầu tư Thế giới Di động
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Cyber Logitech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-
-                <DialogActions>
-                  <ListItemButton onClick={handleClose}>
-                    <ListItemAvatar>
-                      <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      secondary={
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          component="span"
-                          variant="h6"
-                          color="text.primary"
-                        >
-                          Nash Tech
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </DialogActions>
-              </List>
-            </DialogContentText>
-          </DialogContent>
-        </Dialog>
-      </div>
+      {roleCode?.includes(RoleCodeEnum.AccountantPrefix) && <BusinessPicker />}
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <Typography
-          variant="h4"
-          sx={{
-            width: '100%',
-            maxWidth: 280,
-            mb: { xs: 1, md: 5 },
-            ml: { xs: 1, md: 3 },
-          }}
-        >
-          <Autocomplete
-            id="free-solo-demo"
-            options={role}
-            onChange={(event: any, newValue: string | null) => {
-              // setUserRole(newValue || role[0]);
-            }}
-            value="ACCOUNTANT"
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </Typography>
-
         <Stack
           spacing={1}
           sx={{
@@ -464,7 +249,7 @@ export default function MailView() {
             {/* {renderMailNav} */}
             <Stack
               sx={{
-                width: 320,
+                width: 400,
                 flexShrink: 0,
                 borderRadius: 1.5,
                 bgcolor: 'background.default',

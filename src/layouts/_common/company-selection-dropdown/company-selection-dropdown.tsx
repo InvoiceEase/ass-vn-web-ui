@@ -3,25 +3,12 @@
 import { memo, useEffect, useState } from 'react';
 // @mui
 import { MenuItem, Select } from '@mui/material';
+import { setSelectedBusiness } from 'src/redux/slices/business';
 import { getMails } from 'src/redux/slices/mail';
-import { useDispatch } from 'src/redux/store';
+import { useDispatch, useSelector } from 'src/redux/store';
+import { IBusiness } from 'src/types/business';
 
-interface businessItem {
-  id: string;
-  createdAt: string;
-  modifiedAt: string;
-  version: null;
-  name: string;
-  address: string;
-  website: null;
-  taxNumber: null;
-  email: string;
-  logo: null;
-  invoiceReceivedEmail: string;
-  engName: null;
-}
-
-const defaultBusinessItem: businessItem = {
+const defaultBusinessItem: IBusiness = {
   id: '0',
   createdAt: '',
   modifiedAt: '',
@@ -36,40 +23,83 @@ const defaultBusinessItem: businessItem = {
   engName: null,
 };
 
-function CompanySelectionDropdown({ businessData }: { businessData: businessItem[] }) {
+function CompanySelectionDropdown() {
   const dispatch = useDispatch();
   const [selectedCompany, setSelectedCompany] = useState(defaultBusinessItem);
+  const [businessesName, setBusinessesName] = useState(['']);
+  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID');
 
-  const handleSelectBusiness = (option: businessItem) => {
+  const businesses = useSelector((state) => state.business.businesses);
+  const selectedBusiness = useSelector((state) => state.business.selectedBusiness);
+
+  const handleSelectBusiness = (option: IBusiness) => {
+    sessionStorage.setItem('selectedBusinessID', option?.id);
     setSelectedCompany(option);
+    dispatch(setSelectedBusiness(option));
     if (option.id && option.id !== '0') {
       dispatch(getMails(option.id, '', 0));
     }
   };
 
+  const getBusinessesName = () => {
+    const result: string[] = [];
+    businesses.allIds.map((id) => result.push(businesses.byId[id].name));
+    setBusinessesName(result);
+  };
+
   useEffect(() => {
-    setSelectedCompany(businessData[0]);
-    sessionStorage.setItem('selectedBusinessID', selectedCompany.id);
-    if (selectedCompany.id && selectedCompany.id !== '0') {
-      dispatch(getMails(selectedCompany.id, '', 0));
+    setSelectedCompany(businesses.byId[8]);
+    sessionStorage.setItem('selectedBusinessID', selectedCompany?.id);
+    if (selectedCompany?.id && selectedCompany?.id !== '0') {
+      dispatch(getMails(selectedCompany?.id, '', 0));
     }
-  }, [businessData]);
+    getBusinessesName();
+  }, [businesses]);
+
+  useEffect(() => {
+    if (selectedBusinessID) {
+      setSelectedCompany(businesses.byId[selectedBusinessID]);
+    }
+  }, [selectedBusinessID]);
 
   return (
     <Select
       // multiple
-      value={selectedCompany.name}
+      value={selectedBusiness?.name}
       // onChange={handleFilterService}
       // input={<OutlinedInput label="Business" />}
       // renderValue={(selected) => selected.map((value) => value).join(', ')}
       // sx={{ textTransform: 'capitalize' }}
     >
-      {businessData.map((option: businessItem) => (
-        <MenuItem key={option.id} value={option.name} onClick={() => handleSelectBusiness(option)}>
-          {option.name}
+      {businesses.allIds.map((id) => (
+        <MenuItem
+          key={id}
+          value={businesses.byId[id].name}
+          onClick={() => handleSelectBusiness(businesses.byId[id])}
+        >
+          {businesses.byId[id].name}
         </MenuItem>
       ))}
     </Select>
+    // <Typography
+    //   variant="h4"
+    //   sx={{
+    //     width: '100%',
+    //     maxWidth: 280,
+    //     ml: { xs: 1, md: 3 },
+    //   }}
+    // >
+    //   <Autocomplete
+    //     id="free-solo-demo"
+    //     options={businesses.byId}
+    //     onChange={(event: any, newValue: string | null) => {
+    //       setSelectedCompany(newValue);
+    //       sessionStorage.setItem('selectedBusinessID', selectedCompany?.id);
+    //     }}
+    //     value={selectedCompany?.name}
+    //     renderInput={(params) => <TextField {...params} />}
+    //   />
+    // </Typography>
   );
 }
 

@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 //
-import { useAuthContext } from '../hooks';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
@@ -20,9 +20,8 @@ export default function GuestGuard({ children }: GuestGuardProps) {
   const roleCode = sessionStorage.getItem('roleCode');
 
   const check = useCallback(() => {
-
     if (authenticated) {
-      if (roleCode === RoleCodeEnum.AccountantStaff) {
+      if (roleCode?.includes(RoleCodeEnum.AccountantPrefix)) {
         router.replace(paths.dashboard.mail);
       } else {
         router.replace(paths.dashboard.root);

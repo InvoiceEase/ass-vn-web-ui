@@ -1,9 +1,9 @@
 // @mui
-import { useTheme } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Toolbar from '@mui/material/Toolbar';
+import { useTheme } from '@mui/material/styles';
 // theme
 import { bgBlur } from 'src/theme/css';
 // hooks
@@ -11,23 +11,21 @@ import { useOffSetTop } from 'src/hooks/use-off-set-top';
 import { useResponsive } from 'src/hooks/use-responsive';
 // components
 import Logo from 'src/components/logo';
-import SvgColor from 'src/components/svg-color';
 import { useSettingsContext } from 'src/components/settings';
+import SvgColor from 'src/components/svg-color';
 //
-import { HEADER, NAV } from '../config-layout';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import {
-  Searchbar,
   AccountPopover,
-  SettingsButton,
-  LanguagePopover,
   ContactsPopover,
   NotificationsPopover,
+  Searchbar,
+  SettingsButton,
 } from '../_common';
-import { RadioGroup } from '@mui/material';
 import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
-import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
-import { useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
+import { HEADER, NAV } from '../config-layout';
 
 // ----------------------------------------------------------------------
 
@@ -72,7 +70,9 @@ export default function Header({ onOpenNav }: Props) {
   }, []);
 
   useEffect(() => {
-    getBusinessOnContract();
+    if (role?.includes(RoleCodeEnum.AccountantPrefix)) {
+      getBusinessOnContract();
+    }
   }, []);
 
   const renderContent = (
@@ -85,10 +85,10 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {role !== RoleCodeEnum.AccountantStaff ? (
+      {role?.includes(RoleCodeEnum.AccountantPrefix) ? (
         <Searchbar />
       ) : (
-        businessData.length > 0 && <CompanySelectionDropdown businessData={businessData} />
+        businessData.length > 0 && <CompanySelectionDropdown />
       )}
 
       <Stack
