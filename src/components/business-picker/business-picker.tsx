@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getBusinesses, setSelectedBusiness } from 'src/redux/slices/business';
+import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
 import BusinessItem from './business-item';
 
@@ -24,6 +25,7 @@ export default function BusinessPicker() {
     setOpen(false);
     sessionStorage.setItem('selectedBusinessID', id);
     dispatch(setSelectedBusiness(businesses.byId[id]));
+    dispatch(getMails(id, '', 0));
   };
 
   useEffect(() => {

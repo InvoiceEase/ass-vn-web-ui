@@ -79,12 +79,12 @@ export default function MailDetails({ mail, renderLabel }: Props) {
           checkedIcon={<Iconify icon="material-symbols:label-important-rounded" />}
           checked={mail.isImportant}
         /> */}
-        <IconButton>
+        {/* <IconButton>
           <Iconify icon="solar:trash-bin-trash-bold" />
         </IconButton>
         <IconButton>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </Stack>
     </Stack>
   );
@@ -275,7 +275,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
         bgcolor: 'background.default',
       }}
     >
-      {renderHead}
+      {/* {renderHead} */}
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
