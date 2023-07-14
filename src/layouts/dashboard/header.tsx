@@ -14,9 +14,10 @@ import Logo from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
 import SvgColor from 'src/components/svg-color';
 //
-import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { getBusinesses } from 'src/redux/slices/business';
+import { useDispatch, useSelector } from 'src/redux/store';
 import {
   AccountPopover,
   ContactsPopover,
@@ -36,6 +37,8 @@ type Props = {
 export default function Header({ onOpenNav }: Props) {
   const theme = useTheme();
 
+  const dispatch = useDispatch();
+
   const settings = useSettingsContext();
 
   const isNavHorizontal = settings.themeLayout === 'horizontal';
@@ -50,28 +53,28 @@ export default function Header({ onOpenNav }: Props) {
 
   const role = sessionStorage.getItem('roleCode');
 
-  const [businessData, setBusinessData] = useState([]);
+  const businesses = useSelector((state) => state.business.businesses);
 
-  const getBusinessOnContract = useCallback(async () => {
-    const token = sessionStorage.getItem('token');
-    const config = {
-      headers: {
-        accept: '*/*',
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/contracts`,
-      config
-    );
-    if (response.status === 200) {
-      setBusinessData(response.data);
-    }
-  }, []);
+  // const getBusinessOnContract = useCallback(async () => {
+  //   const token = sessionStorage.getItem('token');
+  //   const config = {
+  //     headers: {
+  //       accept: '*/*',
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   };
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/contracts`,
+  //     config
+  //   );
+  //   if (response.status === 200) {
+  //     setBusinessData(response.data);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (role?.includes(RoleCodeEnum.AccountantPrefix)) {
-      getBusinessOnContract();
+      dispatch(getBusinesses());
     }
   }, []);
 
@@ -85,10 +88,10 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {role?.includes(RoleCodeEnum.AccountantPrefix) ? (
+      {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
         <Searchbar />
       ) : (
-        businessData.length > 0 && <CompanySelectionDropdown />
+        businesses.allIds.length > 0 && <CompanySelectionDropdown />
       )}
 
       <Stack
