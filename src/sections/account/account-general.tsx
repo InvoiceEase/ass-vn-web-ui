@@ -114,8 +114,10 @@ export default function AccountGeneral() {
           </Card>
         </Grid> */}
 
-        <Grid xs={12} md={8}>
+        <Grid xs={12}>
           <Card sx={{ p: 3 }}>
+            <h2>Hãy cho chúng tôi biết thêm về doanh nghiệp của bạn</h2>
+            <h4>Giúp chúng tôi hỗ trợ bạn tốt nhất có thể</h4>
             <Box rowGap={3} columnGap={2} display="grid">
               <RHFTextField name="name" label="Tên công ty" />
               <RHFTextField name="address" label="Địa chỉ" />
