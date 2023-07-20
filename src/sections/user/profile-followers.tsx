@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 // types
-import { IUserProfileFollower } from 'src/types/user';
+import { IUserProfileFollower } from 'src/types/profile';
 // components
 import Iconify from 'src/components/iconify';
 

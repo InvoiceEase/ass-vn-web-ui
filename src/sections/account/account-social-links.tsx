@@ -3,14 +3,14 @@ import { useForm } from 'react-hook-form';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
 // types
-import { IUserSocialLink } from 'src/types/user';
+import { IUserSocialLink } from 'src/types/profile';
 // components
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
