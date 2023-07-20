@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 // routes
 import { useSearchParams } from 'src/routes/hook';
 // redux
+import { getMail, getMails } from 'src/redux/slices/mail';
 import { useDispatch } from 'src/redux/store';
-import { getMail, getLabels, getMails } from 'src/redux/slices/mail';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
@@ -18,12 +17,16 @@ import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
+import { InputAdornment, TextField } from '@mui/material';
+import BusinessPicker from 'src/components/business-picker/business-picker';
+import Iconify from 'src/components/iconify/iconify';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { useMail } from '../hooks';
-import MailNav from '../mail-nav';
-import MailList from '../mail-list';
-import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
+import MailHeader from '../mail-header';
+import MailList from '../mail-list';
+import MailNav from '../mail-nav';
 
 // ----------------------------------------------------------------------
 
@@ -36,12 +39,24 @@ function useInitial() {
 
   const mailParam = searchParams.get('id');
 
-  const getLabelsCallback = useCallback(() => {
-    dispatch(getLabels());
-  }, [dispatch]);
+  const roleCode = sessionStorage.getItem('roleCode');
+
+  const businessId = sessionStorage.getItem('selectedBusinessID');
+
+  const orgId = sessionStorage.getItem('orgId');
+
+  // const getLabelsCallback = useCallback(() => {
+  //   dispatch(getLabels());
+  // }, [dispatch]);
 
   const getMailsCallback = useCallback(() => {
-    dispatch(getMails(labelParam));
+    if (roleCode?.includes(RoleCodeEnum.AccountantPrefix)) {
+      if (businessId && businessId !== '0') {
+        dispatch(getMails(businessId, '', 0));
+      }
+    } else if (orgId && orgId !== '0') {
+      dispatch(getMails(orgId, '', 0));
+    }
   }, [dispatch, labelParam]);
 
   const getMailCallback = useCallback(() => {
@@ -50,9 +65,9 @@ function useInitial() {
     }
   }, [dispatch, mailParam]);
 
-  useEffect(() => {
-    getLabelsCallback();
-  }, [getLabelsCallback]);
+  // useEffect(() => {
+  //   getLabelsCallback();
+  // }, [getLabelsCallback]);
 
   useEffect(() => {
     getMailsCallback();
@@ -100,6 +115,22 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
+
+  const dispatch = useDispatch();
+
+  const roleCode = sessionStorage.getItem('roleCode');
+
+  const businessId = sessionStorage.getItem('selectedBusinessID');
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      sessionStorage.setItem('businessSearchQuery', searchQuery);
+      if (businessId && businessId !== '0') dispatch(getMails(businessId, searchQuery));
+    }, 800);
+    return () => clearTimeout(getData);
+  }, [searchQuery]);
 
   useEffect(() => {
     handleOpenCompose();
@@ -186,16 +217,8 @@ export default function MailView() {
 
   return (
     <>
+      {roleCode?.includes(RoleCodeEnum.AccountantPrefix) && <BusinessPicker />}
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-        <Typography
-          variant="h4"
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        >
-          Mail
-        </Typography>
-
         <Stack
           spacing={1}
           sx={{
@@ -223,9 +246,31 @@ export default function MailView() {
               },
             }}
           >
-            {renderMailNav}
+            {/* {renderMailNav} */}
+            <Stack
+              sx={{
+                width: 400,
+                flexShrink: 0,
+                borderRadius: 1.5,
+                bgcolor: 'background.default',
+              }}
+            >
+              <Stack sx={{ p: 2 }}>
+                <TextField
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search..."
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
 
-            {mailsStatus.empty ? renderEmpty : renderMailList}
+              {mailsStatus.empty ? renderEmpty : renderMailList}
+            </Stack>
 
             {mailsStatus.loading ? renderLoading : renderMailDetails}
           </Stack>

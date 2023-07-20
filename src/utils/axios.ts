@@ -23,7 +23,7 @@ export const API_ENDPOINTS = {
     register: '/api/auth/register',
   },
   mail: {
-    list: '/api/mail/list',
+    list: '/api/v1/mails',
     details: '/api/mail/details',
     labels: '/api/mail/labels',
   },
@@ -37,5 +37,8 @@ export const API_ENDPOINTS = {
     list: '/api/product/list',
     details: '/api/product/details',
     search: '/api/product/search',
+  },
+  business: {
+    list: '/api/v1/contracts',
   },
 };

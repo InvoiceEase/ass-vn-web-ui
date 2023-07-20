@@ -1,5 +1,5 @@
-import keyBy from 'lodash/keyBy';
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
+import keyBy from 'lodash/keyBy';
 // utils
 import axios, { API_ENDPOINTS } from 'src/utils/axios';
 // types
@@ -12,6 +12,12 @@ const initialState: IMailState = {
   mails: {
     byId: {},
     allIds: [],
+  },
+  pagination: {
+    numberOfElements: 0,
+    page: 0,
+    totalElements: 0,
+    totalPages: 0,
   },
   labelsStatus: {
     loading: false,
@@ -30,25 +36,25 @@ const slice = createSlice({
   initialState,
   reducers: {
     // GET LABELS
-    getLabelsStart(state) {
-      state.labelsStatus.loading = true;
-      state.labelsStatus.empty = false;
-      state.labelsStatus.error = null;
-    },
-    getLabelsFailure(state, action) {
-      state.labelsStatus.loading = false;
-      state.labelsStatus.empty = false;
-      state.labelsStatus.error = action.payload;
-    },
-    getLabelsSuccess(state, action) {
-      const labels = action.payload;
+    // getLabelsStart(state) {
+    //   state.labelsStatus.loading = true;
+    //   state.labelsStatus.empty = false;
+    //   state.labelsStatus.error = null;
+    // },
+    // getLabelsFailure(state, action) {
+    //   state.labelsStatus.loading = false;
+    //   state.labelsStatus.empty = false;
+    //   state.labelsStatus.error = action.payload;
+    // },
+    // getLabelsSuccess(state, action) {
+    //   const labels = action.payload;
 
-      state.labels = labels;
+    //   state.labels = labels;
 
-      state.labelsStatus.loading = false;
-      state.labelsStatus.empty = !labels.length;
-      state.labelsStatus.error = null;
-    },
+    //   state.labelsStatus.loading = false;
+    //   state.labelsStatus.empty = !labels.length;
+    //   state.labelsStatus.error = null;
+    // },
 
     // GET MAILS
     getMailsStart(state) {
@@ -62,7 +68,7 @@ const slice = createSlice({
       state.mailsStatus.error = action.payload;
     },
     getMailsSuccess(state, action) {
-      const mails = action.payload;
+      const mails = action.payload.content;
 
       state.mailsStatus.loading = false;
       state.mailsStatus.empty = !mails.length;
@@ -70,6 +76,13 @@ const slice = createSlice({
 
       state.mails.byId = keyBy(mails, 'id');
       state.mails.allIds = Object.keys(state.mails.byId);
+
+      state.pagination = {
+        numberOfElements: action.payload.numberOfElements,
+        page: action.payload.number,
+        totalElements: action.payload.totalElements,
+        totalPages: action.payload.totalPages,
+      };
     },
 
     // GET MAIL
@@ -89,32 +102,55 @@ export default slice.reducer;
 
 // ----------------------------------------------------------------------
 
-export function getLabels() {
-  return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.getLabelsStart());
+// export function getLabels() {
+//   return async (dispatch: Dispatch) => {
+//     dispatch(slice.actions.getLabelsStart());
 
-    try {
-      const response = await axios.get(API_ENDPOINTS.mail.labels);
-      dispatch(slice.actions.getLabelsSuccess(response.data.labels));
-    } catch (error) {
-      dispatch(slice.actions.getLabelsFailure(error));
-    }
-  };
-}
+//     try {
+//       const response = await axios.get(API_ENDPOINTS.mail.labels);
+//       dispatch(slice.actions.getLabelsSuccess(response.data.labels));
+//     } catch (error) {y
+//       dispatch(slice.actions.getLabelsFailure(error));
+//     }
+//   };
+// }
 
 // ----------------------------------------------------------------------
 
-export function getMails(labelId: string | null) {
+export function getMails(businessId: string | null, searchQuery?: string | null, page?: number) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getMailsStart());
 
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
     try {
-      const response = await axios.get(API_ENDPOINTS.mail.list, {
-        params: {
-          labelId,
-        },
-      });
-      dispatch(slice.actions.getMailsSuccess(response.data.mails));
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.list}`,
+        {
+          headers: headersList,
+          params: {
+            businessId,
+            search: searchQuery ?? '',
+            page: page ?? 0,
+            size: 10,
+            sort: [],
+          },
+        }
+      );
+      sessionStorage.setItem('totalMailPage', response.data.totalPages);
+      if (page) {
+        sessionStorage.setItem('currentMailPage', page.toString());
+      } else {
+        sessionStorage.setItem('currentMailPage', '0');
+      }
+      dispatch(slice.actions.getMailsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.getMailsFailure(error));
     }

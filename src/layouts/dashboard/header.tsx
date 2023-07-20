@@ -1,9 +1,9 @@
 // @mui
-import { useTheme } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Toolbar from '@mui/material/Toolbar';
+import { useTheme } from '@mui/material/styles';
 // theme
 import { bgBlur } from 'src/theme/css';
 // hooks
@@ -11,20 +11,22 @@ import { useOffSetTop } from 'src/hooks/use-off-set-top';
 import { useResponsive } from 'src/hooks/use-responsive';
 // components
 import Logo from 'src/components/logo';
-import SvgColor from 'src/components/svg-color';
 import { useSettingsContext } from 'src/components/settings';
+import SvgColor from 'src/components/svg-color';
 //
-import { HEADER, NAV } from '../config-layout';
+import { useEffect } from 'react';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { getBusinesses } from 'src/redux/slices/business';
+import { useDispatch, useSelector } from 'src/redux/store';
 import {
-  Searchbar,
   AccountPopover,
-  SettingsButton,
-  LanguagePopover,
   ContactsPopover,
   NotificationsPopover,
+  Searchbar,
+  SettingsButton,
 } from '../_common';
-import { RadioGroup } from '@mui/material';
 import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
+import { HEADER, NAV } from '../config-layout';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +36,8 @@ type Props = {
 
 export default function Header({ onOpenNav }: Props) {
   const theme = useTheme();
+
+  const dispatch = useDispatch();
 
   const settings = useSettingsContext();
 
@@ -49,6 +53,31 @@ export default function Header({ onOpenNav }: Props) {
 
   const role = sessionStorage.getItem('roleCode');
 
+  const businesses = useSelector((state) => state.business.businesses);
+
+  // const getBusinessOnContract = useCallback(async () => {
+  //   const token = sessionStorage.getItem('token');
+  //   const config = {
+  //     headers: {
+  //       accept: '*/*',
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   };
+  //   const response = await axios.get(
+  //     `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/contracts`,
+  //     config
+  //   );
+  //   if (response.status === 200) {
+  //     setBusinessData(response.data);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    if (role?.includes(RoleCodeEnum.AccountantPrefix)) {
+      dispatch(getBusinesses());
+    }
+  }, []);
+
   const renderContent = (
     <>
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
@@ -59,7 +88,11 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {role !== 'ACCOUNTANT' ? <Searchbar /> : <CompanySelectionDropdown />}
+      {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
+        <Searchbar />
+      ) : (
+        businesses.allIds.length > 0 && <CompanySelectionDropdown />
+      )}
 
       <Stack
         flexGrow={1}

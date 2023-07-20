@@ -2,7 +2,14 @@
 
 import * as Yup from 'yup';
 
-import { Autocomplete, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@mui/material';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import { useCallback, useRef, useState } from 'react';
 
@@ -23,6 +30,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'src/routes/hook';
 import { yupResolver } from '@hookform/resolvers/yup';
 import AuthClassicLayout from 'src/layouts/auth/classic';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
 // ----------------------------------------------------------------------
 
@@ -82,6 +90,17 @@ export default function FirebaseRegisterView() {
     formState: { isSubmitting },
   } = methods;
 
+  const mappingRole = (mapRole: string) => {
+    switch (mapRole) {
+      case 'ACCOUNTANT':
+        return `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Manager}`;
+      case 'BUSINESS':
+        return `${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`;
+      default:
+        return `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Manager}`;
+    }
+  };
+
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
@@ -90,7 +109,7 @@ export default function FirebaseRegisterView() {
           phoneNumber: `+84${data.phoneNumber.substring(1)}`,
           fullName: `${data.firstName} ${data.lastName}`,
           password: data.password,
-          role: userRole,
+          role: mappingRole(userRole),
           organization: {
             name: data.nameOrg,
             email: data.emailOrg,
@@ -98,15 +117,14 @@ export default function FirebaseRegisterView() {
             taxNumber: data.taxNumber,
           },
         };
-        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
         const response = await axios.post(url, body);
-        if(response.status === 201){
-          router.replace("")
+        if (response.status === 201) {
+          router.replace('');
         }
       } catch (error) {
-        console.error(error);
         reset();
-        setErrorMsg(typeof error === 'string' ? error : error.message);
+        setErrorMsg(typeof error === 'string' ? error : error.response.data.message);
       }
     },
     [register, reset, router, userRole]
@@ -200,6 +218,7 @@ export default function FirebaseRegisterView() {
       <Autocomplete
         id="free-solo-demo"
         ref={roleRef}
+        value={userRole}
         options={role}
         onChange={(event: any, newValue: string | null) => {
           setUserRole(newValue || role[0]);

@@ -1,6 +1,6 @@
 // utils
-import { paramCase } from 'src/utils/change-case';
 import { _id, _postTitles } from 'src/_mock/assets';
+import { paramCase } from 'src/utils/change-case';
 
 // ----------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ export const paths = {
       new: `${ROOTS.DASHBOARD}/user/new`,
       list: `${ROOTS.DASHBOARD}/user/list`,
       cards: `${ROOTS.DASHBOARD}/user/cards`,
-      profile: `${ROOTS.DASHBOARD}/user/profile`,
+      profile: `${ROOTS.DASHBOARD}/user`,
       account: `${ROOTS.DASHBOARD}/user/account`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
       demo: {
