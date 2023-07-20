@@ -2,23 +2,23 @@
 
 import { useRef } from 'react';
 // @mui
-import { alpha } from '@mui/material/styles';
-import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import InputBase from '@mui/material/InputBase';
-import Grid from '@mui/material/Unstable_Grid2';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import Divider from '@mui/material/Divider';
+import Fab from '@mui/material/Fab';
+import InputBase from '@mui/material/InputBase';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Unstable_Grid2';
+import { alpha } from '@mui/material/styles';
 // _mock
 import { _socials } from 'src/_mock';
 // utils
 import { fNumber } from 'src/utils/format-number';
 // types
-import { IUserProfile, IUserProfilePost } from 'src/types/user';
+import { IUserProfile, IUserProfilePost } from 'src/types/profile';
 // components
 import Iconify from 'src/components/iconify';
 //

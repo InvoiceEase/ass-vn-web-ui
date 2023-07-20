@@ -1,29 +1,29 @@
-import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
-import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import MenuItem from '@mui/material/MenuItem';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import MenuItem from '@mui/material/MenuItem';
 // routes
 // _mock
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 // types
-import { IUserItem } from 'src/types/user';
+import { IUserItem } from 'src/types/profile';
 // assets
 import { countries } from 'src/assets/data';
 // components
+import FormProvider, { RHFAutocomplete, RHFSelect, RHFTextField } from 'src/components/hook-form';
 import Iconify from 'src/components/iconify';
-import { CustomFile } from 'src/components/upload';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import { CustomFile } from 'src/components/upload';
 
 // ----------------------------------------------------------------------
 

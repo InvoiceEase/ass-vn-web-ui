@@ -1,17 +1,17 @@
 // @mui
-import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 // utils
 import { fDate } from 'src/utils/format-time';
 // types
-import { IUserProfileGallery } from 'src/types/user';
+import { IUserProfileGallery } from 'src/types/profile';
 // components
-import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
+import Image from 'src/components/image';
 import Lightbox, { useLightBox } from 'src/components/lightbox';
 
 // ----------------------------------------------------------------------

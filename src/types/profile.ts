@@ -1,5 +1,4 @@
-import { CustomFile } from 'src/components/upload';
-
+import { IErrorType } from './error';
 // ----------------------------------------------------------------------
 
 export type IUserTableFilterValue = string | string[];
@@ -109,18 +108,41 @@ export type IUserItem = {
   isVerified: boolean;
 };
 
+// export type IUserAccount = {
+//   email: string;
+//   isPublic: boolean;
+//   displayName: string;
+//   city: string | null;
+//   state: string | null;
+//   about: string | null;
+//   country: string | null;
+//   address: string | null;
+//   zipCode: string | null;
+//   phoneNumber: string | null;
+//   photoURL: CustomFile | string | null;
+// };
+
 export type IUserAccount = {
+  id: string;
+  createdAt: Date | string;
+  modifiedAt: Date | string;
+  version: number;
+  name: string;
+  address: string;
+  website: string | null;
+  taxNumber: string;
   email: string;
-  isPublic: boolean;
-  displayName: string;
-  city: string | null;
-  state: string | null;
-  about: string | null;
-  country: string | null;
-  address: string | null;
-  zipCode: string | null;
-  phoneNumber: string | null;
-  photoURL: CustomFile | string | null;
+  logo: string | null;
+  invoiceReceivedEmail: string;
+  engName: string | null;
+  digitalSignatureDueDate: string | null;
+  digitalSignaturePeriod: string | null;
+  digitalSignatureRegisDate: string | null;
+  representPersonName: string | null;
+  declarationPeriod: 1 | 3;
+  needAudit: boolean | null;
+  businessTypeId: number | null;
+  domainBusinessId: number | null;
 };
 
 export type IUserAccountBillingHistory = {
@@ -134,4 +156,13 @@ export type IUserAccountChangePassword = {
   oldPassword: string;
   newPassword: string;
   confirmNewPassword: string;
+};
+
+export type IProfileState = {
+  profileData: IUserAccount;
+  profileStatus: {
+    loading: boolean;
+    empty: boolean;
+    error: IErrorType;
+  };
 };
