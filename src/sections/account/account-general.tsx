@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
@@ -9,25 +9,26 @@ import Grid from '@mui/material/Unstable_Grid2';
 // hooks
 // utils
 // assets
-import { countries } from 'src/assets/data';
+import { periodDeclarationTypes } from 'src/assets/data';
 // types
 import { IUserAccount } from 'src/types/profile';
 // components
 import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import { useSelector } from 'src/redux/store';
+import { getBusinessTypes } from 'src/redux/slices/business';
+import { useDispatch, useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = IUserAccount;
 
 export default function AccountGeneral() {
+  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const user = useSelector((state) => state.profile.profileData);
 
-  console.log('NghiaLog: user - ', user);
+  const businessTypes = useSelector((state) => state.business.businessTypes);
 
   const UpdateUserSchema = Yup.object().shape({
     name: Yup.string().required('Business name is required'),
@@ -43,10 +44,12 @@ export default function AccountGeneral() {
     name: user?.name || '',
     address: user?.address || '',
     taxNumber: user?.taxNumber || '',
-    businessTypeId: user?.businessTypeId || 0,
+    businessTypeId: businessTypes.byId[user?.businessTypeId ?? 0] || null,
     representPersonName: user?.representPersonName || '',
     invoiceReceivedEmail: user?.invoiceReceivedEmail || '',
-    declarationPeriod: user?.declarationPeriod || 3,
+    declarationPeriod:
+      periodDeclarationTypes.filter((item) => item.id === user?.declarationPeriod)[0]?.label ||
+      null,
   };
 
   const methods = useForm<FormValuesProps>({
@@ -72,6 +75,10 @@ export default function AccountGeneral() {
     },
     [enqueueSnackbar]
   );
+
+  useEffect(() => {
+    dispatch(getBusinessTypes());
+  }, []);
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -124,26 +131,16 @@ export default function AccountGeneral() {
               <RHFAutocomplete
                 name="businessTypeId"
                 label="Loại hình DN"
-                options={countries.map((country) => country.label)}
+                options={businessTypes.allIds.map((id) => businessTypes.byId[id].name)}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
+                  if (!option) {
                     return null;
                   }
 
                   return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
+                    <li {...props} key={option}>
+                      {option}
                     </li>
                   );
                 }}
@@ -154,26 +151,16 @@ export default function AccountGeneral() {
               <RHFAutocomplete
                 name="declarationPeriod"
                 label="Khai báo thuế theo"
-                options={countries.map((country) => country.label)}
+                options={periodDeclarationTypes.map((type) => type.label)}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
+                  if (!option) {
                     return null;
                   }
 
                   return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
+                    <li {...props} key={option}>
+                      {option}
                     </li>
                   );
                 }}
