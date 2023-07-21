@@ -11,12 +11,12 @@ import { _userAbout, _userAddressBook, _userInvoices, _userPayment, _userPlans }
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 //
-import { Divider, Stack } from '@mui/material';
 import AccountBilling from '../account-billing';
 import AccountChangePassword from '../account-change-password';
 import AccountGeneral from '../account-general';
 import AccountNotifications from '../account-notifications';
 import AccountSocialLinks from '../account-social-links';
+import AccountStepper from './account-stepper';
 
 // ----------------------------------------------------------------------
 
@@ -85,22 +85,20 @@ export default function AccountView() {
         ))}
       </Tabs> */}
 
-      <Grid container spacing={{ xs: 2, md: 10 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        <Grid>
+      <Grid container spacing={3}>
+        <Grid xs>
           <h3>Tài khoản</h3>
           <h3>Thông tin doanh nghiệp</h3>
           <h3>Thanh toán</h3>
         </Grid>
-        {currentTab === 'general' && <AccountGeneral />}
-        <Grid>
-          <Stack
-            direction="column"
-            divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-          >
-            <h1>hehe</h1>
-            <h1>hehe</h1>
-            <h1>hehe</h1>
-          </Stack>
+        {currentTab === 'general' && (
+          <Grid xs={6}>
+            {' '}
+            <AccountGeneral />{' '}
+          </Grid>
+        )}
+        <Grid xs>
+          <AccountStepper />
         </Grid>
       </Grid>
 

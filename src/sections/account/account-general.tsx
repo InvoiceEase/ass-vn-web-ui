@@ -3,10 +3,8 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
-import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 // hooks
 // utils
@@ -114,7 +112,7 @@ export default function AccountGeneral() {
           </Card>
         </Grid> */}
 
-        <Grid xs={12}>
+        <Grid xs={10}>
           <Card sx={{ p: 3 }}>
             <h2>Hãy cho chúng tôi biết thêm về doanh nghiệp của bạn</h2>
             <h4>Giúp chúng tôi hỗ trợ bạn tốt nhất có thể</h4>
@@ -182,11 +180,11 @@ export default function AccountGeneral() {
               />
             </Box>
 
-            <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
+            {/* <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>
-            </Stack>
+            </Stack> */}
           </Card>
         </Grid>
       </Grid>
