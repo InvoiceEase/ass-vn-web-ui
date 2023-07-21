@@ -61,8 +61,8 @@ const slice = createSlice({
       state.businessTypesStatus.empty = !businessTypes.length;
       state.businessTypesStatus.error = null;
 
-      state.businesses.byId = keyBy(businessTypes, 'id');
-      state.businesses.allIds = Object.keys(state.businessTypes.byId);
+      state.businessTypes.byId = keyBy(businessTypes, 'id');
+      state.businessTypes.allIds = Object.keys(state.businessTypes.byId);
     },
 
     getBusinessesStart(state) {
@@ -110,14 +110,14 @@ export function getBusinessTypes() {
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.types}`,
+        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.types}`,
         {
           headers: headersList,
         }
       );
-      dispatch(slice.actions.getBusinessesSuccess(response.data));
+      dispatch(slice.actions.getBusinessTypesSuccess(response.data));
     } catch (error) {
-      dispatch(slice.actions.getBusinessesFailure(error));
+      dispatch(slice.actions.getBusinessTypesFailure(error));
     }
   };
 }
