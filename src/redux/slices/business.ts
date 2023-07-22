@@ -5,6 +5,15 @@ import { IBusiness, IBusinessState } from 'src/types/business';
 import { API_ENDPOINTS } from 'src/utils/axios';
 
 const initialState: IBusinessState = {
+  businessTypes: {
+    byId: {},
+    allIds: [],
+  },
+  businessTypesStatus: {
+    loading: false,
+    empty: false,
+    error: null,
+  },
   businesses: {
     byId: {},
     allIds: [],
@@ -34,6 +43,28 @@ const slice = createSlice({
   name: 'business',
   initialState,
   reducers: {
+    getBusinessTypesStart(state) {
+      state.businessTypesStatus.loading = true;
+      state.businessTypesStatus.empty = false;
+      state.businessTypesStatus.error = null;
+    },
+
+    getBusinessTypesFailure(state, action) {
+      state.businessTypesStatus.loading = true;
+      state.businessTypesStatus.empty = false;
+      state.businessTypesStatus.error = action.payload;
+    },
+
+    getBusinessTypesSuccess(state, action) {
+      const businessTypes = action.payload;
+      state.businessTypesStatus.loading = false;
+      state.businessTypesStatus.empty = !businessTypes.length;
+      state.businessTypesStatus.error = null;
+
+      state.businessTypes.byId = keyBy(businessTypes, 'id');
+      state.businessTypes.allIds = Object.keys(state.businessTypes.byId);
+    },
+
     getBusinessesStart(state) {
       state.businessesStatus.loading = true;
       state.businessesStatus.empty = false;
@@ -64,6 +95,32 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
+
+export function getBusinessTypes() {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getBusinessTypesStart());
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.types}`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getBusinessTypesSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.getBusinessTypesFailure(error));
+    }
+  };
+}
 
 export function getBusinesses() {
   return async (dispatch: Dispatch) => {

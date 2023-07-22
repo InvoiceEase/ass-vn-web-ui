@@ -1,5 +1,3 @@
-import { _mock } from 'src/_mock';
-
 // TO GET THE USER FROM THE AUTHCONTEXT, YOU CAN USE
 
 // CHANGE:
@@ -14,20 +12,26 @@ import { _mock } from 'src/_mock';
 
 export function useMockedUser() {
   const user = {
-    id: '8864c717-587d-472a-929a-8e5f298024da-0',
-    displayName: 'Thằng lồn',
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
-    photoURL: _mock.image.avatar(24),
-    phoneNumber: '+40 777666555',
-    country: 'United States',
-    address: '90210 Broadway Blvd',
-    state: 'California',
-    city: 'San Francisco',
-    zipCode: '94116',
-    about: 'Praesent turpis. Phasellus viverra nulla ut metus varius laoreet. Phasellus tempus.',
-    role: 'admin',
-    isPublic: true,
+    id: '8',
+    createdAt: '2023-06-30T13:48:06.548305Z',
+    modifiedAt: '2023-07-08T07:40:04.901066Z',
+    version: 1,
+    name: 'Apple Inc.',
+    address: 'Silicon Valey',
+    website: null,
+    taxNumber: '12344',
+    email: 'ataile.assvn@gmail.com',
+    logo: null,
+    invoiceReceivedEmail: 'tnghia@business.com',
+    engName: null,
+    digitalSignatureDueDate: null,
+    digitalSignaturePeriod: null,
+    digitalSignatureRegisDate: null,
+    representPersonName: null,
+    declarationPeriod: null,
+    needAudit: null,
+    businessTypeId: null,
+    domainBusinessId: null,
   };
 
   return { user };

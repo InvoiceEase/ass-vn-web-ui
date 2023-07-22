@@ -1,67 +1,55 @@
-import * as Yup from 'yup';
-import { useCallback } from 'react';
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 // @mui
-import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
 // hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // utils
-import { fData } from 'src/utils/format-number';
 // assets
-import { countries } from 'src/assets/data';
+import { periodDeclarationTypes } from 'src/assets/data';
 // types
-import { IUserAccount } from 'src/types/user';
+import { IUserAccount } from 'src/types/profile';
 // components
-import Iconify from 'src/components/iconify';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import { getBusinessTypes } from 'src/redux/slices/business';
+import { useDispatch, useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
 type FormValuesProps = IUserAccount;
 
 export default function AccountGeneral() {
+  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { user } = useMockedUser();
+  const user = useSelector((state) => state.profile.profileData);
+
+  const businessTypes = useSelector((state) => state.business.businessTypes);
 
   const UpdateUserSchema = Yup.object().shape({
-    displayName: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    photoURL: Yup.mixed().required('Avatar is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    country: Yup.string().required('Country is required'),
+    name: Yup.string().required('Business name is required'),
     address: Yup.string().required('Address is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    about: Yup.string().required('About is required'),
+    taxNumber: Yup.string().required('Tax code is required'),
+    businessTypeId: Yup.string().required('Business type is required'),
+    representPersonName: Yup.string().required('Representative name is required'),
+    invoiceReceivedEmail: Yup.string().required('Invoice received mail is required'),
+    domainBusinessId: Yup.string().required('Tax declaration type is required'),
   });
 
-  const defaultValues = {
-    displayName: user?.displayName || '',
-    email: user?.email || '',
-    photoURL: user?.photoURL || null,
-    phoneNumber: user?.phoneNumber || '',
-    country: user?.country || '',
+  const defaultValues: IUserAccount = {
+    name: user?.name || '',
     address: user?.address || '',
-    state: user?.state || '',
-    city: user?.city || '',
-    zipCode: user?.zipCode || '',
-    about: user?.about || '',
-    isPublic: user?.isPublic || false,
+    taxNumber: user?.taxNumber || '',
+    businessTypeId: businessTypes.byId[user?.businessTypeId ?? 0] || null,
+    representPersonName: user?.representPersonName || '',
+    invoiceReceivedEmail: user?.invoiceReceivedEmail || '',
+    declarationPeriod:
+      periodDeclarationTypes.filter((item) => item.id === user?.declarationPeriod)[0]?.label ||
+      null,
   };
 
   const methods = useForm<FormValuesProps>({
@@ -88,25 +76,14 @@ export default function AccountGeneral() {
     [enqueueSnackbar]
   );
 
-  const handleDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('photoURL', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+  useEffect(() => {
+    dispatch(getBusinessTypes());
+  }, []);
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
+        {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>
             <RHFUploadAvatar
               name="photoURL"
@@ -140,64 +117,61 @@ export default function AccountGeneral() {
               Delete User
             </Button>
           </Card>
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={8}>
+        <Grid xs={10}>
           <Card sx={{ p: 3 }}>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              <RHFTextField name="displayName" label="Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
-              <RHFTextField name="address" label="Address" />
+            <h2>Hãy cho chúng tôi biết thêm về doanh nghiệp của bạn</h2>
+            <h4>Giúp chúng tôi hỗ trợ bạn tốt nhất có thể</h4>
+            <Box rowGap={3} columnGap={2} display="grid">
+              <RHFTextField name="name" label="Tên công ty" />
+              <RHFTextField name="address" label="Địa chỉ" />
+              <RHFTextField name="taxNumber" label="Mã số thuế" />
 
               <RHFAutocomplete
-                name="country"
-                label="Country"
-                options={countries.map((country) => country.label)}
+                name="businessTypeId"
+                label="Loại hình DN"
+                options={businessTypes.allIds.map((id) => businessTypes.byId[id].name)}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
+                  if (!option) {
                     return null;
                   }
 
                   return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
+                    <li {...props} key={option}>
+                      {option}
                     </li>
                   );
                 }}
               />
 
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
+              <RHFTextField name="representPersonName" label="Tên người đại diện" />
+              <RHFTextField name="invoiceReceivedEmail" label="Mail nhận hoá đơn" />
+              <RHFAutocomplete
+                name="declarationPeriod"
+                label="Khai báo thuế theo"
+                options={periodDeclarationTypes.map((type) => type.label)}
+                getOptionLabel={(option) => option}
+                renderOption={(props, option) => {
+                  if (!option) {
+                    return null;
+                  }
+
+                  return (
+                    <li {...props} key={option}>
+                      {option}
+                    </li>
+                  );
+                }}
+              />
             </Box>
 
-            <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
-              <RHFTextField name="about" multiline rows={4} label="About" />
-
+            {/* <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Save Changes
               </LoadingButton>
-            </Stack>
+            </Stack> */}
           </Card>
         </Grid>
       </Grid>

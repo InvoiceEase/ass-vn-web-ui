@@ -1,14 +1,14 @@
 // @mui
 import Grid from '@mui/material/Unstable_Grid2';
 // types
-import { IUserAccountBillingHistory } from 'src/types/user';
-import { IPaymentCard } from 'src/types/payment';
 import { IAddressItem } from 'src/types/address';
+import { IPaymentCard } from 'src/types/payment';
+import { IUserAccountBillingHistory } from 'src/types/profile';
 //
-import AccountBillingPlan from './account-billing-plan';
-import AccountBillingPayment from './account-billing-payment';
-import AccountBillingHistory from './account-billing-history';
 import AccountBillingAddress from './account-billing-address';
+import AccountBillingHistory from './account-billing-history';
+import AccountBillingPayment from './account-billing-payment';
+import AccountBillingPlan from './account-billing-plan';
 
 // ----------------------------------------------------------------------
 
