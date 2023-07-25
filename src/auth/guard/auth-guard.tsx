@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-// routes
-import { useRouter } from 'src/routes/hook';
-import { paths } from 'src/routes/paths';
-//
-import axios from 'axios';
+
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import axios from 'axios';
+import { paths } from 'src/routes/paths';
 import { useAuthContext } from '../hooks';
+import { useRouter } from 'src/routes/hook';
+
+// routes
+
+
+//
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +53,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           headers: { Authorization: `Bearer ${token}` },
         };
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}`;
-        console.log(process.env.NEXT_PUBLIC_BE_ADMIN_API)
         const resp = await axios.get(url, config);
         if (resp.status === 200) {
           setChecked(true);
