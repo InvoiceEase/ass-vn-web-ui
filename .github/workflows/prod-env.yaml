@@ -1,0 +1,93 @@
+name: CI/CD Dev Environment
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci-cd-dev-env:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+      NEXT_PUBLIC_FIREBASE_APPID: ${{ secrets.FIREBASE_APPID }}
+      NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
+      NEXT_PUBLIC_BE_ADMIN_API: ${{ secrets.ADMIN_API }}
+      NEXT_PUBLIC_BE_ACCOUNTANT_API: ${{ secrets.ACCOUNTANT_API }}
+      NEXT_PUBLIC_BE_BUSINESS_API: ${{ secrets.BUSINESS_API }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build Next.js app
+        run: yarn build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Login to Container Registry
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push Docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.AWS_REPO_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Update KubeConfig
+        shell: bash
+        run: |
+          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER }}
+
+      - name: Change image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.AWS_REPO_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        shell: bash
+        run: |
+          kubectl set image deployment/${{ secrets.DEPLOYMENT }} ${{ secrets.CONTAINER_NAME }}=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Generate discord_notification.json
+        if: ${{ always() }}
+        run: |
+          bash generate_discord_notification.sh "${JOB_STATUS}" "${GITHUB_EVENT_NAME}" "${GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP}" "${GITHUB_EVENT_PULL_REQUEST_UPDATED_AT}" "${GITHUB_EVENT_HEAD_COMMIT_URL}" "${GITHUB_EVENT_PULL_REQUEST_HTML_URL}"
+        env:
+          JOB_STATUS: ${{ job.status }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+          GITHUB_EVENT_PULL_REQUEST_UPDATED_AT: ${{ github.event.pull_request.updated_at }}
+          GITHUB_EVENT_HEAD_COMMIT_URL: ${{ github.event.head_commit.url }}
+          GITHUB_EVENT_PULL_REQUEST_HTML_URL: ${{ github.event.pull_request.html_url }}
+
+      - name: Send notification to Discord
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          raw-data: ./discord_notification.json
