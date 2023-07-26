@@ -38,7 +38,7 @@ fi
 
 # Generate the discord_notification.json file
 echo '{
-  "content": "Deployment status for <@&1087630107537059880>",
+  "content": "Deployment status for <@&1013668275755954256>",
   "embeds": [
     {
       "title": "Deployment Status",
