@@ -34,6 +34,9 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
+      - name: Install dependencies
+        run: yarn install
+
       - name: Build Next.js app
         run: yarn build
 
@@ -72,6 +75,7 @@ jobs:
           kubectl set image deployment/${{ secrets.DEPLOYMENT }} ${{ secrets.CONTAINER_NAME }}=$REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Generate discord_notification.json
+        if: ${{ always() }}
         run: |
           bash generate_discord_notification.sh "${JOB_STATUS}" "${GITHUB_EVENT_NAME}" "${GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP}" "${GITHUB_EVENT_PULL_REQUEST_UPDATED_AT}" "${GITHUB_EVENT_HEAD_COMMIT_URL}" "${GITHUB_EVENT_PULL_REQUEST_HTML_URL}"
         env:
