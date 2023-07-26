@@ -1,33 +1,33 @@
 'use client';
 
 // @mui
-import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/material/styles';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // _mock
 import {
-  _ecommerceNewProducts,
-  _ecommerceSalesOverview,
   _ecommerceBestSalesman,
   _ecommerceLatestProducts,
+  _ecommerceNewProducts,
+  _ecommerceSalesOverview,
 } from 'src/_mock';
 // components
 import { useSettingsContext } from 'src/components/settings';
 // assets
 import { MotivationIllustration } from 'src/assets/illustrations';
 //
-import EcommerceWelcome from '../ecommerce-welcome';
-import EcommerceNewProducts from '../ecommerce-new-products';
-import EcommerceYearlySales from '../ecommerce-yearly-sales';
 import EcommerceBestSalesman from '../ecommerce-best-salesman';
+import EcommerceCurrentBalance from '../ecommerce-current-balance';
+import EcommerceLatestProducts from '../ecommerce-latest-products';
+import EcommerceNewProducts from '../ecommerce-new-products';
 import EcommerceSaleByGender from '../ecommerce-sale-by-gender';
 import EcommerceSalesOverview from '../ecommerce-sales-overview';
+import EcommerceWelcome from '../ecommerce-welcome';
 import EcommerceWidgetSummary from '../ecommerce-widget-summary';
-import EcommerceLatestProducts from '../ecommerce-latest-products';
-import EcommerceCurrentBalance from '../ecommerce-current-balance';
+import EcommerceYearlySales from '../ecommerce-yearly-sales';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ export default function OverviewEcommerceView() {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <EcommerceWelcome
-            title={`Congratulations! \n ${user?.displayName}`}
+            title={`Congratulations! \n ${user?.name}`}
             description="Best seller of the month You have done 57.6% more sales today."
             img={<MotivationIllustration />}
             action={

@@ -9,9 +9,9 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import Logo from 'src/components/logo';
 import { NavSectionMini } from 'src/components/nav-section';
 //
+import { NavToggleButton } from '../_common';
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
-import { NavToggleButton } from '../_common';
 
 // ----------------------------------------------------------------------
 
@@ -19,6 +19,8 @@ export default function NavMini() {
   const { user } = useMockedUser();
 
   const navData = useNavData();
+
+  const role = sessionStorage.getItem('roleCode');
 
   return (
     <Box
@@ -50,7 +52,7 @@ export default function NavMini() {
         <NavSectionMini
           data={navData}
           config={{
-            currentRole: user?.role || 'admin',
+            currentRole: role || 'admin',
           }}
         />
       </Stack>

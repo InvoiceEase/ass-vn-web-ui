@@ -1,10 +1,10 @@
 // @mui
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // components
@@ -24,7 +24,7 @@ export default function KanbanDetailsCommentInput() {
         px: 2.5,
       }}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName} />
+      <Avatar src={user?.logo ?? ''} alt={user?.name} />
 
       <Paper variant="outlined" sx={{ p: 1, flexGrow: 1, bgcolor: 'transparent' }}>
         <InputBase fullWidth multiline rows={2} placeholder="Type a message" sx={{ px: 1 }} />

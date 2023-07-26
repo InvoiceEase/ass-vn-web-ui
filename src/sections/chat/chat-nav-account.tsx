@@ -1,20 +1,20 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
 import Badge, { badgeClasses } from '@mui/material/Badge';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // components
-import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -33,8 +33,8 @@ export default function ChatNavAccount() {
     <>
       <Badge variant={status} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
+          src={user?.logo ?? ''}
+          alt={user?.name}
           onClick={popover.onOpen}
           sx={{ cursor: 'pointer', width: 48, height: 48 }}
         />
@@ -52,7 +52,7 @@ export default function ChatNavAccount() {
           }}
         >
           <ListItemText
-            primary={user?.displayName}
+            primary={user?.name}
             secondary={user?.email}
             secondaryTypographyProps={{ component: 'span' }}
           />

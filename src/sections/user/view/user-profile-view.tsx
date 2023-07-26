@@ -89,8 +89,8 @@ export default function UserProfileView() {
       >
         <ProfileCover
           role={_userAbout.role}
-          name={user?.displayName}
-          avatarUrl={user?.photoURL}
+          name={user?.name}
+          avatarUrl={user?.logo ?? ''}
           coverUrl={_userAbout.coverUrl}
         />
 

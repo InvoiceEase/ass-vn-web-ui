@@ -40,16 +40,16 @@ export default function AccountGeneral() {
     domainBusinessId: Yup.string().required('Tax declaration type is required'),
   });
 
-  const defaultValues: IUserAccount = {
+  const defaultValues = {
     name: user?.name || '',
     address: user?.address || '',
     taxNumber: user?.taxNumber || '',
-    businessTypeId: businessTypes.byId[user?.businessTypeId ?? 0] || null,
+    businessTypeId: +businessTypes.byId[user?.businessTypeId ?? 0].id || null,
     representPersonName: user?.representPersonName || '',
     invoiceReceivedEmail: user?.invoiceReceivedEmail || '',
     declarationPeriod:
-      periodDeclarationTypes.filter((item) => item.id === user?.declarationPeriod)[0]?.label ||
-      null,
+      periodDeclarationTypes.filter((item) => item.id?.toString() === user?.declarationPeriod)[0]
+        ?.label || null,
   };
 
   const methods = useForm<FormValuesProps>({

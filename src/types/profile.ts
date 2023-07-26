@@ -139,7 +139,7 @@ export type IUserAccount = {
   digitalSignaturePeriod: string | null;
   digitalSignatureRegisDate: string | null;
   representPersonName: string | null;
-  declarationPeriod: 1 | 3 | null;
+  declarationPeriod: string | null;
   needAudit: boolean | null;
   businessTypeId: number | null;
   domainBusinessId: number | null;

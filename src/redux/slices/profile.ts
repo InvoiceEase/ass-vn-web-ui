@@ -21,7 +21,7 @@ const initialState: IProfileState = {
     digitalSignaturePeriod: null,
     digitalSignatureRegisDate: null,
     representPersonName: null,
-    declarationPeriod: 3,
+    declarationPeriod: '3',
     needAudit: null,
     businessTypeId: null,
     domainBusinessId: null,

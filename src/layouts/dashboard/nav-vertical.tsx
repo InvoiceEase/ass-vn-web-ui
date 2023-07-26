@@ -3,21 +3,21 @@
 import { useEffect, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
+import Stack from '@mui/material/Stack';
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // components
 import Logo from 'src/components/logo';
+import { NavSectionVertical } from 'src/components/nav-section';
 import Scrollbar from 'src/components/scrollbar';
 import { usePathname } from 'src/routes/hook';
-import { NavSectionVertical } from 'src/components/nav-section';
 //
+import { NavToggleButton } from '../_common';
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
-import { NavToggleButton, NavUpgrade } from '../_common';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
       <NavSectionVertical
         data={navData}
         config={{
-          currentRole: user?.role || 'admin',
+          currentRole: role || 'admin',
         }}
       />
 

@@ -60,10 +60,10 @@ export default function ProfilePostItem({ post }: Props) {
   const renderHead = (
     <CardHeader
       disableTypography
-      avatar={<Avatar src={user?.photoURL} alt={user?.displayName} />}
+      avatar={<Avatar src={user?.logo ?? ''} alt={user?.name} />}
       title={
         <Link color="inherit" variant="subtitle1">
-          {user?.displayName}
+          {user?.name}
         </Link>
       }
       subheader={
@@ -121,7 +121,7 @@ export default function ProfilePostItem({ post }: Props) {
         p: (theme) => theme.spacing(0, 3, 3, 3),
       }}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName} />
+      <Avatar src={user?.logo ?? ''} alt={user?.name} />
 
       <InputBase
         fullWidth
