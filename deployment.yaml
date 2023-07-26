@@ -4,7 +4,7 @@ metadata:
   name: ass-vn-web-svc
 spec:
   selector:
-    app: ass-vn-web-svc
+    app: ass-vn-web
   ports:
     - port: 80
       protocol: TCP
