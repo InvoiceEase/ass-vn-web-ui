@@ -1,27 +1,27 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
+import Tab from '@mui/material/Tab';
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 // routes
 import { paths } from 'src/routes/paths';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // _mock
-import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
+import { _userAbout, _userFeeds, _userFollowers, _userFriends, _userGallery } from 'src/_mock';
 // components
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import ProfileHome from '../profile-home';
 import ProfileCover from '../profile-cover';
+import ProfileFollowers from '../profile-followers';
 import ProfileFriends from '../profile-friends';
 import ProfileGallery from '../profile-gallery';
-import ProfileFollowers from '../profile-followers';
+import ProfileHome from '../profile-home';
 
 // ----------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ export default function UserProfileView() {
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'User', href: paths.dashboard.user.root },
-          { name: user?.displayName },
+          { name: user?.name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

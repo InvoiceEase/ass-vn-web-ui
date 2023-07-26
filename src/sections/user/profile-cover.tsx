@@ -1,11 +1,11 @@
 // @mui
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import ListItemText from '@mui/material/ListItemText';
-import { useTheme, alpha } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+import { alpha, useTheme } from '@mui/material/styles';
 // types
-import { IUserProfileCover } from 'src/types/user';
+import { IUserProfileCover } from 'src/types/profile';
 // theme
 import { bgGradient } from 'src/theme/css';
 

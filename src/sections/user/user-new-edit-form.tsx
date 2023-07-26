@@ -1,37 +1,37 @@
-import * as Yup from 'yup';
-import { useCallback, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2';
 // utils
 import { fData } from 'src/utils/format-number';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // types
-import { IUserItem } from 'src/types/user';
+import { IUserItem } from 'src/types/profile';
 // assets
 import { countries } from 'src/assets/data';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import { CustomFile } from 'src/components/upload';
-import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
+  RHFAutocomplete,
   RHFSwitch,
   RHFTextField,
   RHFUploadAvatar,
-  RHFAutocomplete,
 } from 'src/components/hook-form';
+import Iconify from 'src/components/iconify';
+import Label from 'src/components/label';
+import { useSnackbar } from 'src/components/snackbar';
+import { CustomFile } from 'src/components/upload';
 
 // ----------------------------------------------------------------------
 

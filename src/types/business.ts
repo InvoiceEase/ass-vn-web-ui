@@ -20,7 +20,26 @@ export type IBusinessListState = {
   allIds: string[];
 };
 
+export type IBusinessType = {
+  id: string;
+  createdAt: string;
+  modifiedAt: string;
+  version: number;
+  name: string;
+};
+
+export type IBusinessTypesState = {
+  byId: Record<string, IBusinessType>;
+  allIds: string[];
+};
+
 export type IBusinessState = {
+  businessTypes: IBusinessTypesState;
+  businessTypesStatus: {
+    loading: boolean;
+    empty: boolean;
+    error: IErrorType;
+  };
   businesses: IBusinessListState;
   selectedBusiness: IBusiness;
   businessesStatus: {

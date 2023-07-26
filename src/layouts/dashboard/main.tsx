@@ -5,6 +5,9 @@ import { useResponsive } from 'src/hooks/use-responsive';
 // components
 import { useSettingsContext } from 'src/components/settings';
 //
+import { useEffect } from 'react';
+import { getProfileData } from 'src/redux/slices/profile';
+import { useDispatch } from 'src/redux/store';
 import { HEADER, NAV } from '../config-layout';
 
 // ----------------------------------------------------------------------
@@ -15,6 +18,12 @@ export default function Main({ children, sx, ...other }: BoxProps) {
   const settings = useSettingsContext();
 
   const lgUp = useResponsive('up', 'lg');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getProfileData());
+  }, []);
 
   const isNavHorizontal = settings.themeLayout === 'horizontal';
 
