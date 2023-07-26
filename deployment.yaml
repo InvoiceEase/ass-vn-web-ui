@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ass-vn-web-svc
+spec:
+  selector:
+    app: ass-vn-web-svc
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 3000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ass-vn-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ass-vn-web
+  template:
+    metadata:
+      labels:
+        app: ass-vn-web
+    spec:
+      containers:
+        - name: ass-vn-web
+          image: 024839167432.dkr.ecr.us-west-2.amazonaws.com/ass-vn-web-ui:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: nextjs-config
