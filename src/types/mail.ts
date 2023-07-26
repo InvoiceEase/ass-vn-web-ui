@@ -39,6 +39,7 @@ export type IMail = {
   isIncludedXml: boolean;
   isIncludedPdf: boolean;
   isRead: boolean;
+  attachmentFolderPath: string;
 };
 
 // export type IMail = {

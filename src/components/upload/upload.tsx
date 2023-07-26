@@ -9,12 +9,15 @@ import Typography from '@mui/material/Typography';
 // assets
 import { UploadIllustration } from 'src/assets/illustrations';
 //
+import Alert from '@mui/material/Alert';
+
 import Iconify from '../iconify';
 //
 import { UploadProps } from './types';
 import RejectionFiles from './errors-rejection-files';
 import MultiFilePreview from './preview-multi-file';
 import SingleFilePreview from './preview-single-file';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -32,17 +35,28 @@ export default function Upload({
   onUpload,
   onRemove,
   onRemoveAll,
+  mail,
   sx,
   ...other
 }: UploadProps) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple,
     disabled,
+    accept: { 'application/xml': [], 'application/pdf': [] },
     ...other,
   });
 
+  const renderText = () => {
+    if (!mail.isIncludedPdf) {
+      return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
+    }
+    if (!mail.isIncludedXml) {
+      return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
+    }
+    return '';
+  };
   const hasFile = !!file && !multiple;
-
+  const [errorPop, setErrorPop] = useState(false);
   const hasFiles = !!files && multiple && !!files.length;
 
   const hasError = isDragReject || !!error;
@@ -51,20 +65,9 @@ export default function Upload({
     <Stack spacing={3} alignItems="center" justifyContent="center" flexWrap="wrap">
       <UploadIllustration sx={{ width: 1, maxWidth: 200 }} />
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
-        <Typography variant="h6">Drop or Select file</Typography>
+        <Typography variant="h6">Chọn file</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Drop files here or click
-          <Box
-            component="span"
-            sx={{
-              mx: 0.5,
-              color: 'primary.main',
-              textDecoration: 'underline',
-            }}
-          >
-            browse
-          </Box>
-          thorough your machine
+          {renderText()}
         </Typography>
       </Stack>
     </Stack>
@@ -103,7 +106,7 @@ export default function Upload({
       <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
         {onRemoveAll && (
           <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-            Remove All
+            Hủy
           </Button>
         )}
 
@@ -114,59 +117,66 @@ export default function Upload({
             onClick={onUpload}
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
-            Upload
+            Tải lên
           </Button>
         )}
       </Stack>
     </>
   );
-
+  useEffect(() => {
+    files?.length > 2 ? removeFile() : setErrorPop(false);
+  }, [files]);
+  const removeFile = () => {
+    setErrorPop(true);
+    files?.pop();
+  };
   return (
-    <Box sx={{ width: 1, position: 'relative', ...sx }}>
-      <Box
-        {...getRootProps()}
-        sx={{
-          p: 5,
-          outline: 'none',
-          borderRadius: 1,
-          cursor: 'pointer',
-          overflow: 'hidden',
-          position: 'relative',
-          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-          border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
-          transition: (theme) => theme.transitions.create(['opacity', 'padding']),
-          '&:hover': {
-            opacity: 0.72,
-          },
-          ...(isDragActive && {
-            opacity: 0.72,
-          }),
-          ...(disabled && {
-            opacity: 0.48,
-            pointerEvents: 'none',
-          }),
-          ...(hasError && {
-            color: 'error.main',
-            bgcolor: 'error.lighter',
-            borderColor: 'error.light',
-          }),
-          ...(hasFile && {
-            padding: '24% 0',
-          }),
-        }}
-      >
-        <input {...getInputProps()} />
 
-        {hasFile ? renderSinglePreview : renderPlaceholder}
+      <Box sx={{ width: 1, position: 'relative', ...sx }}>
+        <Box
+          {...getRootProps()}
+          sx={{
+            p: 5,
+            outline: 'none',
+            borderRadius: 1,
+            cursor: 'pointer',
+            overflow: 'hidden',
+            position: 'relative',
+            bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+            border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
+            transition: (theme) => theme.transitions.create(['opacity', 'padding']),
+            '&:hover': {
+              opacity: 0.72,
+            },
+            ...(isDragActive && {
+              opacity: 0.72,
+            }),
+            ...(disabled && {
+              opacity: 0.48,
+              pointerEvents: 'none',
+            }),
+            ...(hasError && {
+              color: 'error.main',
+              bgcolor: 'error.lighter',
+              borderColor: 'error.light',
+            }),
+            ...(hasFile && {
+              padding: '24% 0',
+            }),
+          }}
+        >
+          <input {...getInputProps()} />
+
+          {hasFile ? renderSinglePreview : renderPlaceholder}
+        </Box>
+
+        {removeSinglePreview}
+
+        {helperText && helperText}
+        {!!errorPop && <Alert sx={{mt: 5}} severity="error">CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE THÔI NHE</Alert>}
+        <RejectionFiles fileRejections={fileRejections} />
+
+        {files?.length <= 2 && renderMultiPreview}
       </Box>
-
-      {removeSinglePreview}
-
-      {helperText && helperText}
-
-      <RejectionFiles fileRejections={fileRejections} />
-
-      {renderMultiPreview}
-    </Box>
   );
 }
