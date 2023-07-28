@@ -10,16 +10,15 @@ import { fDateTime } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Editor from 'src/components/editor';
 import EmptyContent from 'src/components/empty-content';
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
 // types
-import { IMail, IMailLabel } from 'src/types/mail';
-import FileUpload from 'src/components/file-uploader/file-uploader';
 import { useState } from 'react';
+import FileUpload from 'src/components/file-uploader/file-uploader';
+import { IMail, IMailLabel } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
 
@@ -264,7 +263,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
   };
   return (
     <>
-      {openUpload && <FileUpload isOpen={openUpload} onCanCel= {()=> resetUpload()} mail= {mail} />}
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} mail={mail} />}
       <Stack
         flexGrow={1}
         sx={{

@@ -1,11 +1,11 @@
 import { useDropzone } from 'react-dropzone';
 // @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 // assets
 import { UploadIllustration } from 'src/assets/illustrations';
 //
@@ -13,11 +13,11 @@ import Alert from '@mui/material/Alert';
 
 import Iconify from '../iconify';
 //
-import { UploadProps } from './types';
+import { useEffect, useState } from 'react';
 import RejectionFiles from './errors-rejection-files';
 import MultiFilePreview from './preview-multi-file';
 import SingleFilePreview from './preview-single-file';
-import { useEffect, useState } from 'react';
+import { UploadProps } from './types';
 
 // ----------------------------------------------------------------------
 
@@ -46,10 +46,10 @@ export default function Upload({
     ...other,
   });
   const renderText = () => {
-    if (!mail.isIncludedPdf) {
+    if (!mail?.isIncludedPdf) {
       return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
     }
-    if (!mail.isIncludedXml) {
+    if (!mail?.isIncludedXml) {
       return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
     }
     return 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
@@ -123,59 +123,68 @@ export default function Upload({
     </>
   );
   useEffect(() => {
-    files?.length > 2 ? removeFile() : setErrorPop(false);
+    if (files?.length) {
+      if (files?.length > 2) {
+        removeFile();
+      } else {
+        setErrorPop(false);
+      }
+    }
   }, [files]);
   const removeFile = () => {
     setErrorPop(true);
     files?.pop();
   };
   return (
+    <Box sx={{ width: 1, position: 'relative', ...sx }}>
+      <Box
+        {...getRootProps()}
+        sx={{
+          p: 5,
+          outline: 'none',
+          borderRadius: 1,
+          cursor: 'pointer',
+          overflow: 'hidden',
+          position: 'relative',
+          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+          border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
+          transition: (theme) => theme.transitions.create(['opacity', 'padding']),
+          '&:hover': {
+            opacity: 0.72,
+          },
+          ...(isDragActive && {
+            opacity: 0.72,
+          }),
+          ...(disabled && {
+            opacity: 0.48,
+            pointerEvents: 'none',
+          }),
+          ...(hasError && {
+            color: 'error.main',
+            bgcolor: 'error.lighter',
+            borderColor: 'error.light',
+          }),
+          ...(hasFile && {
+            padding: '24% 0',
+          }),
+        }}
+      >
+        <input {...getInputProps()} />
 
-      <Box sx={{ width: 1, position: 'relative', ...sx }}>
-        <Box
-          {...getRootProps()}
-          sx={{
-            p: 5,
-            outline: 'none',
-            borderRadius: 1,
-            cursor: 'pointer',
-            overflow: 'hidden',
-            position: 'relative',
-            bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-            border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
-            transition: (theme) => theme.transitions.create(['opacity', 'padding']),
-            '&:hover': {
-              opacity: 0.72,
-            },
-            ...(isDragActive && {
-              opacity: 0.72,
-            }),
-            ...(disabled && {
-              opacity: 0.48,
-              pointerEvents: 'none',
-            }),
-            ...(hasError && {
-              color: 'error.main',
-              bgcolor: 'error.lighter',
-              borderColor: 'error.light',
-            }),
-            ...(hasFile && {
-              padding: '24% 0',
-            }),
-          }}
-        >
-          <input {...getInputProps()} />
-
-          {hasFile ? renderSinglePreview : renderPlaceholder}
-        </Box>
-
-        {removeSinglePreview}
-
-        {helperText && helperText}
-        {!!errorPop && <Alert sx={{mt: 5}} severity="error">CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE THÔI NHE</Alert>}
-        <RejectionFiles fileRejections={fileRejections} />
-
-        {files?.length <= 2 && renderMultiPreview}
+        {hasFile ? renderSinglePreview : renderPlaceholder}
       </Box>
+
+      {removeSinglePreview}
+
+      {helperText && helperText}
+      {!!errorPop && (
+        <Alert sx={{ mt: 5 }} severity="error">
+          CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE THÔI NHE
+        </Alert>
+      )}
+      <RejectionFiles fileRejections={fileRejections} />
+
+      {files?.length && files?.length <= 2 && renderMultiPreview}
+    </Box>
   );
 }

@@ -1,24 +1,13 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogProps,
-  DialogTitle,
-  List,
-  Button,
-} from '@mui/material';
+import { Dialog, DialogContent, DialogProps, DialogTitle } from '@mui/material';
 import { useEffect, useState } from 'react';
-import Dropzone from 'react-dropzone';
-import UploadPage from 'src/app/components/extra/upload/page';
-import { getBusinesses, setSelectedBusiness } from 'src/redux/slices/business';
-import { getMails } from 'src/redux/slices/mail';
-import { useDispatch, useSelector } from 'src/redux/store';
+import { useDispatch } from 'src/redux/store';
+import UploadView from 'src/sections/_examples/extra/upload-view';
 import { IMail } from 'src/types/mail';
 import Iconify from '../iconify/iconify';
 
 type Props = {
   mail: IMail;
-  onCanCel: () => {};
+  onCanCel: () => void;
   isOpen: boolean;
 };
 
@@ -36,7 +25,6 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
     setOpen(isOpen);
   }, []);
 
-
   return (
     <Dialog
       open={open}
@@ -47,13 +35,13 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
       <DialogTitle
         id="scroll-dialog-title"
         align="right"
-        sx={{ cursor: "" }}
+        sx={{ cursor: '' }}
         onClick={() => onClickCancel()}
       >
         <Iconify icon="material-symbols:close" />
       </DialogTitle>
       <DialogContent sx={{ alignItems: 'end' }}>
-        <UploadPage mail={mail} onClickCancel={()=>onClickCancel()}/>
+        <UploadView mail={mail} onClickCancel={onClickCancel} />
       </DialogContent>
     </Dialog>
   );

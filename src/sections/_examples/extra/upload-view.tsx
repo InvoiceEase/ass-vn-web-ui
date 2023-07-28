@@ -1,40 +1,30 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import Container from '@mui/material/Container';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import { getMails } from 'src/redux/slices/mail';
 
 // routes
 import { paths } from 'src/routes/paths';
 // utils
-import { fData } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Iconify from 'src/components/iconify';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { UploadAvatar, Upload, UploadBox } from 'src/components/upload';
-import { Button } from '@mui/material';
-import { IMail } from 'src/types/mail';
 import axios from 'axios';
-import fs from 'fs';
-import { useRouter } from 'src/routes/hook';
-import { LoadingScreen, SplashScreen } from 'src/components/loading-screen';
-import { useDispatch } from 'react-redux';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { Upload } from 'src/components/upload';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useDispatch } from 'src/redux/store';
+import { useRouter } from 'src/routes/hook';
+import { IMail } from 'src/types/mail';
 // ----------------------------------------------------------------------
 type Props = {
   mail: IMail;
-  onClickCancel: () => null;
+  onClickCancel: () => void;
 };
 
 export default function UploadView({ mail, onClickCancel }: Props) {
@@ -104,7 +94,6 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     />
   );
   const handleUpload = () => {
-
     const data = new FormData();
     files.forEach((f) => {
       data.append('files', f);
@@ -136,14 +125,12 @@ export default function UploadView({ mail, onClickCancel }: Props) {
             dispatch(
               getMails(
                 roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
-                businessSearchQuery,
+                businessSearchQuery ?? ''
               )
             );
             router.replace(`${paths.dashboard.mail}/?id=${mail.id}`);
           }
-
         }, 10000);
-
       })
       .catch((error) => {
         console.log(error);
