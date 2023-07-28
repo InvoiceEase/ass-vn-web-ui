@@ -1,14 +1,14 @@
 // @mui
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
-import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -56,25 +56,18 @@ export default function InvoiceTableFiltersResult({
       </Box>
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-
-
-        {/* {filters.status !== 'all' && (
+        {filters.status !== 'all' && (
           <Block label="Status:">
             <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
           </Block>
+        )}
+        {/* {!!filters.service.length && (
+        <Block label="Tính chất hóa đơn:">
+          {filters.service.map((item) => (
+            <Chip key={item} label={item} size="small" onDelete={() => handleRemoveService(item)} />
+          ))}
+        </Block>
         )} */}
-        {/* {!!filters.service.length && ( */}
-          <Block label="Tính chất hóa đơn:">
-            {filters.service.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveService(item)}
-              />
-            ))}
-          </Block>
-        {/* )} */}
         {/* {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />

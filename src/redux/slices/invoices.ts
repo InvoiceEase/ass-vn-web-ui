@@ -136,9 +136,9 @@ export function getInvoiceDetails(invoiceId: string) {
           headers: headersList,
         }
       );
-      dispatch(slice.actions.getInvoicesSuccess(response.data));
+      dispatch(slice.actions.getInvoiceDetailsSuccess(response.data));
     } catch (error) {
-      dispatch(slice.actions.getInvoicesFailure(error));
+      dispatch(slice.actions.getInvoiceDetailsFailure(error));
     }
   };
 }

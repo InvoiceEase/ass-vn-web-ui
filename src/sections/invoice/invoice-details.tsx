@@ -1,8 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
@@ -17,8 +16,11 @@ import Label from 'src/components/label';
 import Scrollbar from 'src/components/scrollbar';
 import { IInvoice } from 'src/types/invoice';
 import { fCurrency } from 'src/utils/format-number';
-import { fDate } from 'src/utils/format-time';
 import InvoiceToolbar from './invoice-toolbar';
+
+import { Divider } from '@mui/material';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 
 // @mui
 
@@ -168,6 +170,55 @@ export default function InvoiceDetails({ invoice }: Props) {
     </TableContainer>
   );
 
+  const [invoicePDFUrl, setInvoicePDFUrl] = useState('');
+
+  const getInvoicePDF = () => {
+    // Create a reference to the file we want to download
+    const storage = getStorage();
+    const starsRef = ref(storage, 'FUck/1C23TPL_00000046.pdf');
+
+    // Get the download URL
+    getDownloadURL(starsRef)
+      .then((url) => {
+        // Insert url into an <img> tag to "download"
+        console.log('NghiaLog: url - ', url);
+        setInvoicePDFUrl(url);
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            console.log('NghiaLog: error - ', error);
+            break;
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            console.log('NghiaLog: error - ', error);
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            console.log('NghiaLog: error - ', error);
+            break;
+
+          // ...
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            console.log('NghiaLog: error - ', error);
+            break;
+        }
+      });
+  };
+
+  useEffect(() => {
+    getInvoicePDF();
+  }, []);
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString();
+  };
+
   return (
     <>
       <InvoiceToolbar
@@ -178,72 +229,87 @@ export default function InvoiceDetails({ invoice }: Props) {
       />
 
       <Card sx={{ pt: 5, px: 5 }}>
-        <Box
-          rowGap={5}
-          display="grid"
-          alignItems="center"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
-          }}
-        >
-          <Box component="div" sx={{ height: 48 }}>
-            <h1>Chi tiết hoá đơn</h1>
+        <h1>Chi tiết hoá đơn</h1>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 2, md: 4 }}>
+          <Box component="div">
+            <iframe src={invoicePDFUrl} width="400px" height="620px" />
           </Box>
+          <Stack spacing={{ xs: 1, sm: 2 }} direction="row">
+            <Stack width="320px" sx={{ mr: 4 }}>
+              <Box sx={{ typography: 'body2', mb: 10 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Đơn vị bán hàng
+                </Typography>
+                {invoice.senderName}
+                <br />
+                {invoice.senderAddress}
+                <br />
+                MST: {invoice.senderTaxcode}
+                <br />
+              </Box>
 
-          <Stack spacing={1} alignItems={{ xs: 'flex-start', md: 'flex-end' }}>
-            <Label
-              variant="soft"
-              color={
-                (currentStatus === 'paid' && 'success') ||
-                (currentStatus === 'pending' && 'warning') ||
-                (currentStatus === 'overdue' && 'error') ||
-                'default'
-              }
-            >
-              {currentStatus}
-            </Label>
-
-            <Typography variant="h6">{invoice.invoiceNumber}</Typography>
+              <Box sx={{ typography: 'body2' }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Đơn vị mua hàng
+                </Typography>
+                {invoice.receiverName}
+                <br />
+                {invoice.receiverAddress}
+                <br />
+                MST: {invoice.receiverTaxCode}
+                <br />
+              </Box>
+            </Stack>
+            <Stack spacing={1} direction="column">
+              <Label
+                variant="soft"
+                color={
+                  (currentStatus === InvoiceStatusConfig.approved.status &&
+                    InvoiceStatusConfig.approved.color) ||
+                  (currentStatus === InvoiceStatusConfig.authenticated.status &&
+                    InvoiceStatusConfig.authenticated.color) ||
+                  (currentStatus === InvoiceStatusConfig.unapproved.status &&
+                    InvoiceStatusConfig.unapproved.color) ||
+                  (currentStatus === InvoiceStatusConfig.unauthenticated.status &&
+                    InvoiceStatusConfig.unauthenticated.color) ||
+                  (currentStatus === InvoiceStatusConfig.wrong.status &&
+                    InvoiceStatusConfig.wrong.color) ||
+                  'default'
+                }
+              >
+                {currentStatus}
+              </Label>
+              <Box sx={{ typography: 'body2' }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Thông tin hoá đơn
+                </Typography>
+                Kí hiệu: {invoice.invoiceSerial}
+                <br />
+                Số: {invoice.invoiceNumber}
+                <br />
+                Ngày hoá đơn: {formatDate(invoice.invoiceCreatedDate)}
+                <br />
+                Ngày nhận: {formatDate(invoice.invoiceCreatedDate)}
+                <br />
+              </Box>
+              <Divider style={{ marginBottom: 10, marginTop: 10 }} color="primary" />
+              <Box sx={{ typography: 'body2' }}>
+                Tổng tiền trước thuế: {fCurrency(invoice.subTotal)}
+                <br />
+                Tiền thuế GTGT: {fCurrency(invoice.taxAmountTotal)}
+                <br />
+                Tổng tiền thanh toán: {fCurrency(invoice.totalPrice)}
+                <br />
+              </Box>
+            </Stack>
           </Stack>
 
-          <Stack sx={{ typography: 'body2' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Invoice From
-            </Typography>
-            {invoice.senderName}
-            <br />
-            {invoice.senderAddress}
-            <br />
-            MST: {invoice.senderTaxcode}
-            <br />
-          </Stack>
+          {/* {renderList} */}
 
-          <Stack sx={{ typography: 'body2' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Invoice To
-            </Typography>
-            {invoice.receiverName}
-            <br />
-            {invoice.receiverAddress}
-            <br />
-            MST: {invoice.receiverTaxCode}
-            <br />
-          </Stack>
+          {/* <Divider sx={{ mt: 5, borderStyle: 'dashed' }} /> */}
 
-          <Stack sx={{ typography: 'body2' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Date Create
-            </Typography>
-            {fDate(invoice.invoiceCreatedDate)}
-          </Stack>
-        </Box>
-
-        {/* {renderList} */}
-
-        <Divider sx={{ mt: 5, borderStyle: 'dashed' }} />
-
-        {/* {renderFooter} */}
+          {/* {renderFooter} */}
+        </Stack>
       </Card>
     </>
   );

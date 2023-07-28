@@ -3,9 +3,7 @@
 // @mui
 import Container from '@mui/material/Container';
 // routes
-import { paths } from 'src/routes/paths';
 // components
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSettingsContext } from 'src/components/settings';
 import { useParams } from 'src/routes/hook';
 //
@@ -36,7 +34,7 @@ export default function InvoiceDetailsView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
+      {/* <CustomBreadcrumbs
         heading={currentInvoice?.invoiceNumber}
         links={[
           {
@@ -50,7 +48,7 @@ export default function InvoiceDetailsView() {
           { name: currentInvoice?.invoiceNumber },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
-      />
+      /> */}
 
       <InvoiceDetails invoice={currentInvoice ?? currentInvoiceFromList} />
     </Container>

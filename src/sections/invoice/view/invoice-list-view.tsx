@@ -49,6 +49,7 @@ import { useDispatch, useSelector } from 'src/redux/store';
 import InvoiceTableFiltersResult from '../invoice-table-filters-result';
 import InvoiceTableRow from '../invoice-table-row';
 import InvoiceTableToolbar from '../invoice-table-toolbar';
+import { InvoiceStatusConfig } from '../InvoiceStatusConfig';
 
 // ----------------------------------------------------------------------
 
@@ -117,7 +118,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const dateError = isDateError(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: _invoices,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -152,30 +153,35 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   const TABS = [
     { value: 'all', label: 'Tất cả', color: 'default', count: tableData.length },
-    { value: 'approved', label: 'Đã duyệt', color: 'success', count: getInvoiceLength('Đã duyệt') },
     {
-      value: 'authenticated',
-      label: 'Đã xác thực',
-      color: 'warning',
-      count: getInvoiceLength('Đã xác thực'),
+      value: InvoiceStatusConfig.approved.status,
+      label: InvoiceStatusConfig.approved.status,
+      color: InvoiceStatusConfig.approved.color,
+      count: getInvoiceLength(InvoiceStatusConfig.approved.status),
     },
     {
-      value: 'unauthenticated',
-      label: 'Chưa xác thực',
-      color: 'primary',
-      count: getInvoiceLength('Chưa xác thực'),
+      value: InvoiceStatusConfig.authenticated.status,
+      label: InvoiceStatusConfig.authenticated.status,
+      color: InvoiceStatusConfig.authenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.authenticated.status),
     },
     {
-      value: 'unapproved',
-      label: 'Không duyệt',
-      color: 'error',
-      count: getInvoiceLength('Không duyệt'),
+      value: InvoiceStatusConfig.unauthenticated.status,
+      label: InvoiceStatusConfig.unauthenticated.status,
+      color: InvoiceStatusConfig.unauthenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.unauthenticated.status),
     },
     {
-      value: 'wrong',
-      label: 'Sai thông tin',
-      color: 'default',
-      count: getInvoiceLength('Sai thông tin'),
+      value: InvoiceStatusConfig.unapproved.status,
+      label: InvoiceStatusConfig.unapproved.status,
+      color: InvoiceStatusConfig.unapproved.color,
+      count: getInvoiceLength(InvoiceStatusConfig.unapproved.status),
+    },
+    {
+      value: InvoiceStatusConfig.wrong.status,
+      label: InvoiceStatusConfig.wrong.status,
+      color: InvoiceStatusConfig.wrong.color,
+      count: getInvoiceLength(InvoiceStatusConfig.wrong.status),
     },
   ] as const;
 
@@ -434,7 +440,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
               />
 
               <TableBody>
-                {_invoices
+                {dataFiltered
                   .slice(
                     table.page * table.rowsPerPage,
                     table.page * table.rowsPerPage + table.rowsPerPage

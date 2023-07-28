@@ -21,6 +21,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
+import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 
 // ----------------------------------------------------------------------
 
@@ -52,8 +53,6 @@ export default function InvoiceTableRow({
     receiverName,
     senderName,
   } = row;
-
-  console.log('NghiaLog: isInputInvoice - ', isInputInvoice);
 
   const confirm = useBoolean();
 
@@ -106,9 +105,15 @@ export default function InvoiceTableRow({
           <Label
             variant="soft"
             color={
-              (status === 'paid' && 'success') ||
-              (status === 'pending' && 'warning') ||
-              (status === 'overdue' && 'error') ||
+              (status === InvoiceStatusConfig.approved.status &&
+                InvoiceStatusConfig.approved.color) ||
+              (status === InvoiceStatusConfig.authenticated.status &&
+                InvoiceStatusConfig.authenticated.color) ||
+              (status === InvoiceStatusConfig.unapproved.status &&
+                InvoiceStatusConfig.unapproved.color) ||
+              (status === InvoiceStatusConfig.unauthenticated.status &&
+                InvoiceStatusConfig.unauthenticated.color) ||
+              (status === InvoiceStatusConfig.wrong.status && InvoiceStatusConfig.wrong.color) ||
               'default'
             }
           >
