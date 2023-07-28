@@ -115,10 +115,16 @@ export function useNavData(role: string | null = 'ADMIN') {
             path: paths.dashboard.invoice.root,
             icon: ICONS.invoice,
             children: [
-              { title: t('list'), path: paths.dashboard.invoice.root },
-              { title: t('details'), path: paths.dashboard.invoice.demo.details },
-              { title: t('create'), path: paths.dashboard.invoice.new },
-              { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
+              {
+                title: 'Hoá đơn đầu vào',
+                path: paths.dashboard.invoice.root,
+              },
+              {
+                title: 'Hoá đơn đầu ra',
+                path: paths.dashboard.invoice.output,
+              },
+              // { title: t('create'), path: paths.dashboard.invoice.new },
+              // { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
             ],
           },
           // STORAGE
@@ -368,10 +374,18 @@ export function useNavData(role: string | null = 'ADMIN') {
             path: paths.dashboard.invoice.root,
             icon: ICONS.invoice,
             children: [
-              { title: t('list'), path: paths.dashboard.invoice.root },
-              { title: t('details'), path: paths.dashboard.invoice.demo.details },
-              { title: t('create'), path: paths.dashboard.invoice.new },
-              { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
+              {
+                title: 'Hoá đơn đầu vào',
+                path: paths.dashboard.invoice.root,
+                param: { isInputInvoice: true },
+              },
+              {
+                title: 'Hoá đơn đầu ra',
+                path: paths.dashboard.invoice.demo.details,
+                param: { isInputInvoice: false },
+              },
+              // { title: t('create'), path: paths.dashboard.invoice.new },
+              // { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
             ],
           },
           // STORAGE

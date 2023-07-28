@@ -3,40 +3,26 @@ import { useCallback, useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Unstable_Grid2';
-import { IInvoice } from 'src/types/invoice';
-import { INVOICE_STATUS_OPTIONS } from 'src/_mock';
-import InvoiceToolbar from './invoice-toolbar';
-import Label from 'src/components/label';
-import Scrollbar from 'src/components/scrollbar';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2';
+import { styled } from '@mui/material/styles';
+import { INVOICE_STATUS_OPTIONS } from 'src/_mock';
+import Label from 'src/components/label';
+import Scrollbar from 'src/components/scrollbar';
+import { IInvoice } from 'src/types/invoice';
 import { fCurrency } from 'src/utils/format-number';
 import { fDate } from 'src/utils/format-time';
-import { styled } from '@mui/material/styles';
+import InvoiceToolbar from './invoice-toolbar';
 
 // @mui
 
-
-
-
-
-
-
-
-
-
-
-
-
 // utils
-
 
 // _mock
 
@@ -44,9 +30,7 @@ import { styled } from '@mui/material/styles';
 
 // components
 
-
 //
-
 
 // ----------------------------------------------------------------------
 
@@ -86,7 +70,7 @@ export default function InvoiceDetails({ invoice }: Props) {
         </TableCell>
       </StyledTableRow>
 
-      <StyledTableRow>
+      {/* <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Shipping</TableCell>
         <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
@@ -100,19 +84,19 @@ export default function InvoiceDetails({ invoice }: Props) {
         <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
           {fCurrency(-invoice.discount)}
         </TableCell>
-      </StyledTableRow>
+      </StyledTableRow> */}
 
       <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Taxes</TableCell>
-        <TableCell width={120}>{fCurrency(invoice.taxes)}</TableCell>
+        <TableCell width={120}>{fCurrency(invoice.taxAmountTotal)}</TableCell>
       </StyledTableRow>
 
       <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ typography: 'subtitle1' }}>Total</TableCell>
         <TableCell width={140} sx={{ typography: 'subtitle1' }}>
-          {fCurrency(invoice.totalAmount)}
+          {fCurrency(invoice.totalPrice)}
         </TableCell>
       </StyledTableRow>
     </>
@@ -154,7 +138,7 @@ export default function InvoiceDetails({ invoice }: Props) {
             </TableRow>
           </TableHead>
 
-          <TableBody>
+          {/* <TableBody>
             {invoice.items.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
@@ -178,7 +162,7 @@ export default function InvoiceDetails({ invoice }: Props) {
             ))}
 
             {renderTotal}
-          </TableBody>
+          </TableBody> */}
         </Table>
       </Scrollbar>
     </TableContainer>
@@ -203,12 +187,9 @@ export default function InvoiceDetails({ invoice }: Props) {
             sm: 'repeat(2, 1fr)',
           }}
         >
-          <Box
-            component="img"
-            alt="logo"
-            src="/logo/logo_single.svg"
-            sx={{ width: 48, height: 48 }}
-          />
+          <Box component="div" sx={{ height: 48 }}>
+            <h1>Chi tiết hoá đơn</h1>
+          </Box>
 
           <Stack spacing={1} alignItems={{ xs: 'flex-start', md: 'flex-end' }}>
             <Label
@@ -230,11 +211,11 @@ export default function InvoiceDetails({ invoice }: Props) {
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Invoice From
             </Typography>
-            {invoice.invoiceFrom.name}
+            {invoice.senderName}
             <br />
-            {invoice.invoiceFrom.fullAddress}
+            {invoice.senderAddress}
             <br />
-            Phone: {invoice.invoiceFrom.phoneNumber}
+            MST: {invoice.senderTaxcode}
             <br />
           </Stack>
 
@@ -242,11 +223,11 @@ export default function InvoiceDetails({ invoice }: Props) {
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Invoice To
             </Typography>
-            {invoice.invoiceTo.name}
+            {invoice.receiverName}
             <br />
-            {invoice.invoiceTo.fullAddress}
+            {invoice.receiverAddress}
             <br />
-            Phone: {invoice.invoiceTo.phoneNumber}
+            MST: {invoice.receiverTaxCode}
             <br />
           </Stack>
 
@@ -254,22 +235,15 @@ export default function InvoiceDetails({ invoice }: Props) {
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Date Create
             </Typography>
-            {fDate(invoice.createDate)}
-          </Stack>
-
-          <Stack sx={{ typography: 'body2' }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>
-              Due Date
-            </Typography>
-            {fDate(invoice.dueDate)}
+            {fDate(invoice.invoiceCreatedDate)}
           </Stack>
         </Box>
 
-        {renderList}
+        {/* {renderList} */}
 
         <Divider sx={{ mt: 5, borderStyle: 'dashed' }} />
 
-        {renderFooter}
+        {/* {renderFooter} */}
       </Card>
     </>
   );

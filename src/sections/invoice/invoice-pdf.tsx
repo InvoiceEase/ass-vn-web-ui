@@ -1,15 +1,13 @@
 import { Document, Font, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 
+import { useMemo } from 'react';
 import { IInvoice } from 'src/types/invoice';
 import { fCurrency } from 'src/utils/format-number';
 import { fDate } from 'src/utils/format-time';
-import { useMemo } from 'react';
 
 // utils
 
-
 // types
-
 
 // ----------------------------------------------------------------------
 
@@ -97,15 +95,14 @@ type Props = {
 
 export default function InvoicePDF({ invoice, currentStatus }: Props) {
   const {
-    items,
-    taxes,
-    dueDate,
-    discount,
-    shipping,
-    invoiceTo,
-    createDate,
-    totalAmount,
-    invoiceFrom,
+    receiverName,
+    receiverAddress,
+    receiverTaxCode,
+    invoiceCreatedDate,
+    totalPrice,
+    senderName,
+    senderAddress,
+    senderTaxcode,
     invoiceNumber,
     subTotal,
   } = invoice;
@@ -127,28 +124,28 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
         <View style={[styles.gridContainer, styles.mb40]}>
           <View style={styles.col6}>
             <Text style={[styles.subtitle2, styles.mb4]}>Invoice from</Text>
-            <Text style={styles.body2}>{invoiceFrom.name}</Text>
-            <Text style={styles.body2}>{invoiceFrom.fullAddress}</Text>
-            <Text style={styles.body2}>{invoiceFrom.phoneNumber}</Text>
+            <Text style={styles.body2}>{senderName}</Text>
+            <Text style={styles.body2}>{senderAddress}</Text>
+            <Text style={styles.body2}>{senderTaxcode}</Text>
           </View>
 
           <View style={styles.col6}>
             <Text style={[styles.subtitle2, styles.mb4]}>Invoice to</Text>
-            <Text style={styles.body2}>{invoiceTo.name}</Text>
-            <Text style={styles.body2}>{invoiceTo.fullAddress}</Text>
-            <Text style={styles.body2}>{invoiceTo.phoneNumber}</Text>
+            <Text style={styles.body2}>{receiverName}</Text>
+            <Text style={styles.body2}>{receiverAddress}</Text>
+            <Text style={styles.body2}>{receiverTaxCode}</Text>
           </View>
         </View>
 
         <View style={[styles.gridContainer, styles.mb40]}>
           <View style={styles.col6}>
             <Text style={[styles.subtitle2, styles.mb4]}>Date create</Text>
-            <Text style={styles.body2}>{fDate(createDate)}</Text>
+            <Text style={styles.body2}>{fDate(invoiceCreatedDate)}</Text>
           </View>
-          <View style={styles.col6}>
+          {/* <View style={styles.col6}>
             <Text style={[styles.subtitle2, styles.mb4]}>Due date</Text>
             <Text style={styles.body2}>{fDate(dueDate)}</Text>
-          </View>
+          </View> */}
         </View>
 
         <Text style={[styles.subtitle1, styles.mb8]}>Invoice Details</Text>
@@ -179,7 +176,7 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
           </View>
 
           <View>
-            {items.map((item, index) => (
+            {/* {items.map((item, index) => (
               <View style={styles.tableRow} key={item.id}>
                 <View style={styles.tableCell_1}>
                   <Text>{index + 1}</Text>
@@ -202,7 +199,7 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
                   <Text>{fCurrency(item.price * item.quantity)}</Text>
                 </View>
               </View>
-            ))}
+            ))} */}
 
             <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
@@ -216,7 +213,7 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
               </View>
             </View>
 
-            <View style={[styles.tableRow, styles.noBorder]}>
+            {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />
               <View style={styles.tableCell_3} />
@@ -226,9 +223,9 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
               <View style={[styles.tableCell_3, styles.alignRight]}>
                 <Text>{fCurrency(-shipping)}</Text>
               </View>
-            </View>
+            </View> */}
 
-            <View style={[styles.tableRow, styles.noBorder]}>
+            {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />
               <View style={styles.tableCell_3} />
@@ -238,9 +235,9 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
               <View style={[styles.tableCell_3, styles.alignRight]}>
                 <Text>{fCurrency(-discount)}</Text>
               </View>
-            </View>
+            </View> */}
 
-            <View style={[styles.tableRow, styles.noBorder]}>
+            {/* <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
               <View style={styles.tableCell_2} />
               <View style={styles.tableCell_3} />
@@ -250,7 +247,7 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
               <View style={[styles.tableCell_3, styles.alignRight]}>
                 <Text>{fCurrency(taxes)}</Text>
               </View>
-            </View>
+            </View> */}
 
             <View style={[styles.tableRow, styles.noBorder]}>
               <View style={styles.tableCell_1} />
@@ -260,7 +257,7 @@ export default function InvoicePDF({ invoice, currentStatus }: Props) {
                 <Text style={styles.h4}>Total</Text>
               </View>
               <View style={[styles.tableCell_3, styles.alignRight]}>
-                <Text style={styles.h4}>{fCurrency(totalAmount)}</Text>
+                <Text style={styles.h4}>{fCurrency(totalPrice)}</Text>
               </View>
             </View>
           </View>
