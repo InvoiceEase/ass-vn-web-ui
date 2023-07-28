@@ -207,6 +207,9 @@ export default function InvoiceDetails({ invoice }: Props) {
             // Unknown error occurred, inspect the server response
             console.log('NghiaLog: error - ', error);
             break;
+
+          default:
+            break;
         }
       });
   };
@@ -215,10 +218,7 @@ export default function InvoiceDetails({ invoice }: Props) {
     getInvoicePDF();
   }, []);
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString();
-  };
-
+  const formatDate = (date: string) => new Date(date).toLocaleDateString();
   return (
     <>
       <InvoiceToolbar
@@ -232,7 +232,7 @@ export default function InvoiceDetails({ invoice }: Props) {
         <h1>Chi tiết hoá đơn</h1>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 2, md: 4 }}>
           <Box component="div">
-            <iframe src={invoicePDFUrl} width="400px" height="620px" />
+            <iframe title="pdf-viewer" src={invoicePDFUrl} width="400px" height="620px" />
           </Box>
           <Stack spacing={{ xs: 1, sm: 2 }} direction="row">
             <Stack width="320px" sx={{ mr: 4 }}>

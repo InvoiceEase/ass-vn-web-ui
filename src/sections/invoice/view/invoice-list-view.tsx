@@ -88,7 +88,7 @@ function useInitial() {
 
   useEffect(() => {
     getInvoicessCallback();
-  }, [getInvoicessCallback]);
+  }, [getInvoicessCallback, orgId, selectedBusinessID]);
 
   return null;
 }

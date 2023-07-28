@@ -1,7 +1,7 @@
-import { useMemo, useCallback } from 'react';
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import Card from '@mui/material/Card';
@@ -9,18 +9,17 @@ import Stack from '@mui/material/Stack';
 // routes
 import { paths } from 'src/routes/paths';
 // types
-import { IInvoice } from 'src/types/invoice';
 import { IAddressItem } from 'src/types/address';
+import { IInvoice } from 'src/types/invoice';
 // _mock
-import { _addressBooks } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import FormProvider from 'src/components/hook-form';
 import { useRouter } from 'src/routes/hook';
 //
-import InvoiceNewEditDetails from './invoice-new-edit-details';
 import InvoiceNewEditAddress from './invoice-new-edit-address';
+import InvoiceNewEditDetails from './invoice-new-edit-details';
 import InvoiceNewEditStatusDate from './invoice-new-edit-status-date';
 
 // ----------------------------------------------------------------------
@@ -35,7 +34,7 @@ interface FormValuesProps extends IFormValuesProps {
 }
 
 type Props = {
-  currentInvoice?: FormValuesProps;
+  currentInvoice?: IInvoice | undefined;
 };
 
 export default function InvoiceNewEditForm({ currentInvoice }: Props) {
@@ -56,18 +55,18 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
   const defaultValues = useMemo(
     () => ({
       invoiceNumber: currentInvoice?.invoiceNumber || 'INV-1990',
-      createDate: currentInvoice?.createDate || new Date(),
-      dueDate: currentInvoice?.dueDate || null,
-      taxes: currentInvoice?.taxes || 0,
-      shipping: currentInvoice?.shipping || 0,
+      // createDate: currentInvoice?.createDate || new Date(),
+      // dueDate: currentInvoice?.dueDate || null,
+      // taxes: currentInvoice?.taxes || 0,
+      // shipping: currentInvoice?.shipping || 0,
       status: currentInvoice?.status || 'draft',
-      discount: currentInvoice?.discount || 0,
-      invoiceFrom: currentInvoice?.invoiceFrom || _addressBooks[0],
-      invoiceTo: currentInvoice?.invoiceTo || null,
-      items: currentInvoice?.items || [
-        { title: '', description: '', service: '', quantity: 1, price: 0, total: 0 },
-      ],
-      totalAmount: currentInvoice?.totalAmount || 0,
+      // discount: currentInvoice?.discount || 0,
+      // invoiceFrom: currentInvoice?.invoiceFrom || _addressBooks[0],
+      // invoiceTo: currentInvoice?.invoiceTo || null,
+      // items: currentInvoice?.items || [
+      //   { title: '', description: '', service: '', quantity: 1, price: 0, total: 0 },
+      // ],
+      // totalAmount: currentInvoice?.totalAmount || 0,
     }),
     [currentInvoice]
   );

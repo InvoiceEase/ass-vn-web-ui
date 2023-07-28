@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function InvoiceListPage() {
-  return <InvoiceListView isInputInvoice={true} />;
+  return <InvoiceListView isInputInvoice />;
 }

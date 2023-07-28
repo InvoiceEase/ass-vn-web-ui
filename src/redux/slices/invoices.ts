@@ -100,7 +100,7 @@ export function getInvoices(businessId: string, isInputInvoice?: boolean, page?:
           headers: headersList,
           params: {
             search: '',
-            businessId: businessId,
+            businessId,
             invoiceCharacters: '',
             invoiceStatus: '',
             incomeInvoice: isInputInvoice ?? true,
