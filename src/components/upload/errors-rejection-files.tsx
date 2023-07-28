@@ -37,12 +37,12 @@ export default function RejectionFiles({ fileRejections }: Props) {
         return (
           <Box key={path} sx={{ my: 1 }}>
             <Typography variant="subtitle2" noWrap>
-              {path} - {size ? fData(size) : ''}
+               {path}
             </Typography>
 
             {errors.map((error) => (
               <Box key={error.code} component="span" sx={{ typography: 'caption' }}>
-                - {error.message}
+                - Yêu cầu file pdf hoặc xml
               </Box>
             ))}
           </Box>
