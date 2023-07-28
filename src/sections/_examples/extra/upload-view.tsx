@@ -25,15 +25,19 @@ import { Button } from '@mui/material';
 import { IMail } from 'src/types/mail';
 import axios from 'axios';
 import fs from 'fs';
+import { useRouter } from 'src/routes/hook';
+import { LoadingScreen, SplashScreen } from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 type Props = {
   mail: IMail;
+  onClickCancel: ()=>null;
 };
 
-export default function UploadView({ mail }: Props) {
+export default function UploadView({ mail , onClickCancel}: Props) {
+  const [loading,setLoading] = useState(false);
   const preview = useBoolean();
-
-  const [files, setFiles] = useState<(File)[]>([]);
+  const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
 
   const [file, setFile] = useState<File | string | null>(null);
 
@@ -83,19 +87,49 @@ export default function UploadView({ mail }: Props) {
   const handleRemoveAllFiles = () => {
     setFiles([]);
   };
+  const renderLoading = (
+    <LoadingScreen
+      sx={{
+        borderRadius: 1.5,
+        bgcolor: 'background.default',
+      }}
+    />
+  );
   const handleUpload = () => {
     const data = new FormData();
     files.forEach((f) => {
       data.append('files', f);
     });
     data.append('mailId', mail.id);
-    data.append('mailFilePath', mail.attachmentFolderPath);
+    data.append('attachmentFolderPath', mail.attachmentFolderPath);
+    data.append('emailAddress', mail.mailFrom);
+    setLoading(true);
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
-      headers: { 'content-type': 'multipart/form-data' }
+      headers: {
+        // 'Access-Control-Allow-Origin': '*',
+        // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        'content-type': 'multipart/form-data',
+      },
     };
-    axios.post('https://us-central1-accountant-support-system.cloudfunctions.net/uploadFiles',data,config).then((response) => {}).catch((error) => {console.log(error);});
+    axios
+      .post(
+        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadFiles`,
+        data,
+        config
+      )
+      .then((response) => {
+
+        if(response.status ===200){
+          onClickCancel();
+          // router.replace(paths.dashboard.mail);
+        }
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <>
@@ -172,7 +206,7 @@ export default function UploadView({ mail }: Props) {
               </Stack>
             </CardContent>
           </Card>
-
+          {loading && renderLoading}
           {/* <Card>
             <CardHeader title="Upload Single File" />
             <CardContent>

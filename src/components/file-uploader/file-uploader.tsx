@@ -53,7 +53,7 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
         <Iconify icon="material-symbols:close" />
       </DialogTitle>
       <DialogContent sx={{ alignItems: 'end' }}>
-        <UploadPage mail={mail} />
+        <UploadPage mail={mail} onClickCancel={()=>onClickCancel()}/>
       </DialogContent>
     </Dialog>
   );

@@ -42,7 +42,7 @@ export default function Upload({
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple,
     disabled,
-    accept: { 'application/xml': [], 'application/pdf': [] },
+    accept: { 'text/xml': [], 'application/pdf': [] },
     ...other,
   });
 

@@ -10,8 +10,9 @@ export const metadata = {
 
 type Props = {
   mail: IMail;
+  onClickCancel:()=>null;
 };
 
-export default function UploadPage({mail}:Props) {
-  return <UploadView  mail={mail}/>;
+export default function UploadPage({mail, onClickCancel}:Props) {
+  return <UploadView  mail={mail} onClickCancel={onClickCancel}/>;
 }
