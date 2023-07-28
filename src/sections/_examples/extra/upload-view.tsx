@@ -1,34 +1,42 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import Container from '@mui/material/Container';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
+import { getMails } from 'src/redux/slices/mail';
+
 // routes
 import { paths } from 'src/routes/paths';
 // utils
-import { fData } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Iconify from 'src/components/iconify';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { UploadAvatar, Upload, UploadBox } from 'src/components/upload';
-
+import axios from 'axios';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { Upload } from 'src/components/upload';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useDispatch } from 'src/redux/store';
+import { useRouter } from 'src/routes/hook';
+import { IMail } from 'src/types/mail';
 // ----------------------------------------------------------------------
+type Props = {
+  mail: IMail;
+  onClickCancel: () => void;
+};
 
-export default function UploadView() {
+export default function UploadView({ mail, onClickCancel }: Props) {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const preview = useBoolean();
-
-  const [files, setFiles] = useState<(File | string)[]>([]);
-
+  const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
+  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID');
+  const roleCode = sessionStorage.getItem('roleCode');
+  const orgId = sessionStorage.getItem('orgId');
+  const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
   const [file, setFile] = useState<File | string | null>(null);
 
   const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
@@ -77,10 +85,60 @@ export default function UploadView() {
   const handleRemoveAllFiles = () => {
     setFiles([]);
   };
+  const renderLoading = (
+    <LoadingScreen
+      sx={{
+        borderRadius: 1.5,
+        bgcolor: 'background.default',
+      }}
+    />
+  );
+  const handleUpload = () => {
+    const data = new FormData();
+    files.forEach((f) => {
+      data.append('files', f);
+    });
+    data.append('mailId', mail.id);
+    data.append('attachmentFolderPath', mail.attachmentFolderPath);
+    data.append('emailAddress', mail.mailFrom);
+    setLoading(true);
 
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      headers: {
+        // 'Access-Control-Allow-Origin': '*',
+        // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        'content-type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post(
+        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadFiles`,
+        data,
+        config
+      )
+      .then((response) => {
+        setTimeout(() => {
+          if (response.status === 200) {
+            onClickCancel();
+            dispatch(
+              getMails(
+                roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
+                businessSearchQuery ?? ''
+              )
+            );
+            router.replace(`${paths.dashboard.mail}/?id=${mail.id}`);
+          }
+        }, 10000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <>
-      <Box
+      {/* <Box
         sx={{
           py: 5,
           bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
@@ -99,12 +157,12 @@ export default function UploadView() {
             moreLink={['https://react-dropzone.js.org/#section-basic-example']}
           />
         </Container>
-      </Box>
+      </Box> */}
 
-      <Container sx={{ my: 10 }}>
+      <Container sx={{ marginBottom: 5 }}>
         <Stack spacing={5}>
           <Card>
-            <CardHeader
+            {/* <CardHeader
               title="Upload Multi File"
               action={
                 <FormControlLabel
@@ -112,21 +170,49 @@ export default function UploadView() {
                   label="Show Thumbnail"
                 />
               }
-            />
+            /> */}
             <CardContent>
-              <Upload
-                multiple
-                thumbnail={preview.value}
-                files={files}
-                onDrop={handleDropMultiFile}
-                onRemove={handleRemoveFile}
-                onRemoveAll={handleRemoveAllFiles}
-                onUpload={() => console.info('ON UPLOAD')}
-              />
+              <Stack
+                spacing={2}
+                sx={{
+                  p: (theme) => theme.spacing(0, 2, 2, 2),
+                }}
+              >
+                <Stack direction="row" alignItems="center" flexGrow={1}>
+                  <Upload
+                    multiple
+                    thumbnail={preview.value}
+                    files={files}
+                    onDrop={handleDropMultiFile}
+                    onRemove={handleRemoveFile}
+                    onRemoveAll={handleRemoveAllFiles}
+                    onUpload={() => handleUpload()}
+                    mail={mail}
+                  />
+                </Stack>
+                {/* <Stack direction="row" alignItems="center" spacing={2}>
+                  <Stack direction="row" alignItems="center" flexGrow={1} />
+                  <Button
+                    variant="outlined"
+                    onClick={()=>onClickCancel()}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+                    variant="contained"
+                    color="primary"
+                    // onClick={() => onClickUpload()}
+                  >
+                    Tải lên
+                  </Button>
+
+                </Stack> */}
+              </Stack>
             </CardContent>
           </Card>
-
-          <Card>
+          {loading && renderLoading}
+          {/* <Card>
             <CardHeader title="Upload Single File" />
             <CardContent>
               <Upload file={file} onDrop={handleDropSingleFile} onDelete={() => setFile(null)} />
@@ -175,7 +261,7 @@ export default function UploadView() {
                 />
               </Stack>
             </CardContent>
-          </Card>
+          </Card> */}
         </Stack>
       </Container>
     </>

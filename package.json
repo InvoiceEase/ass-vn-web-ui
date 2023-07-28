@@ -47,6 +47,7 @@
     "encoding": "^0.1.13",
     "firebase": "^9.22.1",
     "framer-motion": "^10.12.16",
+    "fs": "^0.0.1-security",
     "highlight.js": "^11.8.0",
     "i18next": "^22.5.0",
     "i18next-browser-languagedetector": "^7.0.2",

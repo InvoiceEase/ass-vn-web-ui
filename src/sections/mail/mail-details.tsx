@@ -10,13 +10,14 @@ import { fDateTime } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Editor from 'src/components/editor';
 import EmptyContent from 'src/components/empty-content';
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
 // types
+import { useState } from 'react';
+import FileUpload from 'src/components/file-uploader/file-uploader';
 import { IMail, IMailLabel } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
@@ -28,7 +29,7 @@ type Props = {
 
 export default function MailDetails({ mail, renderLabel }: Props) {
   const showAttachments = useBoolean(true);
-
+  const [openUpload, setOpenUpload] = useState(false);
   if (!mail) {
     return (
       <EmptyContent
@@ -233,7 +234,9 @@ export default function MailDetails({ mail, renderLabel }: Props) {
       </Scrollbar>
     </Box>
   );
-
+  const onClickUpload = () => {
+    setOpenUpload(true);
+  };
   const renderEditor = (
     <Stack
       spacing={2}
@@ -241,55 +244,51 @@ export default function MailDetails({ mail, renderLabel }: Props) {
         p: (theme) => theme.spacing(0, 2, 2, 2),
       }}
     >
-      <Editor simple id="reply-mail" />
-
       <Stack direction="row" alignItems="center">
-        <Stack direction="row" alignItems="center" flexGrow={1}>
-          <IconButton>
-            <Iconify icon="solar:gallery-add-bold" />
-          </IconButton>
-
-          <IconButton>
-            <Iconify icon="eva:attach-2-fill" />
-          </IconButton>
-        </Stack>
+        <Stack direction="row" alignItems="center" flexGrow={1} />
 
         <Button
           variant="contained"
           color="primary"
           endIcon={<Iconify icon="iconamoon:send-fill" />}
+          onClick={() => onClickUpload()}
         >
-          Send
+          Bổ sung
         </Button>
       </Stack>
     </Stack>
   );
-
+  const resetUpload = () => {
+    setOpenUpload(false);
+  };
   return (
-    <Stack
-      flexGrow={1}
-      sx={{
-        width: 1,
-        minWidth: 0,
-        borderRadius: 1.5,
-        bgcolor: 'background.default',
-      }}
-    >
-      {/* {renderHead} */}
+    <>
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} mail={mail} />}
+      <Stack
+        flexGrow={1}
+        sx={{
+          width: 1,
+          minWidth: 0,
+          borderRadius: 1.5,
+          bgcolor: 'background.default',
+        }}
+      >
+        {/* {renderHead} */}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+        <Divider sx={{ borderStyle: 'dashed' }} />
 
-      {renderSubject}
+        {renderSubject}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+        <Divider sx={{ borderStyle: 'dashed' }} />
 
-      {renderSender}
+        {renderSender}
 
-      {/* {!!mail.attachments.length && <Stack sx={{ px: 2 }}> {renderAttachments} </Stack>} */}
+        {/* {!!mail.attachments.length && <Stack sx={{ px: 2 }}> {renderAttachments} </Stack>} */}
 
-      {renderContent}
+        {renderContent}
 
-      {/* {renderEditor} */}
-    </Stack>
+        {(!mail.isIncludedPdf || !mail.isIncludedXml) && renderEditor}
+      </Stack>
+    </>
   );
 }
