@@ -1,6 +1,6 @@
-import { IAddressItem } from './address';
-
 // ----------------------------------------------------------------------
+
+import { IErrorType } from './error';
 
 export type IInvoiceTableFilterValue = string | string[] | Date | null;
 
@@ -26,17 +26,57 @@ export type IInvoiceItem = {
 
 export type IInvoice = {
   id: string;
-  sent: number;
-  status: string;
-  totalAmount: number;
+  createdAt: Date | string;
+  modifiedAt: Date | string;
+  version: number;
+  invoiceSerial: string;
   invoiceNumber: string;
+  typeInvoice: number;
+  invoiceCharacter: string;
+  isInComeInvoice: null;
+  invoiceCreatedDate: '2023-07-10T00:00:00';
+  currency: 'VND';
+  exchangeRate: 1;
   subTotal: number;
-  items: IInvoiceItem[];
-  taxes: number | string;
-  dueDate: Date | number;
-  discount: number | string;
-  shipping: number | string;
-  createDate: Date | number;
-  invoiceTo: IAddressItem;
-  invoiceFrom: IAddressItem;
+  taxAmountTotal: number;
+  totalPrice: number;
+  status: string;
+  isIncludedXml: true;
+  senderTaxcode: string;
+  receiverTaxCode: string;
+  senderAddress: string;
+  receiverAddress: string;
+  receiverName: string;
+  senderName: string;
+  senderPhone: string | null;
+  taxCodeVerified: string;
+  invoiceProviderName: string | null;
+  invoiceProviderTaxcode: string;
+  mailId: number;
+  businessId: number;
+  taxDeclarationId: number | null;
+  invoiceName: string;
+};
+
+export type IInvoicePage = {
+  numberOfElements: number;
+  page: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+export type IInvoiceState = {
+  invoices: IInvoice[];
+  invoiceDetails: IInvoice | null;
+  pagination: IInvoicePage;
+  invoicesStatus: {
+    loading: boolean;
+    empty: boolean;
+    error: IErrorType;
+  };
+  invoiceDetailsStatus: {
+    loading: boolean;
+    empty: boolean;
+    error: IErrorType;
+  };
 };

@@ -45,4 +45,8 @@ export const API_ENDPOINTS = {
   profile: {
     business: '/api/v1/businesses',
   },
+  invoice: {
+    list: '/api/v1/invoices/filter',
+    details: '/api/v1/invoices/',
+  },
 };

@@ -1,25 +1,18 @@
+import { PDFViewer } from '@react-pdf/renderer';
 import { useCallback } from 'react';
-import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 // @mui
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import DialogActions from '@mui/material/DialogActions';
-import CircularProgress from '@mui/material/CircularProgress';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // types
 import { IInvoice } from 'src/types/invoice';
 // components
-import Iconify from 'src/components/iconify';
 //
 import InvoicePDF from './invoice-pdf';
 
@@ -51,7 +44,7 @@ export default function InvoiceToolbar({
 
   return (
     <>
-      <Stack
+      {/* <Stack
         spacing={3}
         direction={{ xs: 'column', sm: 'row' }}
         alignItems={{ xs: 'flex-end', sm: 'center' }}
@@ -123,7 +116,7 @@ export default function InvoiceToolbar({
             </MenuItem>
           ))}
         </TextField>
-      </Stack>
+      </Stack> */}
 
       <Dialog fullScreen open={view.value}>
         <Box sx={{ height: 1, display: 'flex', flexDirection: 'column' }}>

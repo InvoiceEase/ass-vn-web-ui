@@ -5,6 +5,7 @@ import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 import businessReducer from './slices/business';
 import calendarReducer from './slices/calendar';
 import chatReducer from './slices/chat';
+import invoiceReducer from './slices/invoices';
 import kanbanReducer from './slices/kanban';
 import mailReducer from './slices/mail';
 import productReducer from './slices/product';
@@ -49,4 +50,5 @@ export const rootReducer = combineReducers({
   product: persistReducer(productPersistConfig, productReducer),
   business: businessReducer,
   profile: profileReducer,
+  invoice: invoiceReducer,
 });

@@ -3,14 +3,13 @@
 // @mui
 import Container from '@mui/material/Container';
 // routes
-import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hook';
-// _mock
-import { _invoices } from 'src/_mock';
+import { paths } from 'src/routes/paths';
 // components
-import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useSettingsContext } from 'src/components/settings';
 //
+import { useSelector } from 'src/redux/store';
 import InvoiceNewEditForm from '../invoice-new-edit-form';
 
 // ----------------------------------------------------------------------
@@ -21,6 +20,8 @@ export default function InvoiceEditView() {
   const params = useParams();
 
   const { id } = params;
+
+  const _invoices = useSelector((state) => state.invoice.invoices);
 
   const currentInvoice = _invoices.find((invoice) => invoice.id === id);
 

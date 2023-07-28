@@ -44,7 +44,7 @@ export default function AccountGeneral() {
     name: user?.name || '',
     address: user?.address || '',
     taxNumber: user?.taxNumber || '',
-    businessTypeId: +businessTypes.byId[user?.businessTypeId ?? 0].id || null,
+    businessTypeId: +businessTypes.byId[user?.businessTypeId ?? 0]?.id || null,
     representPersonName: user?.representPersonName || '',
     invoiceReceivedEmail: user?.invoiceReceivedEmail || '',
     declarationPeriod:
