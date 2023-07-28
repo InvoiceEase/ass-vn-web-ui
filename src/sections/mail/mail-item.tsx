@@ -28,7 +28,7 @@ export default function MailItem({ mail, selected, onClickMail, sx, ...other }: 
           ? {
               bgcolor: 'action.selected',
             }
-          : !(mail.isIncludedPdf || mail.isIncludedXml)
+          : !mail.isIncludedPdf || !mail.isIncludedXml
           ? { bgcolor: '#FCF7E5' }
           : { bgcolor: 'white' }),
         ...sx,
@@ -66,7 +66,7 @@ export default function MailItem({ mail, selected, onClickMail, sx, ...other }: 
               color: '#C69E59',
             }}
           >
-            {!(mail.isIncludedPdf || mail.isIncludedXml) && 'Cần bổ sung file'}
+            {(!mail.isIncludedPdf || !mail.isIncludedXml) && 'Cần bổ sung file'}
           </Typography>
 
           {!mail.isRead && (

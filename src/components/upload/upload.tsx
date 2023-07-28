@@ -45,7 +45,6 @@ export default function Upload({
     accept: { 'text/xml': [], 'application/pdf': [] },
     ...other,
   });
-
   const renderText = () => {
     if (!mail.isIncludedPdf) {
       return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
@@ -53,7 +52,7 @@ export default function Upload({
     if (!mail.isIncludedXml) {
       return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
     }
-    return '';
+    return 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
   };
   const hasFile = !!file && !multiple;
   const [errorPop, setErrorPop] = useState(false);

@@ -11,6 +11,8 @@ import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { getMails } from 'src/redux/slices/mail';
+
 // routes
 import { paths } from 'src/routes/paths';
 // utils
@@ -27,18 +29,24 @@ import axios from 'axios';
 import fs from 'fs';
 import { useRouter } from 'src/routes/hook';
 import { LoadingScreen, SplashScreen } from 'src/components/loading-screen';
+import { useDispatch } from 'react-redux';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 // ----------------------------------------------------------------------
 type Props = {
   mail: IMail;
-  onClickCancel: ()=>null;
+  onClickCancel: () => null;
 };
 
-export default function UploadView({ mail , onClickCancel}: Props) {
-  const [loading,setLoading] = useState(false);
+export default function UploadView({ mail, onClickCancel }: Props) {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const preview = useBoolean();
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
-
+  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID');
+  const roleCode = sessionStorage.getItem('roleCode');
+  const orgId = sessionStorage.getItem('orgId');
+  const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
   const [file, setFile] = useState<File | string | null>(null);
 
   const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
@@ -96,6 +104,7 @@ export default function UploadView({ mail , onClickCancel}: Props) {
     />
   );
   const handleUpload = () => {
+
     const data = new FormData();
     files.forEach((f) => {
       data.append('files', f);
@@ -104,6 +113,7 @@ export default function UploadView({ mail , onClickCancel}: Props) {
     data.append('attachmentFolderPath', mail.attachmentFolderPath);
     data.append('emailAddress', mail.mailFrom);
     setLoading(true);
+
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
@@ -120,11 +130,19 @@ export default function UploadView({ mail , onClickCancel}: Props) {
         config
       )
       .then((response) => {
+        setTimeout(() => {
+          if (response.status === 200) {
+            onClickCancel();
+            dispatch(
+              getMails(
+                roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
+                businessSearchQuery,
+              )
+            );
+            router.replace(`${paths.dashboard.mail}/?id=${mail.id}`);
+          }
 
-        if(response.status ===200){
-          onClickCancel();
-          // router.replace(paths.dashboard.mail);
-        }
+        }, 10000);
 
       })
       .catch((error) => {
