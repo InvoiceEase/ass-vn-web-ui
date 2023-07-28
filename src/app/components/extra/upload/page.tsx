@@ -4,9 +4,9 @@ import { IMail } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
 
-export const metadata = {
-  title: 'Extra: Upload',
-};
+// export const metadata = {
+//   title: 'Extra: Upload',
+// };
 
 type Props = {
   mail: IMail;
