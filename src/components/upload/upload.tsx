@@ -1,7 +1,6 @@
 import { useDropzone } from 'react-dropzone';
 // @mui
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -9,10 +8,10 @@ import { alpha } from '@mui/material/styles';
 // assets
 import { UploadIllustration } from 'src/assets/illustrations';
 //
-import Alert from '@mui/material/Alert';
 
 import Iconify from '../iconify';
 //
+import { Alert, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import RejectionFiles from './errors-rejection-files';
 import MultiFilePreview from './preview-multi-file';
@@ -184,7 +183,7 @@ export default function Upload({
       )}
       <RejectionFiles fileRejections={fileRejections} />
 
-      {files?.length && files?.length <= 2 && renderMultiPreview}
+      {files?.length !== undefined && files?.length <= 2 && renderMultiPreview}
     </Box>
   );
 }
