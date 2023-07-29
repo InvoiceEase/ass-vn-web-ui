@@ -1,6 +1,7 @@
 'use client';
 
 // components
+
 import MainLayout from 'src/layouts/main';
 
 // ----------------------------------------------------------------------
@@ -10,5 +11,6 @@ type Props = {
 };
 
 export default function Layout({ children }: Props) {
+  console.log('Test features')
   return <MainLayout>{children}</MainLayout>;
 }
