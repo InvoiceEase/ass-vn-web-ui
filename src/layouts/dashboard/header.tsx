@@ -88,11 +88,11 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
+      {/* {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
         <Searchbar />
       ) : (
         businesses.allIds.length > 0 && <CompanySelectionDropdown />
-      )}
+      )} */}
 
       <Stack
         flexGrow={1}

@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useState } from 'react';
 // @mui
-import { MenuItem, Select } from '@mui/material';
+import { MenuItem, OutlinedInput, Select } from '@mui/material';
 import { setSelectedBusiness } from 'src/redux/slices/business';
 import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
@@ -65,6 +65,7 @@ function CompanySelectionDropdown() {
   return (
     <Select
       // multiple
+      input={<OutlinedInput label="Role" />}
       value={selectedBusiness?.name}
       // onChange={handleFilterService}
       // input={<OutlinedInput label="Business" />}

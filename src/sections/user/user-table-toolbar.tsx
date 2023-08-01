@@ -15,6 +15,7 @@ import { IUserTableFilters, IUserTableFilterValue } from 'src/types/profile';
 // components
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
+import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +94,38 @@ export default function UserTableToolbar({
           </Select>
         </FormControl>
 
+
+        <FormControl
+          sx={{
+            flexShrink: 0,
+            width: { xs: 1, md: 200 },
+          }}
+        >
+          <InputLabel>Company</InputLabel>
+          <CompanySelectionDropdown/>
+          {/* <InputLabel>Role</InputLabel>
+
+          <Select
+            multiple
+            value={filters.role}
+            onChange={handleFilterRole}
+            input={<OutlinedInput label="Role" />}
+            renderValue={(selected) => selected.map((value) => value).join(', ')}
+            MenuProps={{
+              PaperProps: {
+                sx: { maxHeight: 240 },
+              },
+            }}
+          >
+            {roleOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                <Checkbox disableRipple size="small" checked={filters.role.includes(option)} />
+                {option}
+              </MenuItem>
+            ))}
+          </Select> */}
+        </FormControl>
+
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
@@ -108,13 +141,13 @@ export default function UserTableToolbar({
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </Stack>
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -146,7 +179,7 @@ export default function UserTableToolbar({
           <Iconify icon="solar:export-bold" />
           Export
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }
