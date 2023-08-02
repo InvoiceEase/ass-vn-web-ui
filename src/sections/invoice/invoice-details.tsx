@@ -271,9 +271,9 @@ export default function InvoiceDetails({ invoice }: Props) {
                 </Typography>
                 <Stack direction="row">
                   <Box sx={{ mr: 3 }}>
-                    {invoice?.errorFieldList?.split(',').map((item) => {
-                      return <InvoiceErrorField type={item} />;
-                    })}
+                    {invoice?.errorFieldList?.split(',').map((item) => (
+                      <InvoiceErrorField type={item} />
+                    ))}
                   </Box>
                   <Box>
                     <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />

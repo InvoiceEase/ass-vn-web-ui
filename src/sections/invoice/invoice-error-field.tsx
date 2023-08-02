@@ -21,7 +21,7 @@ const mapErrorFieldMessage = (type: string) => {
     case InvoiceErrorFieldEnum.SenderTaxCode:
       return 'MST bên bán không chính xác';
     default:
-      break;
+      return '';
   }
 };
 
