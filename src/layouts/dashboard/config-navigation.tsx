@@ -349,7 +349,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       {
         subheader: t('connection'),
         items: [
-          { title: t('provider'), path: paths.dashboard.provider, icon: ICONS.order },
+          { title: t('provider'), path: paths.dashboard.provider.root, icon: ICONS.order },
           { title: t('staff'), path: paths.dashboard.user.list, icon: ICONS.user },
         ],
       },

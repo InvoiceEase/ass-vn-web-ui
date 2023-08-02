@@ -1,5 +1,5 @@
 // sections
-import ProviderListView from 'src/sections/provider/provider-list-view';
+import ProviderListView from 'src/sections/provider/view/provider-list-view';
 
 // ----------------------------------------------------------------------
 

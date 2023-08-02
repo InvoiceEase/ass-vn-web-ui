@@ -42,8 +42,8 @@ import { getProviders } from 'src/redux/slices/provider';
 import { useDispatch, useSelector } from 'src/redux/store';
 import ProviderTableRow from 'src/sections/provider/provider-table-row';
 import { IProvider } from 'src/types/provider';
-import UserTableFiltersResult from '../user/user-table-filters-result';
-import ProviderTableToolbar from './provider-table-toolbar';
+import UserTableFiltersResult from '../../user/user-table-filters-result';
+import ProviderTableToolbar from '../provider-table-toolbar';
 
 // ----------------------------------------------------------------------
 
@@ -169,7 +169,7 @@ export default function ProviderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={paths.dashboard.provider.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
