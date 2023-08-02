@@ -269,44 +269,45 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   return (
     <>
-      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} />}
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {TABS.map((tab) => (
-              <Tab
-                key={tab.value}
-                value={tab.value}
-                label={tab.label}
-                iconPosition="end"
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={tab.color}
-                  >
-                    {tab.count}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload}/>}
+      {/* <Container maxWidth={settings.themeStretch ? false : 'lg'}> */}
+      <Card>
+        <Tabs
+          value={filters.status}
+          onChange={handleFilterStatus}
+          sx={{
+            px: 2.5,
+            boxShadow: `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+          }}
+        >
+          {TABS.map((tab) => (
+            <Tab
+              key={tab.value}
+              value={tab.value}
+              label={tab.label}
+              iconPosition="end"
+              icon={
+                <Label
+                  variant={
+                    ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                  }
+                  color={tab.color}
+                >
+                  {tab.count}
+                </Label>
+              }
+            />
+          ))}
+        </Tabs>
 
-          <InvoiceTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            //
-            serviceOptions={INVOICE_SERVICE_OPTIONS.map((option) => option.name)}
-          />
+        <InvoiceTableToolbar
+          filters={filters}
+          onFilters={handleFilters}
+          //
+          serviceOptions={INVOICE_SERVICE_OPTIONS.map((option) => option.name)}
+        />
 
+        {canReset && (
           <InvoiceTableFiltersResult
             filters={filters}
             onFilters={handleFilters}
@@ -316,107 +317,108 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
             results={dataFiltered.length}
             sx={{ p: 2.5, pt: 0 }}
           />
+        )}
 
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-            <TableSelectedAction
-              dense={table.dense}
-              numSelected={table.selected.length}
-              rowCount={tableData.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id)
-                )
-              }
-              action={
-                <Stack direction="row">
-                  <Tooltip title="Sent">
-                    <IconButton color="primary">
-                      <Iconify icon="iconamoon:send-fill" />
-                    </IconButton>
-                  </Tooltip>
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <TableSelectedAction
+            dense={table.dense}
+            numSelected={table.selected.length}
+            rowCount={tableData.length}
+            onSelectAllRows={(checked) =>
+              table.onSelectAllRows(
+                checked,
+                tableData.map((row) => row.id)
+              )
+            }
+            action={
+              <Stack direction="row">
+                <Tooltip title="Sent">
+                  <IconButton color="primary">
+                    <Iconify icon="iconamoon:send-fill" />
+                  </IconButton>
+                </Tooltip>
 
-                  <Tooltip title="Download">
-                    <IconButton color="primary">
-                      <Iconify icon="eva:download-outline" />
-                    </IconButton>
-                  </Tooltip>
+                <Tooltip title="Download">
+                  <IconButton color="primary">
+                    <Iconify icon="eva:download-outline" />
+                  </IconButton>
+                </Tooltip>
 
-                  <Tooltip title="Print">
-                    <IconButton color="primary">
-                      <Iconify icon="solar:printer-minimalistic-bold" />
-                    </IconButton>
-                  </Tooltip>
+                <Tooltip title="Print">
+                  <IconButton color="primary">
+                    <Iconify icon="solar:printer-minimalistic-bold" />
+                  </IconButton>
+                </Tooltip>
 
-                  <Tooltip title="Delete">
-                    <IconButton color="primary" onClick={confirm.onTrue}>
-                      <Iconify icon="solar:trash-bin-trash-bold" />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              }
-            />
+                <Tooltip title="Delete">
+                  <IconButton color="primary" onClick={confirm.onTrue}>
+                    <Iconify icon="solar:trash-bin-trash-bold" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            }
+          />
 
-            <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
+          <Scrollbar>
+            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
+              <TableHeadCustom
+                order={table.order}
+                orderBy={table.orderBy}
+                headLabel={TABLE_HEAD}
+                rowCount={tableData.length}
+                numSelected={table.selected.length}
+                onSort={table.onSort}
+                onSelectAllRows={(checked) =>
+                  table.onSelectAllRows(
+                    checked,
+                    tableData.map((row) => row.id)
+                  )
+                }
+              />
+
+              <TableBody>
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row) => (
+                    <InvoiceTableRow
+                      key={row.id}
+                      row={row}
+                      selected={table.selected.includes(row.id)}
+                      onSelectRow={() => table.onSelectRow(row.id)}
+                      onViewRow={() => handleViewRow(row.id)}
+                      onEditRow={() => handleEditRow(row.id)}
+                      onDeleteRow={() => handleDeleteRow(row.id)}
+                      isInputInvoice={isInputInvoice}
+                    />
+                  ))}
+
+                <TableEmptyRows
+                  height={denseHeight}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
                 />
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <InvoiceTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        isInputInvoice={isInputInvoice}
-                      />
-                    ))}
+                {_invoices.length === 0 && <TableNoData notFound={notFound} />}
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
-
-                  {_invoices.length === 0 && <TableNoData notFound={notFound} />}
-                </TableBody>
-              </Table>
-            </Scrollbar>
-          </TableContainer>
-
-          <TablePaginationCustom
-            count={dataFiltered.length}
-            page={table.page}
-            rowsPerPage={table.rowsPerPage}
-            onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
-          />
-        </Card>
-        {renderEditor}
-      </Container>
+        <TablePaginationCustom
+          count={dataFiltered.length}
+          page={table.page}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onRowsPerPageChange={table.onChangeRowsPerPage}
+          //
+          dense={table.dense}
+          onChangeDense={table.onChangeDense}
+        />
+      </Card>
+      {renderEditor}
+      {/* </Container> */}
 
       <ConfirmDialog
         open={confirm.value}
