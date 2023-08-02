@@ -38,21 +38,32 @@ export default function Upload({
   sx,
   ...other
 }: UploadProps) {
-  const [text,setText]= useState("");
+  const [text, setText] = useState('');
   const getFileType = () => {
     let result = {};
     if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
-      setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
-      result = { 'text/xml': [], 'application/pdf': [] }
+      // setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
+      result = { 'text/xml': [], 'application/pdf': [] };
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
-      setText("Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.");
-      result = { 'text/xml': [] }
+      // setText("Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.");
+      result = { 'text/xml': [] };
     } else if (!mail?.isIncludedPdf && mail?.isIncludedXml) {
-      setText("Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này.");
-      result = { 'application/pdf': [] }
+      // setText("Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này.");
+      result = { 'application/pdf': [] };
     }
     return result;
-  }
+  };
+  const getFileMissingMessage = () => {
+    let result = '';
+    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+      result = 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
+    } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
+      result = 'Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.';
+    } else if (!mail?.isIncludedPdf && mail?.isIncludedXml) {
+      result = 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này.';
+    }
+    return result;
+  };
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple,
     disabled,
@@ -71,7 +82,7 @@ export default function Upload({
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
         <Typography variant="h6">Chọn file</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {text}
+          {getFileMissingMessage()}
         </Typography>
       </Stack>
     </Stack>
