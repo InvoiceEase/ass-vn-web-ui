@@ -56,6 +56,7 @@ export type IInvoice = {
   businessId: number;
   taxDeclarationId: number | null;
   invoiceName: string;
+  errorFieldList: string | null;
 };
 
 export type IInvoicePage = {

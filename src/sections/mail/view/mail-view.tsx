@@ -50,7 +50,7 @@ function useInitial() {
   // }, [dispatch]);
 
   const getMailsCallback = useCallback(() => {
-    if (roleCode?.includes(RoleCodeEnum.AccountantPrefix)) {
+    if (roleCode?.includes(RoleCodeEnum.Auditor)) {
       if (businessId && businessId !== '0') {
         dispatch(getMails(businessId, '', 0));
       }
@@ -217,7 +217,7 @@ export default function MailView() {
 
   return (
     <>
-      {roleCode?.includes(RoleCodeEnum.AccountantPrefix) && <BusinessPicker />}
+      {roleCode?.includes(RoleCodeEnum.Auditor) && <BusinessPicker />}
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <Stack
           spacing={1}

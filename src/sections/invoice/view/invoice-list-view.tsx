@@ -59,7 +59,6 @@ const TABLE_HEAD = [
   { id: 'totalPrice', label: 'Thành tiền' },
   { id: 'invoiceCharacter', label: 'Tính chất hoá đơn' },
   { id: 'status', label: 'Trạng thái' },
-  { id: '' },
 ];
 
 const defaultFilters = {
@@ -79,10 +78,7 @@ function useInitial() {
 
   const getInvoicessCallback = useCallback(async () => {
     await dispatch(
-      getInvoices(
-        roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId ?? '',
-        true
-      )
+      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', true)
     );
   }, [dispatch]);
 
