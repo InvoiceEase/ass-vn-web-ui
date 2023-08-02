@@ -21,7 +21,8 @@ import InvoiceToolbar from './invoice-toolbar';
 import { Divider } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
-import { InvoiceErrorField } from './invoice-error-field';
+import InvoiceErrorField from './invoice-error-field';
+import InvoiceInfoField from './invoice-info-field';
 
 // @mui
 
@@ -265,12 +266,21 @@ export default function InvoiceDetails({ invoice }: Props) {
                 style={{ backgroundColor: '#00B8D91A' }}
                 sx={{ mt: 5, p: 2, borderRadius: 1 }}
               >
-                <Typography variant="subtitle2" sx={{ mb: 1 }} style={{ color: '#006C9C' }}>
+                <Typography variant="h5" sx={{ mb: 1 }} color="#006C9C">
                   KẾT QUẢ KIỂM TRA HOÁ ĐƠN
                 </Typography>
-                {invoice?.errorFieldList?.split(',').map((item) => {
-                  return <InvoiceErrorField type={item} />;
-                })}
+                <Stack direction="row">
+                  <Box sx={{ mr: 3 }}>
+                    {invoice?.errorFieldList?.split(',').map((item) => {
+                      return <InvoiceErrorField type={item} />;
+                    })}
+                  </Box>
+                  <Box>
+                    <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />
+                    <InvoiceInfoField isSigned={invoice?.invoiceSerial?.charAt(1) === 'K'} />
+                    <InvoiceInfoField invoiceCharacter={invoice?.invoiceCharacter} />
+                  </Box>
+                </Stack>
               </Stack>
             </Stack>
             <Stack spacing={1} direction="column">
