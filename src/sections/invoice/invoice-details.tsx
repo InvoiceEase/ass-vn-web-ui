@@ -21,6 +21,8 @@ import InvoiceToolbar from './invoice-toolbar';
 import { Divider } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
+import InvoiceErrorField from './invoice-error-field';
+import InvoiceInfoField from './invoice-info-field';
 
 // @mui
 
@@ -52,7 +54,7 @@ type Props = {
 };
 
 export default function InvoiceDetails({ invoice }: Props) {
-  const [currentStatus, setCurrentStatus] = useState(invoice.status);
+  const [currentStatus, setCurrentStatus] = useState(invoice?.status);
 
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
@@ -68,7 +70,7 @@ export default function InvoiceDetails({ invoice }: Props) {
         </TableCell>
         <TableCell width={120} sx={{ typography: 'subtitle2' }}>
           <Box sx={{ mt: 2 }} />
-          {fCurrency(invoice.subTotal)}
+          {fCurrency(invoice?.subTotal)}
         </TableCell>
       </StyledTableRow>
 
@@ -76,7 +78,7 @@ export default function InvoiceDetails({ invoice }: Props) {
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Shipping</TableCell>
         <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
-          {fCurrency(-invoice.shipping)}
+          {fCurrency(-invoice?.shipping)}
         </TableCell>
       </StyledTableRow>
 
@@ -84,21 +86,21 @@ export default function InvoiceDetails({ invoice }: Props) {
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Discount</TableCell>
         <TableCell width={120} sx={{ color: 'error.main', typography: 'body2' }}>
-          {fCurrency(-invoice.discount)}
+          {fCurrency(-invoice?.discount)}
         </TableCell>
       </StyledTableRow> */}
 
       <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ color: 'text.secondary' }}>Taxes</TableCell>
-        <TableCell width={120}>{fCurrency(invoice.taxAmountTotal)}</TableCell>
+        <TableCell width={120}>{fCurrency(invoice?.taxAmountTotal)}</TableCell>
       </StyledTableRow>
 
       <StyledTableRow>
         <TableCell colSpan={3} />
         <TableCell sx={{ typography: 'subtitle1' }}>Total</TableCell>
         <TableCell width={140} sx={{ typography: 'subtitle1' }}>
-          {fCurrency(invoice.totalPrice)}
+          {fCurrency(invoice?.totalPrice)}
         </TableCell>
       </StyledTableRow>
     </>
@@ -141,7 +143,7 @@ export default function InvoiceDetails({ invoice }: Props) {
           </TableHead>
 
           {/* <TableBody>
-            {invoice.items.map((row, index) => (
+            {invoice?.items.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
 
@@ -240,11 +242,11 @@ export default function InvoiceDetails({ invoice }: Props) {
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Đơn vị bán hàng
                 </Typography>
-                {invoice.senderName}
+                {invoice?.senderName}
                 <br />
-                {invoice.senderAddress}
+                {invoice?.senderAddress}
                 <br />
-                MST: {invoice.senderTaxcode}
+                MST: {invoice?.senderTaxcode}
                 <br />
               </Box>
 
@@ -252,13 +254,34 @@ export default function InvoiceDetails({ invoice }: Props) {
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Đơn vị mua hàng
                 </Typography>
-                {invoice.receiverName}
+                {invoice?.receiverName}
                 <br />
-                {invoice.receiverAddress}
+                {invoice?.receiverAddress}
                 <br />
-                MST: {invoice.receiverTaxCode}
+                MST: {invoice?.receiverTaxCode}
                 <br />
               </Box>
+              <Stack
+                width="185%"
+                style={{ backgroundColor: '#00B8D91A' }}
+                sx={{ mt: 5, p: 2, borderRadius: 1 }}
+              >
+                <Typography variant="h5" sx={{ mb: 1 }} color="#006C9C">
+                  KẾT QUẢ KIỂM TRA HOÁ ĐƠN
+                </Typography>
+                <Stack direction="row">
+                  <Box sx={{ mr: 3 }}>
+                    {invoice?.errorFieldList?.split(',').map((item) => (
+                      <InvoiceErrorField type={item} />
+                    ))}
+                  </Box>
+                  <Box>
+                    <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />
+                    <InvoiceInfoField isSigned={invoice?.invoiceSerial?.charAt(1) === 'K'} />
+                    <InvoiceInfoField invoiceCharacter={invoice?.invoiceCharacter} />
+                  </Box>
+                </Stack>
+              </Stack>
             </Stack>
             <Stack spacing={1} direction="column">
               <Label
@@ -283,22 +306,22 @@ export default function InvoiceDetails({ invoice }: Props) {
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Thông tin hoá đơn
                 </Typography>
-                Kí hiệu: {invoice.invoiceSerial}
+                Kí hiệu: {invoice?.invoiceSerial}
                 <br />
-                Số: {invoice.invoiceNumber}
+                Số: {invoice?.invoiceNumber}
                 <br />
-                Ngày hoá đơn: {formatDate(invoice.invoiceCreatedDate)}
+                Ngày hoá đơn: {formatDate(invoice?.invoiceCreatedDate)}
                 <br />
-                Ngày nhận: {formatDate(invoice.invoiceCreatedDate)}
+                Ngày nhận: {formatDate(invoice?.invoiceCreatedDate)}
                 <br />
               </Box>
               <Divider style={{ marginBottom: 10, marginTop: 10 }} color="primary" />
               <Box sx={{ typography: 'body2' }}>
-                Tổng tiền trước thuế: {fCurrency(invoice.subTotal)}
+                Tổng tiền trước thuế: {fCurrency(invoice?.subTotal)}
                 <br />
-                Tiền thuế GTGT: {fCurrency(invoice.taxAmountTotal)}
+                Tiền thuế GTGT: {fCurrency(invoice?.taxAmountTotal)}
                 <br />
-                Tổng tiền thanh toán: {fCurrency(invoice.totalPrice)}
+                Tổng tiền thanh toán: {fCurrency(invoice?.totalPrice)}
                 <br />
               </Box>
             </Stack>

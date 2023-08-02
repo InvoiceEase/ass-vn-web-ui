@@ -21,7 +21,7 @@ export default function GuestGuard({ children }: GuestGuardProps) {
 
   const check = useCallback(() => {
     if (authenticated) {
-      if (roleCode?.includes(RoleCodeEnum.AccountantPrefix)) {
+      if (roleCode?.includes(RoleCodeEnum.Auditor)) {
         router.replace(paths.dashboard.mail);
       } else {
         router.replace(paths.dashboard.root);

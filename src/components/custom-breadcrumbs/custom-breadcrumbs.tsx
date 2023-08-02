@@ -2,11 +2,8 @@
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 //
 import { CustomBreadcrumbsProps } from './types';
-import LinkItem from './link-item';
 
 // ----------------------------------------------------------------------
 
@@ -24,15 +21,13 @@ export default function CustomBreadcrumbs({
   return (
     <Box sx={{ ...sx }}>
       <Stack direction="row" alignItems="center">
-        <Box sx={{ flexGrow: 1 }}>
-          {/* HEADING */}
+        {/* <Box sx={{ flexGrow: 1 }}>
           {heading && (
             <Typography variant="h4" gutterBottom>
               {heading}
             </Typography>
           )}
 
-          {/* BREADCRUMBS */}
           {!!links.length && (
             <Breadcrumbs separator={<Separator />} {...other}>
               {links.map((link) => (
@@ -45,7 +40,7 @@ export default function CustomBreadcrumbs({
               ))}
             </Breadcrumbs>
           )}
-        </Box>
+        </Box> */}
 
         {action && <Box sx={{ flexShrink: 0 }}> {action} </Box>}
       </Stack>

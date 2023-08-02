@@ -114,7 +114,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     };
     axios
       .post(
-        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadFiles`,
+        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles`,
         data,
         config
       )
@@ -124,7 +124,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
             onClickCancel();
             dispatch(
               getMails(
-                roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
+                roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
                 businessSearchQuery ?? ''
               )
             );

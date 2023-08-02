@@ -2,35 +2,28 @@
 
 import * as Yup from 'yup';
 
-import {
-  Autocomplete,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-} from '@mui/material';
-import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { Autocomplete } from '@mui/material';
 import { useCallback, useRef, useState } from 'react';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
+import { yupResolver } from '@hookform/resolvers/yup';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Iconify from 'src/components/iconify';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from '@mui/material/Link';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { RouterLink } from 'src/routes/components';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
-import { useAuthContext } from 'src/auth/hooks';
-import { useBoolean } from 'src/hooks/use-boolean';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'src/routes/hook';
-import { yupResolver } from '@hookform/resolvers/yup';
-import AuthClassicLayout from 'src/layouts/auth/classic';
+import { useAuthContext } from 'src/auth/hooks';
+import Iconify from 'src/components/iconify';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useBoolean } from 'src/hooks/use-boolean';
+import AuthClassicLayout from 'src/layouts/auth/classic';
+import { RouterLink } from 'src/routes/components';
+import { useRouter } from 'src/routes/hook';
 
 // ----------------------------------------------------------------------
 
@@ -93,11 +86,11 @@ export default function FirebaseRegisterView() {
   const mappingRole = (mapRole: string) => {
     switch (mapRole) {
       case 'ACCOUNTANT':
-        return `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Manager}`;
+        return `${RoleCodeEnum.Auditor}`;
       case 'BUSINESS':
         return `${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`;
       default:
-        return `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Manager}`;
+        return `${RoleCodeEnum.Auditor}`;
     }
   };
 

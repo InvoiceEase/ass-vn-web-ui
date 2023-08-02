@@ -39,8 +39,8 @@ export default function InvoiceToolbar({
   const view = useBoolean();
 
   const handleEdit = useCallback(() => {
-    router.push(paths.dashboard.invoice.edit(invoice.id));
-  }, [invoice.id, router]);
+    router.push(paths.dashboard.invoice?.edit(invoice?.id));
+  }, [invoice?.id, router]);
 
   return (
     <>
@@ -65,7 +65,7 @@ export default function InvoiceToolbar({
 
           <PDFDownloadLink
             document={<InvoicePDF invoice={invoice} currentStatus={currentStatus} />}
-            fileName={invoice.invoiceNumber}
+            fileName={invoice?.invoiceNumber}
             style={{ textDecoration: 'none' }}
           >
             {({ loading }) => (

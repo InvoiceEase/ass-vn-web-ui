@@ -73,7 +73,7 @@ export default function Header({ onOpenNav }: Props) {
   // }, []);
 
   useEffect(() => {
-    if (role?.includes(RoleCodeEnum.AccountantPrefix)) {
+    if (role?.includes(RoleCodeEnum.Auditor)) {
       dispatch(getBusinesses());
     }
   }, []);
@@ -88,7 +88,7 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
+      {!role?.includes(RoleCodeEnum.Auditor) ? (
         <Searchbar />
       ) : (
         businesses.allIds.length > 0 && <CompanySelectionDropdown />

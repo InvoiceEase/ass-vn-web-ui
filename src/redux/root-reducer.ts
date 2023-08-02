@@ -10,6 +10,7 @@ import kanbanReducer from './slices/kanban';
 import mailReducer from './slices/mail';
 import productReducer from './slices/product';
 import profileReducer from './slices/profile';
+import providerReducer from './slices/provider';
 
 // ----------------------------------------------------------------------
 
@@ -51,4 +52,5 @@ export const rootReducer = combineReducers({
   business: businessReducer,
   profile: profileReducer,
   invoice: invoiceReducer,
+  provider: providerReducer,
 });

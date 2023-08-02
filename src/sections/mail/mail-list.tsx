@@ -84,7 +84,7 @@ export default function MailList({
           onPageChange={(event, changedPage) => {
             dispatch(
               getMails(
-                roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
+                roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
                 businessSearchQuery,
                 changedPage
               )
