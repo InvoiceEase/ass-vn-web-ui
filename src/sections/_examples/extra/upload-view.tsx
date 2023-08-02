@@ -23,7 +23,7 @@ import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 // ----------------------------------------------------------------------
 type Props = {
-  mail: IMail;
+  mail?: IMail;
   onClickCancel: () => void;
 };
 

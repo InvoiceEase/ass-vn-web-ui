@@ -38,21 +38,27 @@ export default function Upload({
   sx,
   ...other
 }: UploadProps) {
+  const [text,setText]= useState("");
+  const getFileType = () => {
+    let result = {};
+    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+      setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
+      result = { 'text/xml': [], 'application/pdf': [] }
+    } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
+      setText("Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.");
+      result = { 'text/xml': [] }
+    } else if (!mail?.isIncludedPdf && mail?.isIncludedXml) {
+      setText("Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này.");
+      result = { 'application/pdf': [] }
+    }
+    return result;
+  }
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple,
     disabled,
-    accept: { 'text/xml': [], 'application/pdf': [] },
+    accept: getFileType(),
     ...other,
   });
-  const renderText = () => {
-    if (!mail?.isIncludedPdf) {
-      return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
-    }
-    if (!mail?.isIncludedXml) {
-      return 'Vui lòng chọn file pdf còn thiếu của hóa đơn trong mail này. ';
-    }
-    return 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
-  };
   const hasFile = !!file && !multiple;
   const [errorPop, setErrorPop] = useState(false);
   const hasFiles = !!files && multiple && !!files.length;
@@ -65,7 +71,7 @@ export default function Upload({
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
         <Typography variant="h6">Chọn file</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {renderText()}
+          {text}
         </Typography>
       </Stack>
     </Stack>
