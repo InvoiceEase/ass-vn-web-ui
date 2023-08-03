@@ -23,7 +23,7 @@ import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 // ----------------------------------------------------------------------
 type Props = {
-  mail: IMail;
+  mail?: IMail;
   onClickCancel: () => void;
 };
 
@@ -37,31 +37,31 @@ export default function UploadView({ mail, onClickCancel }: Props) {
   const roleCode = sessionStorage.getItem('roleCode');
   const orgId = sessionStorage.getItem('orgId');
   const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
-  const [file, setFile] = useState<File | string | null>(null);
+  // const [file, setFile] = useState<File | string | null>(null);
 
-  const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
+  // const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
 
-  const handleDropSingleFile = useCallback((acceptedFiles: File[]) => {
-    const newFile = acceptedFiles[0];
-    if (newFile) {
-      setFile(
-        Object.assign(newFile, {
-          preview: URL.createObjectURL(newFile),
-        })
-      );
-    }
-  }, []);
+  // const handleDropSingleFile = useCallback((acceptedFiles: File[]) => {
+  //   const newFile = acceptedFiles[0];
+  //   if (newFile) {
+  //     setFile(
+  //       Object.assign(newFile, {
+  //         preview: URL.createObjectURL(newFile),
+  //       })
+  //     );
+  //   }
+  // }, []);
 
-  const handleDropAvatar = useCallback((acceptedFiles: File[]) => {
-    const newFile = acceptedFiles[0];
-    if (newFile) {
-      setAvatarUrl(
-        Object.assign(newFile, {
-          preview: URL.createObjectURL(newFile),
-        })
-      );
-    }
-  }, []);
+  // const handleDropAvatar = useCallback((acceptedFiles: File[]) => {
+  //   const newFile = acceptedFiles[0];
+  //   if (newFile) {
+  //     setAvatarUrl(
+  //       Object.assign(newFile, {
+  //         preview: URL.createObjectURL(newFile),
+  //       })
+  //     );
+  //   }
+  // }, []);
 
   const handleDropMultiFile = useCallback(
     (acceptedFiles: File[]) => {

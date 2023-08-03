@@ -50,6 +50,8 @@ import InvoiceTableFiltersResult from '../invoice-table-filters-result';
 import InvoiceTableRow from '../invoice-table-row';
 import InvoiceTableToolbar from '../invoice-table-toolbar';
 import { InvoiceStatusConfig } from '../InvoiceStatusConfig';
+import FileUpload from 'src/components/file-uploader/file-uploader';
+import { Container } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -108,9 +110,14 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const loading = useSelector((state) => state.invoice.invoicesStatus.loading);
 
   const [tableData, setTableData] = useState(_invoices);
-
+  const [openUpload, setOpenUpload] = useState(false);
   const [filters, setFilters] = useState(defaultFilters);
-
+  const handleUpload = () => {
+    setOpenUpload(true);
+  };
+  const resetUpload = () => {
+    setOpenUpload(false);
+  };
   const dateError = isDateError(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
@@ -238,98 +245,28 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
     setFilters(defaultFilters);
   }, []);
 
+  const renderEditor = (
+    <Stack direction="row" alignItems="center" sx={{ marginTop: 3 }}>
+      <Stack direction="row" alignItems="center" flexGrow={1} />
+
+      <Button
+        variant="outlined"
+        color="primary"
+        endIcon={<Iconify icon="iconamoon:send-fill" />}
+        onClick={() => handleUpload()}
+      >
+        Xác thực
+      </Button>
+    </Stack>
+  );
+  useEffect(() => {
+    setOpenUpload(false);
+  }, []);
+
   return (
     <>
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload}/>}
       {/* <Container maxWidth={settings.themeStretch ? false : 'lg'}> */}
-      {/* <CustomBreadcrumbs
-          heading="List"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Invoice',
-              href: paths.dashboard.invoice.root,
-            },
-            {
-              name: 'List',
-            },
-          ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.invoice.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Invoice
-            </Button>
-          }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        /> */}
-
-      {/* <Card
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        >
-          <Scrollbar>
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-              sx={{ py: 2 }}
-            >
-              <InvoiceAnalytic
-                title="Total"
-                total={tableData.length}
-                percent={100}
-                price={sumBy(tableData, 'totalAmount')}
-                icon="solar:bill-list-bold-duotone"
-                color={theme.palette.info.main}
-              />
-
-              <InvoiceAnalytic
-                title="Paid"
-                total={getInvoiceLength('paid')}
-                percent={getPercentByStatus('paid')}
-                price={getTotalAmount('paid')}
-                icon="solar:file-check-bold-duotone"
-                color={theme.palette.success.main}
-              />
-
-              <InvoiceAnalytic
-                title="Pending"
-                total={getInvoiceLength('pending')}
-                percent={getPercentByStatus('pending')}
-                price={getTotalAmount('pending')}
-                icon="solar:sort-by-time-bold-duotone"
-                color={theme.palette.warning.main}
-              />
-
-              <InvoiceAnalytic
-                title="Overdue"
-                total={getInvoiceLength('overdue')}
-                percent={getPercentByStatus('overdue')}
-                price={getTotalAmount('overdue')}
-                icon="solar:bell-bing-bold-duotone"
-                color={theme.palette.error.main}
-              />
-
-              <InvoiceAnalytic
-                title="Draft"
-                total={getInvoiceLength('draft')}
-                percent={getPercentByStatus('draft')}
-                price={getTotalAmount('draft')}
-                icon="solar:file-corrupted-bold-duotone"
-                color={theme.palette.text.secondary}
-              />
-            </Stack>
-          </Scrollbar>
-        </Card> */}
-
       <Card>
         <Tabs
           value={filters.status}
@@ -476,6 +413,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
           onChangeDense={table.onChangeDense}
         />
       </Card>
+      {renderEditor}
       {/* </Container> */}
 
       <ConfirmDialog
