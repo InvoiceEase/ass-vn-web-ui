@@ -98,9 +98,9 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     files.forEach((f) => {
       data.append('files', f);
     });
-    data.append('mailId', mail.id);
-    data.append('attachmentFolderPath', mail.attachmentFolderPath);
-    data.append('emailAddress', mail.mailFrom);
+    data.append('mailId', mail?.id ?? '');
+    data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
+    data.append('emailAddress', mail?.mailFrom ?? '');
     setLoading(true);
 
     const config = {
@@ -128,7 +128,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                 businessSearchQuery ?? ''
               )
             );
-            router.replace(`${paths.dashboard.mail}/?id=${mail.id}`);
+            router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
           }
         }, 10000);
       })
