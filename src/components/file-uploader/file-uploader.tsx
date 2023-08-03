@@ -22,7 +22,6 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
   };
 
   useEffect(() => {
-    console.log('NghiaLog: hehe');
     setOpen(isOpen);
   }, []);
 

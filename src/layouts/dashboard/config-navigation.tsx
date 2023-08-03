@@ -875,7 +875,7 @@ export function useNavData(role: string | null = 'ADMIN') {
   switch (role) {
     case `${RoleCodeEnum.Auditor}`:
       return accountantStaffData;
-    case `${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Staff}`:
+    case `${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`:
       return businessManagerData;
     default:
       return data;

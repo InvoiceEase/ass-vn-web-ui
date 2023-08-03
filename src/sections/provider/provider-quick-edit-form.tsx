@@ -38,8 +38,6 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
 
-  console.log('NghiaLog: currentProvider - ', currentProvider);
-
   const NewProviderSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
@@ -55,7 +53,6 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
     address: currentProvider?.address || '',
     taxNumber1: currentProvider?.taxNumber || '',
   };
-  console.log('NghiaLog: defaultValues - ', defaultValues);
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewProviderSchema),
     defaultValues,

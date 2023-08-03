@@ -183,7 +183,6 @@ export default function InvoiceDetails({ invoice }: Props) {
     getDownloadURL(starsRef)
       .then((url) => {
         // Insert url into an <img> tag to "download"
-        console.log('NghiaLog: url - ', url);
         setInvoicePDFUrl(url);
       })
       .catch((error) => {
@@ -192,22 +191,18 @@ export default function InvoiceDetails({ invoice }: Props) {
         switch (error.code) {
           case 'storage/object-not-found':
             // File doesn't exist
-            console.log('NghiaLog: error - ', error);
             break;
           case 'storage/unauthorized':
             // User doesn't have permission to access the object
-            console.log('NghiaLog: error - ', error);
             break;
           case 'storage/canceled':
             // User canceled the upload
-            console.log('NghiaLog: error - ', error);
             break;
 
           // ...
 
           case 'storage/unknown':
             // Unknown error occurred, inspect the server response
-            console.log('NghiaLog: error - ', error);
             break;
 
           default:
