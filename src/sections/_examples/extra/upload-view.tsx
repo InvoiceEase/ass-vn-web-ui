@@ -22,7 +22,7 @@ import { useDispatch } from 'src/redux/store';
 import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
@@ -120,7 +120,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     },
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     const data = new FormData();
     files.forEach((f, index) => {
       if (!mail) {
@@ -137,14 +137,13 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     setLoading(true);
     const token = sessionStorage.getItem('token');
     const config = {
-      method: 'post',
       maxBodyLength: Infinity,
       headers: {
         'content-type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
     };
-    const timeOut = mail ? 10000 : 3000;
+    const timeOut = mail ? 1000 : 3000;
     axios
       .post(mail ? uploadOptions.mailUpload.path : uploadOptions.invoiceUpload.path, data, config)
       .then((response) => {
@@ -157,8 +156,8 @@ export default function UploadView({ mail, onClickCancel }: Props) {
               )
             );
             if (mail) {
-              router.replace(uploadOptions.mailUpload.pathRoute);
               onClickCancel();
+              router.replace(uploadOptions.mailUpload.pathRoute);
             } else {
               setInvoiceStatus({
                 numberOfCompareSuccess: response.data.numberOfCompareSuccess,
@@ -177,7 +176,15 @@ export default function UploadView({ mail, onClickCancel }: Props) {
   };
 
   const renderVerifyPop = (
-    <Timeline  position="right">
+    <Timeline
+      sx={{
+        [`& .${timelineItemClasses.root}:before`]: {
+          flex: 0,
+          padding: 0,
+        },
+      }}
+      position="right"
+    >
       <TimelineItem>
         <TimelineSeparator>
           <TimelineDot variant="outlined" color="warning" />
@@ -210,7 +217,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
   );
 
   return (
-    <Container sx={{ marginBottom: 5, marginTop:2 }}>
+    <Container sx={{ marginBottom: 5, marginTop: 2 }}>
       <Stack spacing={5}>
         <Card>
           <CardContent>
