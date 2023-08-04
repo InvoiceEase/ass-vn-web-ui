@@ -173,7 +173,7 @@ export default function ProviderListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Provider
+              Thêm nhà cung cấp
             </Button>
           }
           sx={{

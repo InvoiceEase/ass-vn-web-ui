@@ -5,7 +5,7 @@ import { ProviderCreateView } from 'src/sections/provider/view';
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: Create a new provider',
+  title: 'Tạo nhà cung cấp mới',
 };
 
 export default function UserCreatePage() {

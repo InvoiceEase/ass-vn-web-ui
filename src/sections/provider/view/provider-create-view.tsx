@@ -18,7 +18,7 @@ export default function UserCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new provider"
+        heading="Tạo nhà cung cấp mới"
         links={[
           {
             name: 'Dashboard',

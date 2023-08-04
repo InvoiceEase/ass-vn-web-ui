@@ -94,6 +94,13 @@ const slice = createSlice({
         state.mails.allIds.push(mail.id);
       }
     },
+
+    // READ MAIL
+    readMail(state, action) {
+      const mail = action.payload;
+
+      state.mails.byId[mail.id] = mail;
+    },
   },
 });
 
@@ -171,5 +178,29 @@ export function getMail(mailId: string) {
     } catch (error) {
       console.error(error);
     }
+  };
+}
+
+export function readMail(mailId: string) {
+  return async (dispatch: Dispatch) => {
+    try {
+      const token = sessionStorage.getItem('token');
+
+      const accessToken: string = `Bearer ${token}`;
+
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.list}/${mailId}`,
+        {},
+        { headers: headersList }
+      );
+      // tnghia's TODO: Remove console.log
+      console.log('NghiaLog: response - ', response);
+
+      dispatch(slice.actions.readMail(response.data));
+    } catch (error) {}
   };
 }

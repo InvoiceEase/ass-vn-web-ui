@@ -43,6 +43,7 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import FileUpload from 'src/components/file-uploader/file-uploader';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { getInvoices } from 'src/redux/slices/invoices';
 import { useDispatch, useSelector } from 'src/redux/store';
@@ -50,8 +51,6 @@ import InvoiceTableFiltersResult from '../invoice-table-filters-result';
 import InvoiceTableRow from '../invoice-table-row';
 import InvoiceTableToolbar from '../invoice-table-toolbar';
 import { InvoiceStatusConfig } from '../InvoiceStatusConfig';
-import FileUpload from 'src/components/file-uploader/file-uploader';
-import { Container } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -142,8 +141,10 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
-  const getInvoiceLength = (status: string) =>
-    tableData.filter((item) => item.status === status).length;
+  const getInvoiceLength = useCallback(
+    (status: string) => tableData.filter((item) => item.status === status).length,
+    [tableData]
+  );
 
   const getTotalAmount = (status: string) =>
     sumBy(
@@ -265,7 +266,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   return (
     <>
-      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload}/>}
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} />}
       {/* <Container maxWidth={settings.themeStretch ? false : 'lg'}> */}
       <Card>
         <Tabs

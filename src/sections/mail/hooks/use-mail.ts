@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 // redux
-import { useSelector } from 'src/redux/store';
+import { useDispatch, useSelector } from 'src/redux/store';
 // routes
 import { paths } from 'src/routes/paths';
 // components
+import { readMail } from 'src/redux/slices/mail';
 import { useRouter, useSearchParams } from 'src/routes/hook';
 
 // ----------------------------------------------------------------------
@@ -14,6 +15,8 @@ const baseUrl = paths.dashboard.mail;
 
 export default function useMail() {
   const router = useRouter();
+
+  const dispatch = useDispatch();
 
   const searchParams = useSearchParams();
 
@@ -26,13 +29,14 @@ export default function useMail() {
   const mail = useSelector((state) => state.mail.mails.byId[`${mailParam}`]);
 
   const onClickMail = useCallback(
-    (mailId: string) => {
+    async (mailId: string) => {
       const href =
         labelParam !== LABEL_INDEX
           ? `${baseUrl}?id=${mailId}&label=${labelParam}`
           : `${baseUrl}?id=${mailId}`;
 
       router.push(href);
+      dispatch(readMail(mailId));
     },
     [labelParam, router]
   );

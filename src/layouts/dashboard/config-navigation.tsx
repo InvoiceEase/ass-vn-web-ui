@@ -54,15 +54,15 @@ export function useNavData(role: string | null = 'ADMIN') {
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: t('overview'),
+        subheader: t('Tổng quát'),
         items: [
-          { title: t('dashboard'), path: paths.dashboard.root, icon: ICONS.dashboard },
+          { title: t('Quản lý'), path: paths.dashboard.root, icon: ICONS.dashboard },
           {
-            title: t('find an agency'),
+            title: t('Tìm kiếm Agency'),
             path: paths.dashboard.general.ecommerce,
             icon: ICONS.ecommerce,
           },
-          { title: t('Contract'), path: paths.dashboard.general.analytics, icon: ICONS.file },
+          { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
           // { title: t('banking'), path: paths.dashboard.general.banking, icon: ICONS.banking },
           // { title: t('booking'), path: paths.dashboard.general.booking, icon: ICONS.booking },
           // { title: t('file'), path: paths.dashboard.general.file, icon: ICONS.file },
@@ -72,7 +72,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('management'),
+        subheader: t('Lưu trữ'),
         items: [
           // USER
           // {
@@ -111,7 +111,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // INVOICE
           {
-            title: t('invoice'),
+            title: t('Hoá đơn'),
             path: paths.dashboard.invoice.root,
             icon: ICONS.invoice,
             children: [
@@ -129,7 +129,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // STORAGE
           {
-            title: t('storage'),
+            title: t('Kho lưu trữ'),
             path: paths.dashboard.order.root,
             icon: ICONS.folder,
             children: [
@@ -331,15 +331,15 @@ export function useNavData(role: string | null = 'ADMIN') {
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: t('overview'),
+        subheader: t('Tổng quát'),
         items: [
-          { title: t('dashboard'), path: paths.dashboard.root, icon: ICONS.dashboard },
+          { title: t('Quản lý'), path: paths.dashboard.root, icon: ICONS.dashboard },
           {
-            title: t('find an agency'),
+            title: t('Tìm kiếm Agency'),
             path: paths.dashboard.general.ecommerce,
             icon: ICONS.ecommerce,
           },
-          { title: t('Contract'), path: paths.dashboard.general.analytics, icon: ICONS.file },
+          { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
           // { title: t('banking'), path: paths.dashboard.general.banking, icon: ICONS.banking },
           // { title: t('booking'), path: paths.dashboard.general.booking, icon: ICONS.booking },
           // { title: t('file'), path: paths.dashboard.general.file, icon: ICONS.file },
@@ -347,17 +347,17 @@ export function useNavData(role: string | null = 'ADMIN') {
       },
 
       {
-        subheader: t('connection'),
+        subheader: t('Kết nối'),
         items: [
-          { title: t('provider'), path: paths.dashboard.provider.root, icon: ICONS.order },
-          { title: t('staff'), path: paths.dashboard.user.list, icon: ICONS.user },
+          { title: t('Nhà cung cấp'), path: paths.dashboard.provider.root, icon: ICONS.order },
+          { title: t('Nhân viên'), path: paths.dashboard.user.list, icon: ICONS.user },
         ],
       },
 
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('management'),
+        subheader: t('Lưu trữ'),
         items: [
           // USER
           // {
@@ -396,7 +396,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // INVOICE
           {
-            title: t('invoice'),
+            title: t('Hoá đơn'),
             path: paths.dashboard.invoice.root,
             icon: ICONS.invoice,
             children: [
@@ -414,7 +414,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // STORAGE
           {
-            title: t('storage'),
+            title: t('Kho lưu trữ'),
             path: paths.dashboard.order.root,
             icon: ICONS.folder,
             children: [
@@ -616,7 +616,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('management'),
+        subheader: t('Lưu trữ'),
         items: [
           // USER
           // {
@@ -655,7 +655,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // INVOICE
           {
-            title: t('invoice'),
+            title: t('Hoá đơn'),
             path: paths.dashboard.invoice.root,
             icon: ICONS.invoice,
             children: [
@@ -675,7 +675,7 @@ export function useNavData(role: string | null = 'ADMIN') {
           },
           // STORAGE
           {
-            title: t('storage'),
+            title: t('Kho lưu trữ'),
             path: paths.dashboard.order.root,
             icon: ICONS.folder,
             children: [
