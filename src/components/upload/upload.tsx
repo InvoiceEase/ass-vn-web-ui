@@ -38,10 +38,14 @@ export default function Upload({
   sx,
   ...other
 }: UploadProps) {
-  const [text, setText] = useState('');
   const getFileType = () => {
     let result = {};
-    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+    if (!mail) {
+      result = {
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+        'application/vnd.ms-excel': [],
+      };
+    } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       // setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
       result = { 'text/xml': [], 'application/pdf': [] };
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
@@ -55,7 +59,9 @@ export default function Upload({
   };
   const getFileMissingMessage = () => {
     let result = '';
-    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+    if (!mail) {
+      result = 'Vui lòng chọn 2 file excel để xác thực';
+    } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.';
@@ -72,6 +78,7 @@ export default function Upload({
   });
   const hasFile = !!file && !multiple;
   const [errorPop, setErrorPop] = useState(false);
+  const [errorInvoice, setErrorINvoice] = useState(false);
   const hasFiles = !!files && multiple && !!files.length;
 
   const hasError = isDragReject || !!error;
@@ -112,6 +119,14 @@ export default function Upload({
     </IconButton>
   );
 
+  const handleUpload = () => {
+    if (!mail && files?.length && files?.length < 2) {
+      setErrorINvoice(true);
+    } else {
+      onUpload();
+    }
+  };
+
   const renderMultiPreview = hasFiles && (
     <>
       <Box sx={{ my: 3 }}>
@@ -129,7 +144,7 @@ export default function Upload({
           <Button
             size="small"
             variant="contained"
-            onClick={onUpload}
+            onClick={handleUpload}
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
             Tải lên
@@ -144,6 +159,7 @@ export default function Upload({
         removeFile();
       } else {
         setErrorPop(false);
+        setErrorINvoice(false);
       }
     }
   }, [files]);
@@ -198,6 +214,12 @@ export default function Upload({
           CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE THÔI NHE
         </Alert>
       )}
+      {!!errorInvoice && (
+        <Alert sx={{ mt: 5 }} severity="error">
+          Vui lòng upload 2 file excel
+        </Alert>
+      )}
+
       <RejectionFiles fileRejections={fileRejections} />
 
       {files?.length !== undefined && files?.length <= 2 && renderMultiPreview}

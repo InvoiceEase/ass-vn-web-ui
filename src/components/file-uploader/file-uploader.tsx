@@ -7,7 +7,7 @@ import Iconify from '../iconify/iconify';
 
 type Props = {
   mail?: IMail;
-  onCanCel: () => void;
+  onCanCel: VoidFunction;
   isOpen: boolean;
 };
 
@@ -40,7 +40,7 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
       >
         <Iconify icon="material-symbols:close" />
       </DialogTitle>
-      <DialogContent sx={{ alignItems: 'end' }}>
+      <DialogContent >
         <UploadView mail={mail} onClickCancel={onClickCancel} />
       </DialogContent>
     </Dialog>

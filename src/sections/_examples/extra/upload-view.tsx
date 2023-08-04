@@ -21,6 +21,14 @@ import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { useDispatch } from 'src/redux/store';
 import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
+import { position } from 'stylis';
+import { relative } from 'path';
 // ----------------------------------------------------------------------
 type Props = {
   mail?: IMail;
@@ -30,6 +38,7 @@ type Props = {
 export default function UploadView({ mail, onClickCancel }: Props) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [isVerify, setIsVerify] = useState(false);
   const preview = useBoolean();
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
@@ -37,6 +46,12 @@ export default function UploadView({ mail, onClickCancel }: Props) {
   const roleCode = sessionStorage.getItem('roleCode');
   const orgId = sessionStorage.getItem('orgId');
   const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
+  const statusInvoice = {
+    numberOfInvoices: 0,
+    numberOfCompareSuccess: 0,
+    errorInvoices: 0,
+  };
+  const [invoiceStatus, setInvoiceStatus] = useState(statusInvoice);
   // const [file, setFile] = useState<File | string | null>(null);
 
   // const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
@@ -93,92 +108,122 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       }}
     />
   );
+
+  const uploadOptions = {
+    mailUpload: {
+      pathRoute: `${paths.dashboard.mail}/?id=${mail?.id ?? ''}`,
+      path: 'https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles',
+    },
+    invoiceUpload: {
+      pathRoute: `${paths.dashboard.invoice}`,
+      path: 'https://accountant-support-system.site/ass-admin/api/v1/files',
+    },
+  };
+
   const handleUpload = () => {
     const data = new FormData();
-    files.forEach((f) => {
-      data.append('files', f);
+    files.forEach((f, index) => {
+      if (!mail) {
+        data.append(`file${index + 1}`, f);
+      } else {
+        data.append('files', f);
+      }
     });
-    data.append('mailId', mail?.id ?? '');
-    data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
-    data.append('emailAddress', mail?.mailFrom ?? '');
+    if (mail) {
+      data.append('mailId', mail?.id ?? '');
+      data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
+      data.append('emailAddress', mail?.mailFrom ?? '');
+    }
     setLoading(true);
-
+    const token = sessionStorage.getItem('token');
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
       headers: {
-        // 'Access-Control-Allow-Origin': '*',
-        // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
         'content-type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
       },
     };
+    const timeOut = mail ? 10000 : 3000;
     axios
-      .post(
-        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles`,
-        data,
-        config
-      )
+      .post(mail ? uploadOptions.mailUpload.path : uploadOptions.invoiceUpload.path, data, config)
       .then((response) => {
         setTimeout(() => {
           if (response.status === 200) {
-            onClickCancel();
             dispatch(
               getMails(
                 roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
                 businessSearchQuery ?? ''
               )
             );
-            router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
+            if (mail) {
+              router.replace(uploadOptions.mailUpload.pathRoute);
+              onClickCancel();
+            } else {
+              setInvoiceStatus({
+                numberOfCompareSuccess: response.data.numberOfCompareSuccess,
+                numberOfInvoices: response.data.numberOfInvoices,
+                errorInvoices: response.data.errorInvoices.length,
+              });
+              setIsVerify(true);
+              setLoading(false);
+            }
           }
-        }, 10000);
+        }, timeOut);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  return (
-    <>
-      {/* <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Upload"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Upload' },
-            ]}
-            moreLink={['https://react-dropzone.js.org/#section-basic-example']}
-          />
-        </Container>
-      </Box> */}
 
-      <Container sx={{ marginBottom: 5 }}>
-        <Stack spacing={5}>
-          <Card>
-            {/* <CardHeader
-              title="Upload Multi File"
-              action={
-                <FormControlLabel
-                  control={<Switch checked={preview.value} onClick={preview.onToggle} />}
-                  label="Show Thumbnail"
-                />
-              }
-            /> */}
-            <CardContent>
-              <Stack
-                spacing={2}
-                sx={{
-                  p: (theme) => theme.spacing(0, 2, 2, 2),
-                }}
-              >
-                <Stack direction="row" alignItems="center" flexGrow={1}>
+  const renderVerifyPop = (
+    <Timeline  position="right">
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot variant="outlined" color="warning" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>
+          {invoiceStatus.numberOfInvoices} hoá đơn được đưa và xác thực
+        </TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot variant="outlined" color="primary" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>
+          {invoiceStatus.numberOfCompareSuccess}/{statusInvoice.numberOfInvoices} hóa đơn đã được
+          xác thực
+        </TimelineContent>
+      </TimelineItem>
+      <TimelineItem>
+        <TimelineSeparator>
+          <TimelineDot variant="outlined" color="grey" />
+          <TimelineConnector />
+        </TimelineSeparator>
+        <TimelineContent>
+          {invoiceStatus.errorInvoices}/{statusInvoice.numberOfInvoices} hóa đơn không xác thực{' '}
+        </TimelineContent>
+      </TimelineItem>
+    </Timeline>
+  );
+
+  return (
+    <Container sx={{ marginBottom: 5, marginTop:2 }}>
+      <Stack spacing={5}>
+        <Card>
+          <CardContent>
+            <Stack
+              spacing={2}
+              sx={{
+                p: (theme) => theme.spacing(0, 2, 2, 2),
+              }}
+            >
+              <Stack direction="row" alignItems="center" flexGrow={1}>
+                {isVerify ? (
+                  renderVerifyPop
+                ) : (
                   <Upload
                     multiple
                     thumbnail={preview.value}
@@ -189,81 +234,14 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                     onUpload={() => handleUpload()}
                     mail={mail}
                   />
-                </Stack>
-                {/* <Stack direction="row" alignItems="center" spacing={2}>
-                  <Stack direction="row" alignItems="center" flexGrow={1} />
-                  <Button
-                    variant="outlined"
-                    onClick={()=>onClickCancel()}
-                  >
-                    Hủy
-                  </Button>
-                  <Button
-                    startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-                    variant="contained"
-                    color="primary"
-                    // onClick={() => onClickUpload()}
-                  >
-                    Tải lên
-                  </Button>
-
-                </Stack> */}
+                )}
               </Stack>
-            </CardContent>
-          </Card>
-          {loading && renderLoading}
-          {/* <Card>
-            <CardHeader title="Upload Single File" />
-            <CardContent>
-              <Upload file={file} onDrop={handleDropSingleFile} onDelete={() => setFile(null)} />
-            </CardContent>
-          </Card>
+            </Stack>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader title="Upload Avatar" />
-            <CardContent>
-              <UploadAvatar
-                file={avatarUrl}
-                onDrop={handleDropAvatar}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader title="Upload Box" />
-            <CardContent>
-              <Stack direction="row" spacing={2}>
-                <UploadBox />
-
-                <UploadBox
-                  placeholder={
-                    <Stack spacing={0.5} alignItems="center">
-                      <Iconify icon="eva:cloud-upload-fill" width={40} />
-                      <Typography variant="body2">Upload file</Typography>
-                    </Stack>
-                  }
-                  sx={{ flexGrow: 1, height: 'auto', py: 2.5, mb: 3 }}
-                />
-              </Stack>
-            </CardContent>
-          </Card> */}
-        </Stack>
-      </Container>
-    </>
+        {loading && renderLoading}
+      </Stack>
+    </Container>
   );
 }
