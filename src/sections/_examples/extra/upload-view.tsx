@@ -29,6 +29,7 @@ import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { position } from 'stylis';
 import { relative } from 'path';
+import { Alert } from '@mui/material';
 // ----------------------------------------------------------------------
 type Props = {
   mail?: IMail;
@@ -38,6 +39,7 @@ type Props = {
 export default function UploadView({ mail, onClickCancel }: Props) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [isFail, setIsFail] = useState(false);
   const [isVerify, setIsVerify] = useState(false);
   const preview = useBoolean();
   const router = useRouter();
@@ -167,10 +169,15 @@ export default function UploadView({ mail, onClickCancel }: Props) {
               setIsVerify(true);
               setLoading(false);
             }
+          } else {
+            setLoading(false);
+            setIsFail(true);
           }
         }, timeOut);
       })
       .catch((error) => {
+        setLoading(false);
+        setIsFail(true);
         console.log(error);
       });
   };
@@ -248,6 +255,11 @@ export default function UploadView({ mail, onClickCancel }: Props) {
         </Card>
 
         {loading && renderLoading}
+        {isFail && (
+          <Alert severity="error">
+            Thất bại
+          </Alert>
+        )}
       </Stack>
     </Container>
   );
