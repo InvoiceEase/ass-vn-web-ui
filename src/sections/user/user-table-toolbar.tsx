@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
 import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
@@ -11,16 +11,22 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 // types
-import { IUserTableFilters, IUserTableFilterValue } from 'src/types/profile';
+import {
+  IUserTableFilters,
+  IUserTableFiltersAdmin,
+  IUserTableFilterValue,
+} from 'src/types/profile';
 // components
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
+import { Autocomplete } from '@mui/material';
+import { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IUserTableFilters;
+  filters: IUserTableFiltersAdmin;
   onFilters: (name: string, value: IUserTableFilterValue) => void;
   //
   roleOptions: string[];
@@ -33,7 +39,9 @@ export default function UserTableToolbar({
   roleOptions,
 }: Props) {
   const popover = usePopover();
-
+  const optionLst = ['Auditor', 'User', 'Company'];
+  const [option, setOption] = useState(optionLst[1]);
+  const [role,setRole] = useState(filters.role);
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
@@ -42,13 +50,37 @@ export default function UserTableToolbar({
   );
 
   const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'role',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+    (event: SelectChangeEvent<string>) => {
+      setRole(event.target.value);
+      onFilters('role', event.target.value);
     },
     [onFilters]
+  );
+
+  const renderOptions = (
+    <Autocomplete
+      value={option}
+      options={optionLst}
+      onChange={(event: any, newValue: string | null) => {
+        setOption(newValue || option[0]);
+      }}
+      renderInput={(params) => <TextField {...params} label="Option" />}
+    />
+  );
+  const renderUserRole = (
+    <Autocomplete
+      value={filters.role}
+      options={roleOptions}
+      onChange={() => handleFilterRole}
+      renderInput={(params) => <TextField {...params} label="Role" />}
+    />
+  );
+
+  const renderComp = (
+    <>
+      <InputLabel>Company</InputLabel>
+      <CompanySelectionDropdown />
+    </>
   );
 
   return (
@@ -71,29 +103,8 @@ export default function UserTableToolbar({
             width: { xs: 1, md: 200 },
           }}
         >
-          <InputLabel>Role</InputLabel>
-
-          <Select
-            multiple
-            value={filters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
-          >
-            {roleOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.role.includes(option)} />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
+          {renderOptions}
         </FormControl>
-
 
         <FormControl
           sx={{
@@ -101,8 +112,7 @@ export default function UserTableToolbar({
             width: { xs: 1, md: 200 },
           }}
         >
-          <InputLabel>Company</InputLabel>
-          <CompanySelectionDropdown/>
+          {option === optionLst[2] ? renderComp : renderUserRole}
           {/* <InputLabel>Role</InputLabel>
 
           <Select

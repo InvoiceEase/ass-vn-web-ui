@@ -5,14 +5,14 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
-import { IUserTableFilters, IUserTableFilterValue } from 'src/types/profile';
+import { IUserTableFilters, IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // components
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = StackProps & {
-  filters: IUserTableFilters;
+  filters: IUserTableFiltersAdmin;
   onFilters: (name: string, value: IUserTableFilterValue) => void;
   //
   onResetFilters: VoidFunction;

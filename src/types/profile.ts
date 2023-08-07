@@ -9,6 +9,12 @@ export type IUserTableFilters = {
   status: string;
 };
 
+export type IUserTableFiltersAdmin = {
+  name: string;
+  role: string;
+  status: string;
+};
+
 // ----------------------------------------------------------------------
 
 export type IUserSocialLink = {

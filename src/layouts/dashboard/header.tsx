@@ -25,7 +25,6 @@ import {
   Searchbar,
   SettingsButton,
 } from '../_common';
-import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
 import { HEADER, NAV } from '../config-layout';
 
 // ----------------------------------------------------------------------

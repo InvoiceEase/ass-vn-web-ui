@@ -591,6 +591,6 @@ export function useNavData(role: string | null = 'ADMIN') {
     case `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Staff}`:
       return accountantStaffData;
     default:
-      return data;
+      return accountantStaffData;
   }
 }

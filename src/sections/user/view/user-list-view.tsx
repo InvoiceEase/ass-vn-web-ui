@@ -19,7 +19,7 @@ import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/profile';
+import { IUserItem, IUserTableFilters, IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // _mock
 import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
@@ -61,7 +61,7 @@ const TABLE_HEAD = [
 
 const defaultFilters = {
   name: '',
-  role: [],
+  role: '',
   status: 'all',
 };
 
@@ -347,7 +347,7 @@ function applyFilter({
 }: {
   inputData: IUserItem[];
   comparator: (a: any, b: any) => number;
-  filters: IUserTableFilters;
+  filters: IUserTableFiltersAdmin;
 }) {
   const { name, status, role } = filters;
 
