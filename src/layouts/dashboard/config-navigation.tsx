@@ -335,7 +335,7 @@ export function useNavData(role: string | null = 'ADMIN') {
         items: [
           // USER
           {
-            title: t('user'),
+            title: t('admin'),
             path: paths.dashboard.user.list,
             icon: ICONS.user,
             // children: [
@@ -591,6 +591,6 @@ export function useNavData(role: string | null = 'ADMIN') {
     case `${RoleCodeEnum.AccountantPrefix}${RoleCodeEnum.Staff}`:
       return accountantStaffData;
     default:
-      return accountantStaffData;
+      return data;
   }
 }
