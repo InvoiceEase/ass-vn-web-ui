@@ -197,8 +197,6 @@ export function readMail(mailId: string) {
         {},
         { headers: headersList }
       );
-      // tnghia's TODO: Remove console.log
-      console.log('NghiaLog: response - ', response);
 
       dispatch(slice.actions.readMail(response.data));
     } catch (error) {}
