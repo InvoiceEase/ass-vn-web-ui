@@ -6,7 +6,7 @@ import { IMail } from 'src/types/mail';
 import Iconify from '../iconify/iconify';
 
 type Props = {
-  mail: IMail;
+  mail?: IMail;
   onCanCel: () => void;
   isOpen: boolean;
 };

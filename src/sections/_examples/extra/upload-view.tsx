@@ -23,7 +23,7 @@ import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 // ----------------------------------------------------------------------
 type Props = {
-  mail: IMail;
+  mail?: IMail;
   onClickCancel: () => void;
 };
 
@@ -37,31 +37,31 @@ export default function UploadView({ mail, onClickCancel }: Props) {
   const roleCode = sessionStorage.getItem('roleCode');
   const orgId = sessionStorage.getItem('orgId');
   const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
-  const [file, setFile] = useState<File | string | null>(null);
+  // const [file, setFile] = useState<File | string | null>(null);
 
-  const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
+  // const [avatarUrl, setAvatarUrl] = useState<File | string | null>(null);
 
-  const handleDropSingleFile = useCallback((acceptedFiles: File[]) => {
-    const newFile = acceptedFiles[0];
-    if (newFile) {
-      setFile(
-        Object.assign(newFile, {
-          preview: URL.createObjectURL(newFile),
-        })
-      );
-    }
-  }, []);
+  // const handleDropSingleFile = useCallback((acceptedFiles: File[]) => {
+  //   const newFile = acceptedFiles[0];
+  //   if (newFile) {
+  //     setFile(
+  //       Object.assign(newFile, {
+  //         preview: URL.createObjectURL(newFile),
+  //       })
+  //     );
+  //   }
+  // }, []);
 
-  const handleDropAvatar = useCallback((acceptedFiles: File[]) => {
-    const newFile = acceptedFiles[0];
-    if (newFile) {
-      setAvatarUrl(
-        Object.assign(newFile, {
-          preview: URL.createObjectURL(newFile),
-        })
-      );
-    }
-  }, []);
+  // const handleDropAvatar = useCallback((acceptedFiles: File[]) => {
+  //   const newFile = acceptedFiles[0];
+  //   if (newFile) {
+  //     setAvatarUrl(
+  //       Object.assign(newFile, {
+  //         preview: URL.createObjectURL(newFile),
+  //       })
+  //     );
+  //   }
+  // }, []);
 
   const handleDropMultiFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -98,9 +98,9 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     files.forEach((f) => {
       data.append('files', f);
     });
-    data.append('mailId', mail.id);
-    data.append('attachmentFolderPath', mail.attachmentFolderPath);
-    data.append('emailAddress', mail.mailFrom);
+    data.append('mailId', mail?.id ?? '');
+    data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
+    data.append('emailAddress', mail?.mailFrom ?? '');
     setLoading(true);
 
     const config = {
@@ -114,7 +114,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     };
     axios
       .post(
-        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadFiles`,
+        `https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles`,
         data,
         config
       )
@@ -124,11 +124,11 @@ export default function UploadView({ mail, onClickCancel }: Props) {
             onClickCancel();
             dispatch(
               getMails(
-                roleCode?.includes(RoleCodeEnum.AccountantPrefix) ? selectedBusinessID : orgId,
+                roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
                 businessSearchQuery ?? ''
               )
             );
-            router.replace(`${paths.dashboard.mail}/?id=${mail.id}`);
+            router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
           }
         }, 10000);
       })

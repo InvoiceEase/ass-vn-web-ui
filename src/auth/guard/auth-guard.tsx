@@ -1,18 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import axios from 'axios';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 import { useAuthContext } from '../hooks';
-import { useRouter } from 'src/routes/hook';
 
 // routes
 
-
 //
-
-
-
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +49,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           headers: { Authorization: `Bearer ${token}` },
         };
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}`;
-        console.log(process.env.NEXT_PUBLIC_BE_ADMIN_API)
+        console.log(process.env.NEXT_PUBLIC_BE_ADMIN_API);
         const resp = await axios.get(url, config);
         if (resp.status === 200) {
           setChecked(true);
@@ -62,7 +58,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           sessionStorage.setItem('userName', resp.data.name);
           sessionStorage.setItem('roleCode', resp.data.role);
           sessionStorage.setItem('orgId', resp.data.organizationId);
-          if (resp.data.role.includes(RoleCodeEnum.AccountantPrefix)) {
+          if (resp.data.role.includes(RoleCodeEnum.Auditor)) {
             // if user is accountant navigate to mail as default screen
             router.prefetch(paths.dashboard.mail);
             router.replace(paths.dashboard.mail);

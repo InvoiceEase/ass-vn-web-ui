@@ -25,6 +25,7 @@ import {
   Searchbar,
   SettingsButton,
 } from '../_common';
+import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
 import { HEADER, NAV } from '../config-layout';
 
 // ----------------------------------------------------------------------
@@ -72,7 +73,7 @@ export default function Header({ onOpenNav }: Props) {
   // }, []);
 
   useEffect(() => {
-    if (role?.includes(RoleCodeEnum.AccountantPrefix)) {
+    if (role?.includes(RoleCodeEnum.Auditor)) {
       dispatch(getBusinesses());
     }
   }, []);
@@ -87,11 +88,11 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {/* {!role?.includes(RoleCodeEnum.AccountantPrefix) ? (
+      {!role?.includes(RoleCodeEnum.Auditor) ? (
         <Searchbar />
       ) : (
         businesses.allIds.length > 0 && <CompanySelectionDropdown />
-      )} */}
+      )}
 
       <Stack
         flexGrow={1}

@@ -44,8 +44,8 @@ const slice = createSlice({
     },
 
     getProfileFailure(state, action) {
-      state.profileStatus.loading = true;
-      state.profileStatus.empty = false;
+      state.profileStatus.loading = false;
+      state.profileStatus.empty = true;
       state.profileStatus.error = action.payload;
     },
 

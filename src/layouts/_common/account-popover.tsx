@@ -1,38 +1,37 @@
 import { m } from 'framer-motion';
 // @mui
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 // routes
-import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
 import { varHover } from 'src/components/animate';
-import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useSnackbar } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
 const OPTIONS = [
   {
-    label: 'Home',
+    label: 'Trang chủ',
     linkTo: '/',
   },
   {
-    label: 'Profile',
+    label: 'Cá nhân',
     linkTo: paths.dashboard.user.profile,
   },
   {
-    label: 'Settings',
+    label: 'Cài đặt',
     linkTo: paths.dashboard.user.account,
   },
 ];
@@ -42,8 +41,7 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
-
-  const {user, logout } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -121,7 +119,7 @@ export default function AccountPopover() {
           onClick={handleLogout}
           sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
         >
-          Logout
+          Đăng xuất
         </MenuItem>
       </CustomPopover>
     </>

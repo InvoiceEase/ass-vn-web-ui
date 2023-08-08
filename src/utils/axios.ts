@@ -49,4 +49,7 @@ export const API_ENDPOINTS = {
     list: '/api/v1/invoices/filter',
     details: '/api/v1/invoices/',
   },
+  provider: {
+    list: '/api/v1/providers',
+  },
 };

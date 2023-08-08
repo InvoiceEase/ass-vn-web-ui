@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -33,13 +33,13 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   const lgUp = useResponsive('up', 'lg');
 
-  const [role, setRole] = useState<string | null>('ADMIN');
+  // const [role, setRole] = useState<string | null>('ADMIN');
 
-  // get user's role from session storage in order to get nav data
-  useEffect(() => {
-    const sessionRole = sessionStorage.getItem('roleCode');
-    setRole(sessionRole);
-  }, []);
+  const role = sessionStorage.getItem('roleCode');
+  // // get user's role from session storage in order to get nav data
+  // useEffect(() => {
+  //   setRole(sessionRole);
+  // }, []);
 
   // get navData with role picked from sessionStorage
   // Default value for role is "ADMIN"

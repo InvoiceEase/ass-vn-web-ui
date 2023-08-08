@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
@@ -73,19 +72,21 @@ export default function InvoiceTableRow({
           <ListItemText
             disableTypography
             primary={
-              <Typography variant="body2" noWrap>
-                {invoiceName}
-              </Typography>
-            }
-            secondary={
               <Link
                 noWrap
                 variant="body2"
                 onClick={onViewRow}
-                sx={{ color: 'text.disabled', cursor: 'pointer' }}
+                sx={{ color: 'text.primary', cursor: 'pointer' }}
               >
-                {isInputInvoice ? senderName : receiverName}
+                <Typography variant="body2" noWrap>
+                  {invoiceName}
+                </Typography>
               </Link>
+            }
+            secondary={
+              <Typography noWrap variant="body2" sx={{ color: 'text.disabled' }}>
+                {isInputInvoice ? senderName : receiverName}
+              </Typography>
             }
           />
         </TableCell>
@@ -119,12 +120,6 @@ export default function InvoiceTableRow({
           >
             {status}
           </Label>
-        </TableCell>
-
-        <TableCell align="right" sx={{ px: 1 }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </TableCell>
       </TableRow>
 
