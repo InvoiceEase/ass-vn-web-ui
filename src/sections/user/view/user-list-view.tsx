@@ -1,34 +1,30 @@
 'use client';
 
 import isEqual from 'lodash/isEqual';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import { alpha } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
-import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 // routes
 import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
-import { IUserItem, IUserTableFilters, IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
+import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // _mock
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
-import Label from 'src/components/label';
 import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
 import {
@@ -42,6 +38,9 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import { getAuditors } from 'src/redux/slices/auditor';
+import { useDispatch, useSelector } from 'src/redux/store';
+import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
@@ -68,6 +67,10 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function UserListView() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAuditors());
+  }, []);
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -75,6 +78,8 @@ export default function UserListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
+
+  const _userList = useSelector((state) => state.auditor.auditors);
 
   const [tableData, setTableData] = useState(_userList);
 
@@ -173,7 +178,7 @@ export default function UserListView() {
         />
 
         <Card>
-          <Tabs
+          {/* <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -213,7 +218,7 @@ export default function UserListView() {
                 }
               />
             ))}
-          </Tabs>
+          </Tabs> */}
 
           <UserTableToolbar
             filters={filters}
@@ -345,7 +350,7 @@ function applyFilter({
   comparator,
   filters,
 }: {
-  inputData: IUserItem[];
+  inputData: IAuditor[];
   comparator: (a: any, b: any) => number;
   filters: IUserTableFiltersAdmin;
 }) {
@@ -367,9 +372,9 @@ function applyFilter({
     );
   }
 
-  if (status !== 'all') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
+  // if (status !== 'all') {
+  //   inputData = inputData.filter((user) => user.status === status);
+  // }
 
   if (role.length) {
     inputData = inputData.filter((user) => role.includes(user.role));

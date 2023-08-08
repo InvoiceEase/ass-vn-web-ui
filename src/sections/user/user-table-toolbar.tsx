@@ -1,27 +1,18 @@
 import { useCallback, useState } from 'react';
 // @mui
-import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 // types
-import {
-  IUserTableFilters,
-  IUserTableFiltersAdmin,
-  IUserTableFilterValue,
-} from 'src/types/profile';
+import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // components
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Autocomplete } from '@mui/material';
+import { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
-import { Autocomplete } from '@mui/material';
-import { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -41,7 +32,7 @@ export default function UserTableToolbar({
   const popover = usePopover();
   const optionLst = ['Auditor', 'User', 'Company'];
   const [option, setOption] = useState(optionLst[1]);
-  const [role,setRole] = useState(filters.role);
+  const [role, setRole] = useState(filters.role);
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
@@ -106,14 +97,14 @@ export default function UserTableToolbar({
           {renderOptions}
         </FormControl>
 
-        <FormControl
+        {/* <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 200 },
           }}
         >
           {option === optionLst[2] ? renderComp : renderUserRole}
-          {/* <InputLabel>Role</InputLabel>
+          <InputLabel>Role</InputLabel>
 
           <Select
             multiple
@@ -133,8 +124,8 @@ export default function UserTableToolbar({
                 {option}
               </MenuItem>
             ))}
-          </Select> */}
-        </FormControl>
+          </Select>
+        </FormControl> */}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
