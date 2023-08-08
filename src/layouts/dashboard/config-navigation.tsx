@@ -104,7 +104,7 @@ export function useNavData(role: string | null = 'ADMIN') {
 
           // MAIL
           {
-            title: t('mail'),
+            title: t('Hộp thư'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
             // info: <Label color="error">+32</Label>,
@@ -389,7 +389,7 @@ export function useNavData(role: string | null = 'ADMIN') {
 
           // MAIL
           {
-            title: t('mail'),
+            title: t('Hộp thư'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
             // info: <Label color="error">+32</Label>,
@@ -648,7 +648,7 @@ export function useNavData(role: string | null = 'ADMIN') {
 
           // MAIL
           {
-            title: t('mail'),
+            title: t('Hộp thư'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
             // info: <Label color="error">+32</Label>,

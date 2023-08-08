@@ -72,19 +72,21 @@ export default function InvoiceTableRow({
           <ListItemText
             disableTypography
             primary={
-              <Typography variant="body2" noWrap>
-                {invoiceName}
-              </Typography>
-            }
-            secondary={
               <Link
                 noWrap
                 variant="body2"
                 onClick={onViewRow}
-                sx={{ color: 'text.disabled', cursor: 'pointer' }}
+                sx={{ color: 'text.primary', cursor: 'pointer' }}
               >
-                {isInputInvoice ? senderName : receiverName}
+                <Typography variant="body2" noWrap>
+                  {invoiceName}
+                </Typography>
               </Link>
+            }
+            secondary={
+              <Typography noWrap variant="body2" sx={{ color: 'text.disabled' }}>
+                {isInputInvoice ? senderName : receiverName}
+              </Typography>
             }
           />
         </TableCell>
