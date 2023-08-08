@@ -94,6 +94,13 @@ const slice = createSlice({
         state.mails.allIds.push(mail.id);
       }
     },
+
+    // READ MAIL
+    readMail(state, action) {
+      const mail = action.payload;
+
+      state.mails.byId[mail.id] = mail;
+    },
   },
 });
 
@@ -168,6 +175,30 @@ export function getMail(mailId: string) {
         },
       });
       dispatch(slice.actions.getMailSuccess(response.data.mail));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+}
+
+export function readMail(mailId: string) {
+  return async (dispatch: Dispatch) => {
+    try {
+      const token = sessionStorage.getItem('token');
+
+      const accessToken: string = `Bearer ${token}`;
+
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.list}/${mailId}`,
+        {},
+        { headers: headersList }
+      );
+
+      dispatch(slice.actions.readMail(response.data));
     } catch (error) {
       console.error(error);
     }
