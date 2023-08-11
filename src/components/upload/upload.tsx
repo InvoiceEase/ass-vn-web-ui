@@ -41,7 +41,9 @@ export default function Upload({
   const [text, setText] = useState('');
   const getFileType = () => {
     let result = {};
-    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+    if (!mail) {
+      result = { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [] };
+    } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       // setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
       result = { 'text/xml': [], 'application/pdf': [] };
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
@@ -55,7 +57,9 @@ export default function Upload({
   };
   const getFileMissingMessage = () => {
     let result = '';
-    if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
+    if (!mail) {
+      result = 'Vui lòng chọn file excel còn thiếu của hóa đơn trong mail này.';
+    } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file xml còn thiếu của hóa đơn trong mail này.';
@@ -72,6 +76,7 @@ export default function Upload({
   });
   const hasFile = !!file && !multiple;
   const [errorPop, setErrorPop] = useState(false);
+  const [errorPopEx, setErrorPopEx] = useState(false);
   const hasFiles = !!files && multiple && !!files.length;
 
   const hasError = isDragReject || !!error;
@@ -140,6 +145,12 @@ export default function Upload({
   );
   useEffect(() => {
     if (files?.length) {
+      if (!mail && files?.length !== 2) {
+        setErrorPopEx(true);
+      }
+      else{
+        setErrorPopEx(false);
+      }
       if (files?.length > 2) {
         removeFile();
       } else {
@@ -195,7 +206,12 @@ export default function Upload({
       {helperText && helperText}
       {!!errorPop && (
         <Alert sx={{ mt: 5 }} severity="error">
-          CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE THÔI NHE
+          CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE
+        </Alert>
+      )}
+      {!!errorPopEx && (
+        <Alert sx={{ mt: 5 }} severity="error">
+          Upload 2 file
         </Alert>
       )}
       <RejectionFiles fileRejections={fileRejections} />
