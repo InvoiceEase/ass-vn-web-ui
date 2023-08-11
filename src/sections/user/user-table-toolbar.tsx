@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 // types
 import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // components
-import { Autocomplete } from '@mui/material';
+import { Autocomplete, OutlinedInput } from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
@@ -31,7 +31,7 @@ export default function UserTableToolbar({
 }: Props) {
   const popover = usePopover();
   const optionLst = ['Auditor', 'User', 'Company'];
-  const [option, setOption] = useState(optionLst[1]);
+  const [option, setOption] = useState(optionLst[0]);
   const [role, setRole] = useState(filters.role);
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +88,7 @@ export default function UserTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <FormControl
+        {/* <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 200 },
@@ -97,34 +97,14 @@ export default function UserTableToolbar({
           {renderOptions}
         </FormControl>
 
-        {/* <FormControl
+        <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 200 },
           }}
         >
           {option === optionLst[2] ? renderComp : renderUserRole}
-          <InputLabel>Role</InputLabel>
 
-          <Select
-            multiple
-            value={filters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
-          >
-            {roleOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.role.includes(option)} />
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
         </FormControl> */}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>

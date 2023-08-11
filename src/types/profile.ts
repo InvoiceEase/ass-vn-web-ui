@@ -114,6 +114,22 @@ export type IUserItem = {
   isVerified: boolean;
 };
 
+export type IAuditorItem = {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  state: string;
+  status: string;
+  address: string;
+  country: string;
+  zipCode: string;
+  company: string;
+  avatarUrl: string;
+  phoneNumber: string;
+  isVerified: boolean;
+};
+
 // export type IUserAccount = {
 //   email: string;
 //   isPublic: boolean;

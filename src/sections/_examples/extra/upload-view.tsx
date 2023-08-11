@@ -119,7 +119,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     const accessToken: string = `Bearer ${token}`;
     setLoading(true);
     const urlUp =
-      'https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles';
+      'https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare';
     const urlComp = 'https://accountant-support-system.site/ass-admin/api/v1/files';
     const config = {
       method: 'post',
