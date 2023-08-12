@@ -115,19 +115,11 @@ export type IUserItem = {
 };
 
 export type IAuditorItem = {
-  id: string;
-  name: string;
+  fullName: string;
   role: string;
   email: string;
-  state: string;
-  status: string;
-  address: string;
-  country: string;
-  zipCode: string;
-  company: string;
-  avatarUrl: string;
   phoneNumber: string;
-  isVerified: boolean;
+  password:string;
 };
 
 // export type IUserAccount = {

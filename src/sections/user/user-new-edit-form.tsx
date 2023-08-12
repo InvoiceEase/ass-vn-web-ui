@@ -1,8 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
+import InputLabel from '@mui/material/InputLabel';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -12,13 +13,14 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
+import IconButton from '@mui/material/IconButton';
 // utils
 import { fData } from 'src/utils/format-number';
 // routes
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
-import { IUserItem } from 'src/types/profile';
+import { IAuditorItem, IUserItem } from 'src/types/profile';
 // assets
 import { countries } from 'src/assets/data';
 // components
@@ -32,6 +34,9 @@ import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { InputAdornment, Alert } from '@mui/material';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -40,42 +45,29 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
 }
 
 type Props = {
-  currentUser?: IUserItem;
+  currentUser?: IAuditorItem;
 };
 
 export default function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
-
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const { enqueueSnackbar } = useSnackbar();
-
+  const password = useBoolean();
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+    fullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    avatarUrl: Yup.mixed().required('Avatar is required'),
+    password: Yup.string().required('Password is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
+      fullName: currentUser?.fullName || '',
       email: currentUser?.email || '',
       phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      state: currentUser?.state || '',
-      city: currentUser?.city || '',
-      zipCode: currentUser?.zipCode || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      isVerified: currentUser?.isVerified || true,
-      status: currentUser?.status,
-      company: currentUser?.company || '',
-      role: currentUser?.role || '',
+      password: currentUser?.password || '',
+      role: currentUser?.role || 'AUDITOR',
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]
@@ -100,13 +92,17 @@ export default function UserNewEditForm({ currentUser }: Props) {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        setError(false);
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
+        const response = await axios.post(url, data);
         reset();
         enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
         router.push(paths.dashboard.user.list);
         console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
+      } catch (e) {
+        console.error(e);
+        setErrorMsg(e.response.data.errorCode);
+        setError(true);
       }
     },
     [currentUser, enqueueSnackbar, reset, router]
@@ -130,8 +126,8 @@ export default function UserNewEditForm({ currentUser }: Props) {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
+        <Grid xs={10} md={2}>
+          {/* <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
                 color={values.status === 'active' ? 'success' : 'error'}
@@ -219,11 +215,20 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 </Button>
               </Stack>
             )}
-          </Card>
+          </Card> */}
         </Grid>
 
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 5 }}>
+              Thêm auditor
+            </Typography>
+            {error && (
+              <Alert sx={{ mb: 2 }} severity={error ? 'error' : 'success'}>
+                {errorMsg}
+              </Alert>
+            )}
+
             <Box
               rowGap={3}
               columnGap={2}
@@ -233,50 +238,37 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="name" label="Full Name" />
+              <RHFTextField name="fullName" label="Full Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phoneNumber" label="Phone Number" />
 
-              <RHFAutocomplete
-                name="country"
-                label="Country"
-                options={countries.map((country) => country.label)}
-                getOptionLabel={(option) => option}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
+              <RHFTextField
+                name="password"
+                label="Password"
+                type={password.value ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={password.onToggle} edge="end">
+                        <Iconify
+                          icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
               />
-
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
+              <RHFTextField disabled name="role" label="Role" value="AUDITOR" />
+              {/* <RHFTextField name="city" label="City" />
               <RHFTextField name="address" label="Address" />
               <RHFTextField name="zipCode" label="Zip/Code" />
               <RHFTextField name="company" label="Company" />
-              <RHFTextField name="role" label="Role" />
+              <RHFTextField name="role" label="Role" /> */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create User' : 'Save Changes'}
+                {!currentUser ? 'Thêm thôi' : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>
