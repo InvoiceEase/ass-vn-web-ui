@@ -50,9 +50,9 @@ import UserTableToolbar from '../user-table-toolbar';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
+  { id: 'name', label: 'Name', width: 500 },
   { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
+  // { id: 'email', label: 'Email', width: 300 },
   { id: 'role', label: 'Role', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
@@ -96,7 +96,7 @@ export default function UserListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 52 : 72;
+  // const denseHeight = table.dense ? 52 : 72;
 
   const canReset = !isEqual(defaultFilters, filters);
 
@@ -136,6 +136,7 @@ export default function UserListView() {
 
   const handleEditRow = useCallback(
     (id: string) => {
+      debugger
       router.push(paths.dashboard.user.edit(id));
     },
     [router]
@@ -169,7 +170,7 @@ export default function UserListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New User
+             Thêm Auditor
             </Button>
           }
           sx={{
@@ -178,47 +179,7 @@ export default function UserListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {tab.value === 'all' && _userList.length}
-                    {tab.value === 'active' &&
-                      _userList.filter((user) => user.status === 'active').length}
 
-                    {tab.value === 'pending' &&
-                      _userList.filter((user) => user.status === 'pending').length}
-                    {tab.value === 'banned' &&
-                      _userList.filter((user) => user.status === 'banned').length}
-                    {tab.value === 'rejected' &&
-                      _userList.filter((user) => user.status === 'rejected').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
 
           <UserTableToolbar
             filters={filters}
@@ -294,7 +255,6 @@ export default function UserListView() {
                     ))}
 
                   <TableEmptyRows
-                    height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
                   />
 
@@ -311,8 +271,8 @@ export default function UserListView() {
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
             //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
+            // dense={table.dense}
+            // onChangeDense={table.onChangeDense}
           />
         </Card>
       </Container>
@@ -354,6 +314,7 @@ function applyFilter({
   comparator: (a: any, b: any) => number;
   filters: IUserTableFiltersAdmin;
 }) {
+
   const { name, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -368,7 +329,7 @@ function applyFilter({
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) => user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 || user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -376,9 +337,9 @@ function applyFilter({
   //   inputData = inputData.filter((user) => user.status === status);
   // }
 
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
-  }
+  // if (role.length) {
+  //   inputData = inputData.filter((user) => role.includes(user.role));
+  // }
 
   return inputData;
 }

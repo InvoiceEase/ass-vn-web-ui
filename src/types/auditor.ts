@@ -1,14 +1,21 @@
 import { IErrorType } from './error';
 
 export type IAuditor = {
+  createdBy: string;
+  modifiedBy: string;
+  version: string;
   id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string | Date;
+  businessId: string;
+  role: string;
+  firebaseUserId: string;
+  status: string;
   createdAt: string | Date;
   modifiedAt: string | Date;
-  version: number;
-  name: string;
-  firebaseUserId: string;
-  role: string;
-  organizationId: string;
+  password: string;
 };
 
 export type IAuditorState = {

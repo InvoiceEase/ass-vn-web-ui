@@ -52,7 +52,8 @@ export const API_ENDPOINTS = {
   provider: {
     list: '/api/v1/providers',
   },
-  auditor: {
-    list: '/api/v1/audits/auditors',
+  users: {
+    list: '/api/v1/users/filter',
+    detail : '/api/v1/users/'
   },
 };

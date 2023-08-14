@@ -38,27 +38,34 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export function getAuditors() {
+export function getAuditors(status?: string | null, searchQuery?: string | null, page?: number) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getAuditorsStart());
     const token = sessionStorage.getItem('token');
-
-    const businessId = sessionStorage.getItem('orgId');
-
     const accessToken: string = `Bearer ${token}`;
 
     const headersList = {
       accept: '*/*',
       Authorization: accessToken,
     };
+    const param = {
+      search: searchQuery ?? '',
+      page: page ?? 0,
+      size: 10,
+      sort: [],
+      status: status ?? '',
+      roles: [],
+    };
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.auditor.list}`,
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.users.list}`,
+        {},
         {
           headers: headersList,
+          params: param,
         }
       );
-      dispatch(slice.actions.getAuditorsSuccess(response.data));
+      dispatch(slice.actions.getAuditorsSuccess(response.data.content));
     } catch (error) {
       dispatch(slice.actions.getAuditorsFailure(error));
     }
