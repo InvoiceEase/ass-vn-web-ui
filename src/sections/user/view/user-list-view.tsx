@@ -47,7 +47,6 @@ import UserTableToolbar from '../user-table-toolbar';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 500 },
@@ -81,10 +80,11 @@ export default function UserListView() {
 
   const _userList = useSelector((state) => state.auditor.auditors);
 
-  const [tableData, setTableData] = useState(_userList);
-
   const [filters, setFilters] = useState(defaultFilters);
-
+  const [tableData, setTableData] = useState(_userList);
+  useEffect(() => {
+    setTableData(_userList)
+  }, [_userList]);
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -136,7 +136,6 @@ export default function UserListView() {
 
   const handleEditRow = useCallback(
     (id: string) => {
-      debugger
       router.push(paths.dashboard.user.edit(id));
     },
     [router]

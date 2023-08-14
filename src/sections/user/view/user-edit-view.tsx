@@ -6,12 +6,12 @@ import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hook';
 // _mock
-import { _userList } from 'src/_mock';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 import UserNewEditForm from '../user-new-edit-form';
+import { useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +21,8 @@ export default function UserEditView() {
   const params = useParams();
 
   const { id } = params;
+
+  const _userList = useSelector((state) => state.auditor.auditors);
 
   const currentUser = _userList.find((user) => user.id === id);
 

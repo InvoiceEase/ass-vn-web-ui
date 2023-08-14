@@ -5,12 +5,12 @@ export type IAuditor = {
   modifiedBy: string;
   version: string;
   id: string;
-  fullName: string;
+  name: string;
   email: string;
   phoneNumber: string;
   dateOfBirth: string | Date;
   businessId: string;
-  role: string;
+  roleName: string;
   firebaseUserId: string;
   status: string;
   createdAt: string | Date;
