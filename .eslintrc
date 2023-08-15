@@ -95,6 +95,7 @@
         "args": "after-used",
         "argsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "array-callback-return": 0
   }
 }

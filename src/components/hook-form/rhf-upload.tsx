@@ -1,8 +1,8 @@
-import { useFormContext, Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 // @mui
 import FormHelperText from '@mui/material/FormHelperText';
 //
-import { UploadAvatar, Upload, UploadBox, UploadProps } from '../upload';
+import { Upload, UploadAvatar, UploadBox, UploadProps } from '../upload';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ export function RHFUploadBox({ name, ...other }: Props) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <UploadBox files={field.value} error={!!error} {...other} />
+        <UploadBox files={[field.value]} error={!!error} {...other} />
       )}
     />
   );

@@ -54,6 +54,13 @@ export const API_ENDPOINTS = {
   },
   users: {
     list: '/api/v1/users/filter',
-    detail : '/api/v1/users/'
+    detail: '/api/v1/users/',
+  },
+  financial: {
+    folders: '/api/v1/files/reports/storage',
+    files: '/api/v1/files/reports/storage/financial',
+  },
+  tax: {
+    files: '/api/v1/files/reports/storage/tax',
   },
 };
