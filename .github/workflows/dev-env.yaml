@@ -10,9 +10,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  clean-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old image
+        uses: smartsquaregmbh/delete-old-packages@v0.5.0
+        with:
+          token: ${{ env.GRGIT_PASS }}
+          type: container
+          organization: InvoiceEase
+          keep: 1
+          version-pattern: ^${{ env.ENV_DEPLOY }}-[a-zA-Z0-9]*
+          names: |
+            ${{ github.event.repository.name }}
   ci-cd-dev-env:
     runs-on: ubuntu-latest
     env:
+      DEPLOYMENT_NAME: ${{ secrets.SERVICE_NAME }}
+      CONTAINER_NAME: ${{ secrets.SERVICE_NAME }}
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ghcr.io/invoiceease/${{ github.event.repository.name }}
+      ENV_DEPLOY: dev
+      GCP_PROJECT_KEY: ${{ secrets.GCP_PROJECT_KEY }}
+      CLUSTER_NAME: ass-super-cluster
+      CLUSTER_REGION: asia-east1
+      GRGIT_USER: ${{ github.actor }}
+      GRGIT_PASS: ${{ secrets.TOKEN }}
       NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
       NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
       NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
