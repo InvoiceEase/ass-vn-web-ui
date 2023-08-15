@@ -1,48 +1,33 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
-import InputLabel from '@mui/material/InputLabel';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import IconButton from '@mui/material/IconButton';
 // utils
-import { fData } from 'src/utils/format-number';
 // routes
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
-import { IAuditorItem, IUserItem } from 'src/types/profile';
+import { IUserItem } from 'src/types/profile';
 // assets
-import { countries } from 'src/assets/data';
 // components
-import FormProvider, {
-  RHFAutocomplete,
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-} from 'src/components/hook-form';
+import { Alert, InputAdornment } from '@mui/material';
+import axios from 'axios';
+import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import Iconify from 'src/components/iconify';
-import Label from 'src/components/label';
 import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { InputAdornment, Alert } from '@mui/material';
 import { getBusinesses } from 'src/redux/slices/business';
-import axios from 'axios';
-import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
-import BusinessPicker from 'src/components/business-picker/business-picker';
-import { IAuditor } from 'src/types/auditor';
-import { API_ENDPOINTS } from 'src/utils/axios';
 import { useDispatch, useSelector } from 'src/redux/store';
+import { IAuditor } from 'src/types/auditor';
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +43,7 @@ type Props = {
 export default function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const businesses = useSelector((state) => state.business.businesses);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const { enqueueSnackbar } = useSnackbar();
@@ -332,7 +318,16 @@ export default function UserNewEditForm({ currentUser }: Props) {
                   }}
                 />
               ) : (
-                <CompanySelectionDropdown />
+                <RHFAutocomplete
+                  name="company"
+                  label="Công ty"
+                  options={businesses.allIds.map((businessId) => businesses.byId[businessId].name)}
+                  getOptionLabel={(option) => option.toString()}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  renderOption={(props, option) => {
+                    return <li {...props}>{option}</li>;
+                  }}
+                />
               )}
             </Box>
 
