@@ -2,7 +2,9 @@
 
 import { memo, useEffect, useState } from 'react';
 // @mui
-import { MenuItem, Select } from '@mui/material';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import { MenuItem, OutlinedInput, Select } from '@mui/material';
 import { setSelectedBusiness } from 'src/redux/slices/business';
 import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
@@ -49,10 +51,7 @@ function CompanySelectionDropdown() {
 
   useEffect(() => {
     setSelectedCompany(businesses.byId[8]);
-    sessionStorage.setItem('selectedBusinessID', selectedCompany?.id);
-    if (selectedCompany?.id && selectedCompany?.id !== '0') {
-      dispatch(getMails(selectedCompany?.id, '', 0));
-    }
+    sessionStorage.setItem('selectedBusinessID',JSON.stringify(selectedCompany));
     getBusinessesName();
   }, [businesses]);
 
@@ -63,24 +62,34 @@ function CompanySelectionDropdown() {
   }, [selectedBusinessID]);
 
   return (
-    <Select
-      // multiple
-      value={selectedBusiness?.name}
-      // onChange={handleFilterService}
-      // input={<OutlinedInput label="Business" />}
-      // renderValue={(selected) => selected.map((value) => value).join(', ')}
-      // sx={{ textTransform: 'capitalize' }}
+    <FormControl
+      sx={{
+        flexShrink: 0,
+      }}
     >
-      {businesses.allIds.map((id) => (
-        <MenuItem
-          key={id}
-          value={businesses.byId[id].name}
-          onClick={() => handleSelectBusiness(businesses.byId[id])}
-        >
-          {businesses.byId[id].name}
-        </MenuItem>
-      ))}
-    </Select>
+      <InputLabel>Company</InputLabel>
+      <Select
+        name='company'
+        // multiple
+        label="Company"
+        input={<OutlinedInput label="Company" />}
+        value={selectedBusiness?.name}
+        // onChange={handleFilterService}
+        // input={<OutlinedInput label="Business" />}
+        // renderValue={(selected) => selected.map((value) => value).join(', ')}
+        // sx={{ textTransform: 'capitalize' }}
+      >
+        {businesses.allIds.map((id) => (
+          <MenuItem
+            key={id}
+            value={businesses.byId[id].name}
+            onClick={() => handleSelectBusiness(businesses.byId[id])}
+          >
+            {businesses.byId[id].name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
     // <Typography
     //   variant="h4"
     //   sx={{

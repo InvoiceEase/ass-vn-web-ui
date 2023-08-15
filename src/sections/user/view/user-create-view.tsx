@@ -18,7 +18,7 @@ export default function UserCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Thêm auditor"
         links={[
           {
             name: 'Dashboard',
