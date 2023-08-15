@@ -28,12 +28,15 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
+import { IBusiness } from 'src/types/business';
+import { DatePicker } from '@mui/x-date-pickers';
 
 // ----------------------------------------------------------------------
 
 interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   avatarUrl: CustomFile | string | null;
-  company: '';
+  businessId: string;
+  expiredDate: string;
 }
 
 type Props = {
@@ -43,12 +46,16 @@ type Props = {
 export default function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getBusinesses());
+  }, []);
   const businesses = useSelector((state) => state.business.businesses);
+  let bizChosen: IBusiness[] = [];
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [date, setDate] = useState(new Date());
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
-  useEffect(() => {}, []);
   const resolver = {
     fullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
@@ -59,48 +66,28 @@ export default function UserNewEditForm({ currentUser }: Props) {
     fullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
-    company: Yup.string().required('Company is required'),
+    businessId: Yup.string().required('Company is required'),
   };
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
+
   useEffect(() => {
-    if (currentUser) {
-      dispatch(getBusinesses());
-    }
-  }, [currentUser]);
-  // useEffect(() => {
-  //   const token = sessionStorage.getItem('token');
-  //   const accessToken: string = `Bearer ${token}`;
+    bizChosen = businesses.allIds.map((businessId) => businesses.byId[businessId]);
+  }, []);
 
-  //   console.log('user', currentUser);
-  //   const headersList = {
-  //     accept: '*/*',
-  //     Authorization: accessToken,
-  //   };
-  //   const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.users.detail}${currentUser?.firebaseUserId}`;
-
-  //   axios
-  //     .get(url, {
-  //       headers: headersList,
-  //     })
-  //     .then((resp) => {})
-  //     .catch((e) => {
-  //       console.log('e', e);
-  //     });
-  // }, []);
   const defaultNoCurr = {
-    fullName: currentUser?.fullName || '',
-    email: currentUser?.email || '',
-    phoneNumber: currentUser?.phoneNumber || '',
-    password: currentUser?.password || '',
-    role: currentUser?.roleName || 'AUDITOR',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    role: 'AUDITOR',
   };
   const defaultVlCurr = {
     fullName: currentUser?.fullName || '',
     email: currentUser?.email || '',
-    phoneNumber: currentUser?.phoneNumber || '',
+    phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
     password: currentUser?.password || '',
     role: currentUser?.roleName || 'AUDITOR',
-    company: '',
+    businessId: '',
   };
   const defaultValues = useMemo(
     () => (!currentUser ? defaultNoCurr : defaultVlCurr),
@@ -108,6 +95,9 @@ export default function UserNewEditForm({ currentUser }: Props) {
     [currentUser]
   );
 
+  const handleChangeDate = (value: Date | null) => {
+    setDate(value ?? new Date());
+  };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
@@ -146,15 +136,15 @@ export default function UserNewEditForm({ currentUser }: Props) {
         }
       } else {
         try {
-          const selectedBusinessID = JSON.parse(sessionStorage.getItem('selectedBusinessID') ?? '');
+          const bizId = bizChosen.filter((item) => item.name.localeCompare(data.businessId) === 0);
+          data.businessId = bizId[0].id;
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
-          const date = new Date().toUTCString;
           const param = {
             version: currentUser.version,
-            businessId: selectedBusinessID.businessId,
+            businessId: data.businessId,
             userId: currentUser.firebaseUserId,
             password: currentUser.password,
-            expiredDate: date,
+            expiredDate: date.toISOString(),
           };
           axios.post(url, param);
         } catch (e) {
@@ -296,9 +286,9 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="fullName" label="Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <RHFTextField disabled={!!currentUser} name="fullName" label="Name" />
+              <RHFTextField disabled={!!currentUser} name="email" label="Email Address" />
+              <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Phone Number" />
               <RHFTextField disabled name="role" label="Role" value="Kiểm duyệt viên" />
               {!currentUser ? (
                 <RHFTextField
@@ -318,16 +308,22 @@ export default function UserNewEditForm({ currentUser }: Props) {
                   }}
                 />
               ) : (
-                <RHFAutocomplete
-                  name="company"
-                  label="Công ty"
-                  options={businesses.allIds.map((businessId) => businesses.byId[businessId].name)}
-                  getOptionLabel={(option) => option.toString()}
-                  isOptionEqualToValue={(option, value) => option === value}
-                  renderOption={(props, option) => {
-                    return <li {...props}>{option}</li>;
-                  }}
-                />
+                <>
+                  <RHFAutocomplete
+                    name="businessId"
+                    label="Công ty"
+                    options={businesses.allIds.map(
+                      (businessId) => businesses.byId[businessId].name
+                    )}
+                    getOptionLabel={(option) => option.toString()}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    renderOption={(props, option) => <li {...props}>{option}</li>}
+                  />
+                  <DatePicker
+                    defaultValue={new Date()}
+                    onChange={(value) => handleChangeDate(value)}
+                  />
+                </>
               )}
             </Box>
 
