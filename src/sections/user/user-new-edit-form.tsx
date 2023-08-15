@@ -29,7 +29,7 @@ import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
 import { IBusiness } from 'src/types/business';
-import { DatePicker } from '@mui/x-date-pickers';
+import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
 
 // ----------------------------------------------------------------------
 
@@ -47,11 +47,11 @@ type Props = {
 export default function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const DEFAULT_DATE = new Date();
   useEffect(() => {
     dispatch(getBusinesses());
   }, []);
   const businesses = useSelector((state) => state.business.businesses);
-  let bizChosen: IBusiness[] = [];
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [date, setDate] = useState(new Date());
@@ -71,10 +71,6 @@ export default function UserNewEditForm({ currentUser }: Props) {
     businessId: Yup.string().required('Company is required'),
   };
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
-
-  useEffect(() => {
-    bizChosen = businesses.allIds.map((businessId) => businesses.byId[businessId]);
-  }, []);
 
   const defaultNoCurr = {
     fullName: '',
@@ -97,8 +93,8 @@ export default function UserNewEditForm({ currentUser }: Props) {
     [currentUser]
   );
 
-  const handleChangeDate = (value: Date | null) => {
-    setDate(value ?? new Date());
+  const handleChangeDate = (value: Date) => {
+    setDate(value);
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewUserSchema),
@@ -118,44 +114,79 @@ export default function UserNewEditForm({ currentUser }: Props) {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
+      const token = sessionStorage.getItem('token');
+      const accessToken: string = `Bearer ${token}`;
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
       if (!currentUser) {
         try {
           setError(false);
           data.role = 'AUDITOR';
           data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
-          await axios.post(url, data);
-          // if (response.data.status === 200){
-
-          // }
-          reset();
-          enqueueSnackbar(currentUser ? 'Cập nhật thành công' : 'Thêm thành công');
-          router.push(paths.dashboard.user.list);
+          const response = await axios.post(
+            url,
+            {},
+            {
+              headers: headersList,
+              params: data,
+            }
+          );
+          if (response.status === 200) {
+            enqueueSnackbar('Thêm thành công');
+            router.push(paths.dashboard.user.list);
+          } else {
+            setErrorMsg('Thêm thất bại');
+            setError(true);
+          }
         } catch (e) {
-          const errorMess = currentUser ? 'Chỉnh sửa thất bại' : 'Thêm thất bại';
-          setErrorMsg(errorMess);
+          reset();
+          setErrorMsg('Thêm thất bại');
           setError(true);
         }
       } else {
         try {
-          debugger;
-          const bizId = bizChosen.filter((item) => item.name.localeCompare(data.businessId) === 0);
-          data.businessId = bizId[0].id;
-          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
-          const param = {
-            version: 0,
-            businessId: data.businessId,
-            userId: currentUser.id,
-            password: data.password,
-            expiredDate: date.toISOString(),
-          };
-          axios.post(url, param);
+          if (
+            date?.getDate() === DEFAULT_DATE.getDate() &&
+            date?.getMonth() === DEFAULT_DATE.getMonth() &&
+            date?.getFullYear() === DEFAULT_DATE.getFullYear()
+          ) {
+            setErrorMsg('Vui lòng chọn ngày sau hôm nay');
+            setError(true);
+          } else {
+            const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
+            const bizId = bizLst.filter((item) => item.name.localeCompare(data.businessId) === 0);
+            data.businessId = bizId[0].id;
+            const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
+            const param = {
+              version: 0,
+              businessId: data.businessId,
+              userId: currentUser.id,
+              password: data.password,
+              expiredDate: date.toISOString(),
+            };
+            const response = await axios.post(url, param, {
+              headers: headersList,
+            });
+            if (response.status === 200) {
+              reset();
+              enqueueSnackbar('Cập nhật thành công');
+              router.push(paths.dashboard.user.list);
+            } else {
+              setErrorMsg('Cập nhật thất bại');
+              setError(true);
+            }
+          }
         } catch (e) {
-          console.log('error', e);
+          reset();
+          setErrorMsg('Cập nhật thất bại');
+          setError(true);
         }
       }
     },
-    [currentUser, enqueueSnackbar, reset, router]
+    [currentUser, enqueueSnackbar, reset, router, date]
   );
 
   const handleDrop = useCallback(
@@ -179,95 +210,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid xs={10} md={2}>
-          {/* <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={values.status === 'active' ? 'success' : 'error'}
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentUser && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentUser && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card> */}
+          {/* <></> */}
         </Grid>
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
@@ -289,14 +232,14 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField disabled={!!currentUser} name="fullName" label="Name" />
-              <RHFTextField disabled={!!currentUser} name="email" label="Email Address" />
-              <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Phone Number" />
-              <RHFTextField disabled name="role" label="Role" value="Kiểm duyệt viên" />
+              <RHFTextField disabled={!!currentUser} name="fullName" label="Họ Tên" />
+              <RHFTextField disabled={!!currentUser} name="email" label="Email" />
+              <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Số điện thoại" />
+              <RHFTextField disabled name="role" label="Chức vụ" value="Kiểm duyệt viên" />
 
               <RHFTextField
                 name="password"
-                label="Password"
+                label="Mật khẩu"
                 type={password.value ? 'text' : 'password'}
                 InputProps={{
                   endAdornment: (
@@ -322,9 +265,18 @@ export default function UserNewEditForm({ currentUser }: Props) {
                     isOptionEqualToValue={(option, value) => option === value}
                     renderOption={(props, option) => <li {...props}>{option}</li>}
                   />
-                  <DatePicker
+                  {/* <DateCalendar
                     defaultValue={new Date()}
                     onChange={(value) => handleChangeDate(value)}
+                    disablePast
+                  /> */}
+                  <DatePicker
+                    defaultValue={new Date()}
+                    value={date}
+                    onChange={(value) => setDate(value ?? new Date())}
+                    disablePast
+                    closeOnSelect
+                    label="Ngày kết thúc hợp đồng"
                   />
                 </>
               )}
