@@ -36,16 +36,19 @@ import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { InputAdornment, Alert } from '@mui/material';
+import { getBusinesses } from 'src/redux/slices/business';
 import axios from 'axios';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
 import BusinessPicker from 'src/components/business-picker/business-picker';
 import { IAuditor } from 'src/types/auditor';
 import { API_ENDPOINTS } from 'src/utils/axios';
+import { useDispatch, useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
 interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   avatarUrl: CustomFile | string | null;
+  company: '';
 }
 
 type Props = {
@@ -54,18 +57,30 @@ type Props = {
 
 export default function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [openPop, setOpenPop] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
+  useEffect(() => {}, []);
+  const resolver = {
+    fullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     password: Yup.string().required('Password is required'),
-  });
-
+  };
+  const resolverCurren = {
+    fullName: Yup.string().required('Name is required'),
+    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    phoneNumber: Yup.string().required('Phone number is required'),
+    company: Yup.string().required('Company is required'),
+  };
+  const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(getBusinesses());
+    }
+  }, [currentUser]);
   // useEffect(() => {
   //   const token = sessionStorage.getItem('token');
   //   const accessToken: string = `Bearer ${token}`;
@@ -86,14 +101,23 @@ export default function UserNewEditForm({ currentUser }: Props) {
   //       console.log('e', e);
   //     });
   // }, []);
+  const defaultNoCurr = {
+    fullName: currentUser?.fullName || '',
+    email: currentUser?.email || '',
+    phoneNumber: currentUser?.phoneNumber || '',
+    password: currentUser?.password || '',
+    role: currentUser?.roleName || 'AUDITOR',
+  };
+  const defaultVlCurr = {
+    fullName: currentUser?.fullName || '',
+    email: currentUser?.email || '',
+    phoneNumber: currentUser?.phoneNumber || '',
+    password: currentUser?.password || '',
+    role: currentUser?.roleName || 'AUDITOR',
+    company: '',
+  };
   const defaultValues = useMemo(
-    () => ({
-      fullName: currentUser?.name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      password: currentUser?.password || '',
-      role: currentUser?.roleName || 'AUDITOR',
-    }),
+    () => (!currentUser ? defaultNoCurr : defaultVlCurr),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]
   );
@@ -116,21 +140,40 @@ export default function UserNewEditForm({ currentUser }: Props) {
 
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
-      try {
-        setError(false);
-        data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
-        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
-        await axios.post(url, data);
-        // if (response.data.status === 200){
+      if (!currentUser) {
+        try {
+          setError(false);
+          data.role = 'AUDITOR';
+          data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
+          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
+          await axios.post(url, data);
+          // if (response.data.status === 200){
 
-        // }
-        reset();
-        enqueueSnackbar(currentUser ? 'Cập nhật thành công' : 'Thêm thành công');
-        router.push(paths.dashboard.user.list);
-      } catch (e) {
-        const errorMess = currentUser ? 'Chỉnh sửa thất bại' : 'Thêm thất bại';
-        setErrorMsg(errorMess);
-        setError(true);
+          // }
+          reset();
+          enqueueSnackbar(currentUser ? 'Cập nhật thành công' : 'Thêm thành công');
+          router.push(paths.dashboard.user.list);
+        } catch (e) {
+          const errorMess = currentUser ? 'Chỉnh sửa thất bại' : 'Thêm thất bại';
+          setErrorMsg(errorMess);
+          setError(true);
+        }
+      } else {
+        try {
+          const selectedBusinessID = JSON.parse(sessionStorage.getItem('selectedBusinessID') ?? '');
+          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
+          const date = new Date().toUTCString;
+          const param = {
+            version: currentUser.version,
+            businessId: selectedBusinessID.businessId,
+            userId: currentUser.firebaseUserId,
+            password: currentUser.password,
+            expiredDate: date,
+          };
+          axios.post(url, param);
+        } catch (e) {
+          console.log('error', e);
+        }
       }
     },
     [currentUser, enqueueSnackbar, reset, router]
@@ -151,17 +194,13 @@ export default function UserNewEditForm({ currentUser }: Props) {
     [setValue]
   );
 
-  const handleCompClick = () => {
-    setOpenPop(true);
-  };
-
   return (
     // <>
     //   {openPop && <BusinessPicker />}
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={3}>
-          <Grid xs={10} md={2}>
-            {/* <Card sx={{ pt: 10, pb: 5, px: 3 }}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={3}>
+        <Grid xs={10} md={2}>
+          {/* <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
                 color={values.status === 'active' ? 'success' : 'error'}
@@ -250,72 +289,62 @@ export default function UserNewEditForm({ currentUser }: Props) {
               </Stack>
             )}
           </Card> */}
-          </Grid>
-          <Grid xs={12} md={8}>
-            <Card sx={{ p: 3 }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Thêm auditor
-              </Typography>
-              {error && (
-                <Alert sx={{ mb: 2 }} severity={error ? 'error' : 'success'}>
-                  {errorMsg}
-                </Alert>
-              )}
-
-              <Box
-                rowGap={3}
-                columnGap={2}
-                display="grid"
-                gridTemplateColumns={{
-                  xs: 'repeat(1, 1fr)',
-                  sm: 'repeat(2, 1fr)',
-                }}
-              >
-                <RHFTextField name="fullName" label="Name" />
-                <RHFTextField name="email" label="Email Address" />
-                <RHFTextField name="phoneNumber" label="Phone Number" />
-
-                {/* {!currentUser && ( */}
-                  <RHFTextField
-                    name="password"
-                    label="Password"
-                    type={password.value ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={password.onToggle} edge="end">
-                            <Iconify
-                              icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                            />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                {/* )} */}
-                <RHFTextField disabled name="role" label="Role" value="AUDITOR" />
-                {/* {currentUser && (
-                  <Stack sx={{ mt: 5 }}>
-                    <LoadingButton
-                      onClick={handleCompClick}
-                      variant="contained"
-                      loading={isSubmitting}
-                    >
-                      Đăng ký công ty
-                    </LoadingButton>
-                  </Stack>
-                )} */}
-              </Box>
-
-              <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  {!currentUser ? 'Thêm' : 'Lưu'}
-                </LoadingButton>
-              </Stack>
-            </Card>
-          </Grid>
         </Grid>
-      </FormProvider>
+        <Grid xs={12} md={8}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              {!currentUser ? 'Thêm Kiểm Duyệt viên' : 'Chỉnh sửa kiểm duyệt viên'}
+            </Typography>
+            {error && (
+              <Alert sx={{ mb: 2 }} severity={error ? 'error' : 'success'}>
+                {errorMsg}
+              </Alert>
+            )}
+
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="fullName" label="Name" />
+              <RHFTextField name="email" label="Email Address" />
+              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <RHFTextField disabled name="role" label="Role" value="Kiểm duyệt viên" />
+              {!currentUser ? (
+                <RHFTextField
+                  name="password"
+                  label="Password"
+                  type={password.value ? 'text' : 'password'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={password.onToggle} edge="end">
+                          <Iconify
+                            icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              ) : (
+                <CompanySelectionDropdown />
+              )}
+            </Box>
+
+            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                {!currentUser ? 'Thêm' : 'Lưu'}
+              </LoadingButton>
+            </Stack>
+          </Card>
+        </Grid>
+      </Grid>
+    </FormProvider>
     // </>
   );
 }

@@ -5,7 +5,11 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
-import { IUserTableFilters, IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
+import {
+  IUserTableFilters,
+  IUserTableFiltersAdmin,
+  IUserTableFilterValue,
+} from 'src/types/profile';
 // components
 import Iconify from 'src/components/iconify';
 
@@ -34,7 +38,7 @@ export default function UserTableFiltersResult({
   };
 
   const handleRemoveRole = (inputValue: string) => {
-    const newValue = filters.role.filter((item) => item !== inputValue);
+    const newValue = filters.role !== inputValue ? filters.role : '';
     onFilters('role', newValue);
   };
 
@@ -54,11 +58,14 @@ export default function UserTableFiltersResult({
           </Block>
         )}
 
-        {!!filters.role.length && (
+        {!!filters.role && (
           <Block label="Role:">
-            {filters.role.map((item) => (
-              <Chip key={item} label={item} size="small" onDelete={() => handleRemoveRole(item)} />
-            ))}
+            <Chip
+              key={filters.role}
+              label={filters.role}
+              size="small"
+              onDelete={() => handleRemoveRole(filters.role)}
+            />
           </Block>
         )}
 

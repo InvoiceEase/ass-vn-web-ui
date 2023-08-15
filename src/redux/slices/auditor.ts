@@ -51,7 +51,7 @@ export function getAuditors(status?: string | null, searchQuery?: string | null,
     const param = {
       search: searchQuery ?? '',
       page: page ?? 0,
-      size: 10,
+      size: 9999,
       sort: [],
       status: status ?? '',
       roles: [],

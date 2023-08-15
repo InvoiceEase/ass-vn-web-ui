@@ -621,7 +621,7 @@ export function useNavData(role: string | null = 'ADMIN') {
         items: [
           // USER
           {
-            title: t('Auditor'),
+            title: t('Người dùng'),
             path: paths.dashboard.user.list,
             icon: ICONS.user,
 

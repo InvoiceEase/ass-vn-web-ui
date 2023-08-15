@@ -1,11 +1,14 @@
 import { useCallback, useState } from 'react';
 // @mui
+import Checkbox from '@mui/material/Checkbox';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
-import { SelectChangeEvent } from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+
 // types
 import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // components
@@ -30,7 +33,12 @@ export default function UserTableToolbar({
   roleOptions,
 }: Props) {
   const popover = usePopover();
-  const optionLst = ['Auditor', 'User', 'Company'];
+  const optionLst = [
+    'Nhân Viên Doanh Nghiệp',
+    'Auditor',
+    'Kiểm duyệt viên',
+    'Quản lý doanh nghiệp',
+  ];
   const [option, setOption] = useState(optionLst[0]);
   const [role, setRole] = useState(filters.role);
   const handleFilterName = useCallback(
@@ -88,14 +96,6 @@ export default function UserTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          {renderOptions}
-        </FormControl>
 
         <FormControl
           sx={{
@@ -103,9 +103,26 @@ export default function UserTableToolbar({
             width: { xs: 1, md: 200 },
           }}
         >
-          {option === optionLst[2] ? renderComp : renderUserRole}
-
-        </FormControl> */}
+          <InputLabel>Role</InputLabel>
+          <Select
+            value={filters.role}
+            onChange={handleFilterRole}
+            input={<OutlinedInput label="Role" />}
+            renderValue={(selected) => selected}
+            MenuProps={{
+              PaperProps: {
+                sx: { maxHeight: 240 },
+              },
+            }}
+          >
+            {roleOptions.map((item) => (
+              <MenuItem key={item} value={item}>
+                {/* <Checkbox disableRipple size="small" checked={filters.role.includes(item)} /> */}
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField

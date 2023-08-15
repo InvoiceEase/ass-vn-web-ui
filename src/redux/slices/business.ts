@@ -83,7 +83,7 @@ const slice = createSlice({
       state.businessesStatus.empty = !businesses.length;
       state.businessesStatus.error = null;
 
-      state.businesses.byId = keyBy(businesses, 'id');
+      state.businesses.byId = keyBy(businesses.content, 'id');
       state.businesses.allIds = Object.keys(state.businesses.byId);
     },
 
@@ -133,16 +133,17 @@ export function getBusinesses() {
       accept: '*/*',
       Authorization: accessToken,
     };
-
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.list}`,
+        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.list}`,
         {
+          params: { page: 0, size: 999, sort: '' },
           headers: headersList,
         }
       );
       dispatch(slice.actions.getBusinessesSuccess(response.data));
     } catch (error) {
+      console.log('error', error);
       dispatch(slice.actions.getBusinessesFailure(error));
     }
   };

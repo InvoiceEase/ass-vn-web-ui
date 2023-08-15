@@ -37,7 +37,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { name, phoneNumber, roleName, email, status } = row;
+  const { fullName, phoneNumber, roleName, email, status } = row;
 
   const confirm = useBoolean();
 
@@ -53,15 +53,13 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-
           <ListItemText
-            primary={name}
+            primary={fullName}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
           />
         </TableCell>
-
 
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell> */}
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{fullName}</TableCell> */}
@@ -103,36 +101,39 @@ export default function UserTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Banned
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onEditRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          Chỉnh sửa
-        </MenuItem>
+        {status !== 'Banned' && (
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Banned
+          </MenuItem>
+        )}
+        {roleName === 'Kiểm duyệt viên' && (
+          <MenuItem
+            onClick={() => {
+              onEditRow();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:pen-bold" />
+            Đăng ký
+          </MenuItem>
+        )}
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
-        content="Are you sure want to delete?"
+        content="Bạn vẫn muốn ban người này?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Ban
           </Button>
         }
       />

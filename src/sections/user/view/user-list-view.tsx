@@ -3,6 +3,9 @@
 import isEqual from 'lodash/isEqual';
 import { useCallback, useEffect, useState } from 'react';
 // @mui
+import { alpha } from '@mui/material/styles';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
@@ -22,6 +25,7 @@ import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
+import Label from 'src/components/label';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
@@ -38,15 +42,13 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import Typography from '@mui/material/Typography';
 import { getAuditors } from 'src/redux/slices/auditor';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
-
-// ----------------------------------------------------------------------
-
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 500 },
@@ -62,8 +64,6 @@ const defaultFilters = {
   role: '',
   status: 'all',
 };
-
-// ----------------------------------------------------------------------
 
 export default function UserListView() {
   const dispatch = useDispatch();
@@ -82,8 +82,22 @@ export default function UserListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const [tableData, setTableData] = useState(_userList);
+  const [role, setRole] = useState(['']);
+  const [userStatus, setUserStatus] = useState(['']);
   useEffect(() => {
-    setTableData(_userList)
+    setTableData(_userList);
+    const userRole: string[] = [];
+    const userSts: string[] = ['all'];
+    _userList.forEach((item) => {
+      if (!userRole.includes(item.roleName)) {
+        userRole.push(item.roleName);
+      }
+      if (!userSts.includes(item.status)) {
+        userSts.push(item.status);
+      }
+    });
+    setRole(userRole);
+    setUserStatus(userSts);
   }, [_userList]);
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -155,36 +169,45 @@ export default function UserListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          // heading="List"
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
-          ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.user.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-             Thêm Auditor
-            </Button>
-          }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
-
+        <Typography sx={{mb:5}} variant="h4">Quản lí người dùng</Typography>
         <Card>
+          <Tabs
+            value={filters.status}
+            onChange={handleFilterStatus}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+            }}
+          >
+            {userStatus.map((tab) => (
+              <Tab
+                key={tab}
+                iconPosition="end"
+                value={tab}
+                label={tab}
+                icon={
+                  <Label
+                    variant={((tab === 'all' || tab === filters.status) && 'filled') || 'soft'}
+                    color={
+                      (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
+                    }
+                  >
+                    {tab === 'all' && _userList.length}
+                    {tab === 'Active' &&
+                      _userList.filter((user) => user.status === 'Active').length}
 
-
+                    {tab === 'Banned' &&
+                      _userList.filter((user) => user.status === 'Banned').length}
+                  </Label>
+                }
+              />
+            ))}
+          </Tabs>
           <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
-            roleOptions={_roles}
+            roleOptions={role}
           />
 
           {canReset && (
@@ -274,6 +297,15 @@ export default function UserListView() {
             // onChangeDense={table.onChangeDense}
           />
         </Card>
+        <Button
+          sx={{ mt: 6 }}
+          component={RouterLink}
+          href={paths.dashboard.user.new}
+          variant="contained"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+        >
+          Thêm Kiểm Duyệt Viên
+        </Button>
       </Container>
 
       <ConfirmDialog
@@ -302,8 +334,6 @@ export default function UserListView() {
   );
 }
 
-// ----------------------------------------------------------------------
-
 function applyFilter({
   inputData,
   comparator,
@@ -313,7 +343,6 @@ function applyFilter({
   comparator: (a: any, b: any) => number;
   filters: IUserTableFiltersAdmin;
 }) {
-
   const { name, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -328,17 +357,19 @@ function applyFilter({
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 || user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) =>
+        user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
-  // if (status !== 'all') {
-  //   inputData = inputData.filter((user) => user.status === status);
-  // }
+  if (status !== 'all') {
+    inputData = inputData.filter((user) => user.status === status);
+  }
 
-  // if (role.length) {
-  //   inputData = inputData.filter((user) => role.includes(user.role));
-  // }
+  if (role.length) {
+    inputData = inputData.filter((user) => role.includes(user.roleName));
+  }
 
   return inputData;
 }
