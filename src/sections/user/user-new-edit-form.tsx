@@ -37,6 +37,7 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   avatarUrl: CustomFile | string | null;
   businessId: string;
   expiredDate: string;
+  password: string;
 }
 
 type Props = {
@@ -66,6 +67,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
     fullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
+    password: Yup.string().required('Password is required'),
     businessId: Yup.string().required('Company is required'),
   };
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
@@ -136,14 +138,15 @@ export default function UserNewEditForm({ currentUser }: Props) {
         }
       } else {
         try {
+          debugger;
           const bizId = bizChosen.filter((item) => item.name.localeCompare(data.businessId) === 0);
           data.businessId = bizId[0].id;
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
           const param = {
-            version: currentUser.version,
+            version: 0,
             businessId: data.businessId,
-            userId: currentUser.firebaseUserId,
-            password: currentUser.password,
+            userId: currentUser.id,
+            password: data.password,
             expiredDate: date.toISOString(),
           };
           axios.post(url, param);
@@ -290,24 +293,24 @@ export default function UserNewEditForm({ currentUser }: Props) {
               <RHFTextField disabled={!!currentUser} name="email" label="Email Address" />
               <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Phone Number" />
               <RHFTextField disabled name="role" label="Role" value="Kiểm duyệt viên" />
-              {!currentUser ? (
-                <RHFTextField
-                  name="password"
-                  label="Password"
-                  type={password.value ? 'text' : 'password'}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={password.onToggle} edge="end">
-                          <Iconify
-                            icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                          />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              ) : (
+
+              <RHFTextField
+                name="password"
+                label="Password"
+                type={password.value ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={password.onToggle} edge="end">
+                        <Iconify
+                          icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              {currentUser && (
                 <>
                   <RHFAutocomplete
                     name="businessId"
