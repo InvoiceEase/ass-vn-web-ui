@@ -1,28 +1,26 @@
 // @mui
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import Tooltip from '@mui/material/Tooltip';
-import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
-import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
+import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
 // types
 import { IFile } from 'src/types/file';
 // components
 import Iconify from 'src/components/iconify';
 import {
-  emptyRows,
-  TableProps,
-  TableNoData,
   TableEmptyRows,
   TableHeadCustom,
-  TableSelectedAction,
+  TableNoData,
   TablePaginationCustom,
+  TableProps,
+  TableSelectedAction,
+  emptyRows,
 } from 'src/components/table';
-//
-import FileManagerTableRow from './file-manager-table-row';
 
 // ----------------------------------------------------------------------
 
@@ -160,7 +158,7 @@ export default function FileManagerTable({
             />
 
             <TableBody>
-              {dataFiltered
+              {/* {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <FileManagerTableRow
@@ -170,7 +168,7 @@ export default function FileManagerTable({
                     onSelectRow={() => onSelectRow(row.id)}
                     onDeleteRow={() => onDeleteRow(row.id)}
                   />
-                ))}
+                ))} */}
 
               <TableEmptyRows
                 height={denseHeight}

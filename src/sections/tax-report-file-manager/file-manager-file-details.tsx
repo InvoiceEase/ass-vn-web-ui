@@ -140,7 +140,7 @@ export default function FileManagerFileDetails({
     // Create a reference to the file we want to download
     const storage = getStorage();
     selected.map((fileId) => {
-      const file = files.filter((file) => file.id === fileId)[0];
+      const file = files.filter((_file) => _file.id === fileId)[0];
       const starsRef = ref(storage, file.cloudFilePath);
 
       // Get the download URL
@@ -183,6 +183,21 @@ export default function FileManagerFileDetails({
     });
   };
 
+  const getReportTypeName = (reportType: string) => {
+    switch (reportType) {
+      case 'TAX_RETURN_TNCN':
+        return 'Tờ khai thuế thu nhập cá nhân';
+      case 'TAX_RETURN_GTGT':
+        return 'Tờ khai thuế giá trị gia tăng';
+      case 'TAX_OUTCOME':
+        return 'Bảng kê đầu ra';
+      case 'TAX_INCOME':
+        return 'Bảng kê đầu vào';
+      default:
+        return '';
+    }
+  };
+
   const renderProperties = (
     <Stack spacing={1.5}>
       <Stack
@@ -201,35 +216,20 @@ export default function FileManagerFileDetails({
       {isLoadingFiles ? (
         <CircularProgress color="primary" />
       ) : (
-        files.map((file) => {
-          const getReportTypeName = (reportType: string) => {
-            switch (reportType) {
-              case 'TAX_RETURN_TNCN':
-                return 'Tờ khai thuế thu nhập cá nhân';
-              case 'TAX_RETURN_GTGT':
-                return 'Tờ khai thuế giá trị gia tăng';
-              case 'TAX_OUTCOME':
-                return 'Bảng kê đầu ra';
-              case 'TAX_INCOME':
-                return 'Bảng kê đầu vào';
-            }
-          };
-
-          return (
-            <>
-              <Divider sx={{ borderStyle: 'dashed' }} />
-              <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
-              <FileManagerFileItem
-                key={file.id}
-                file={file}
-                selected={selected.includes(file.id)}
-                onSelect={() => onSelectItem(file.id)}
-                // onDelete={() => onDeleteItem(file.id)}
-                sx={{ maxWidth: 'auto' }}
-              />
-            </>
-          );
-        })
+        files.map((file) => (
+          <>
+            <Divider sx={{ borderStyle: 'dashed' }} />
+            <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
+            <FileManagerFileItem
+              key={file.id}
+              file={file}
+              selected={selected.includes(file.id)}
+              onSelect={() => onSelectItem(file.id)}
+              // onDelete={() => onDeleteItem(file.id)}
+              sx={{ maxWidth: 'auto' }}
+            />
+          </>
+        ))
       )}
 
       {/* {properties.value && (

@@ -82,6 +82,29 @@ export default function FileManagerFileDetails({
 
   // const [tags, setTags] = useState(item.tags.slice(0, 3));
 
+  const getReportTypeName = (reportType: string) => {
+    switch (reportType) {
+      case FinancialReportTypesEnum.FINANCIAL_BCDKT:
+        return 'Bảng cân đối kế toán';
+      case FinancialReportTypesEnum.FINANCIAL_BCDPSTK:
+        return 'Bảng cân đối phát sinh tài khoản';
+      case FinancialReportTypesEnum.FINANCIAL_BKQKD:
+        return 'Bảng kết quả kinh doanh';
+      case FinancialReportTypesEnum.FINANCIAL_BLCTT:
+        return 'Bảng lưu chuyển tiền tệ';
+      case FinancialReportTypesEnum.FINANCIAL_SCT:
+        return 'Sổ chi tiết';
+      case FinancialReportTypesEnum.FINANCIAL_STATEMENT_FOOTNOTES:
+        return 'Thuyết minh báo cáo tài chính';
+      case FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNCN:
+        return 'Quyết toán thuế thu nhập cá nhân';
+      case FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNDN:
+        return 'Quyết toán thuế thu nhập doanh nghiệp';
+      default:
+        return '';
+    }
+  };
+
   const handleChangeInvite = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(event.target.value);
   }, []);
@@ -141,7 +164,7 @@ export default function FileManagerFileDetails({
     // Create a reference to the file we want to download
     const storage = getStorage();
     selected.map((fileId) => {
-      const file = files.filter((file) => file.id === fileId)[0];
+      const file = files.filter((fileInState) => fileInState.id === fileId)[0];
       const starsRef = ref(storage, file.cloudFilePath);
 
       // Get the download URL
@@ -202,43 +225,20 @@ export default function FileManagerFileDetails({
       {isLoadingFiles ? (
         <CircularProgress color="primary" />
       ) : (
-        files.map((file) => {
-          const getReportTypeName = (reportType: string) => {
-            switch (reportType) {
-              case FinancialReportTypesEnum.FINANCIAL_BCDKT:
-                return 'Bảng cân đối kế toán';
-              case FinancialReportTypesEnum.FINANCIAL_BCDPSTK:
-                return 'Bảng cân đối phát sinh tài khoản';
-              case FinancialReportTypesEnum.FINANCIAL_BKQKD:
-                return 'Bảng kết quả kinh doanh';
-              case FinancialReportTypesEnum.FINANCIAL_BLCTT:
-                return 'Bảng lưu chuyển tiền tệ';
-              case FinancialReportTypesEnum.FINANCIAL_SCT:
-                return 'Sổ chi tiết';
-              case FinancialReportTypesEnum.FINANCIAL_STATEMENT_FOOTNOTES:
-                return 'Thuyết minh báo cáo tài chính';
-              case FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNCN:
-                return 'Quyết toán thuế thu nhập cá nhân';
-              case FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNDN:
-                return 'Quyết toán thuế thu nhập doanh nghiệp';
-            }
-          };
-
-          return (
-            <>
-              <Divider sx={{ borderStyle: 'dashed' }} />
-              <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
-              <FileManagerFileItem
-                key={file.id}
-                file={file}
-                selected={selected.includes(file.id)}
-                onSelect={() => onSelectItem(file.id)}
-                // onDelete={() => onDeleteItem(file.id)}
-                sx={{ maxWidth: 'auto' }}
-              />
-            </>
-          );
-        })
+        files.map((file) => (
+          <>
+            <Divider sx={{ borderStyle: 'dashed' }} />
+            <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
+            <FileManagerFileItem
+              key={file.id}
+              file={file}
+              selected={selected.includes(file.id)}
+              onSelect={() => onSelectItem(file.id)}
+              // onDelete={() => onDeleteItem(file.id)}
+              sx={{ maxWidth: 'auto' }}
+            />
+          </>
+        ))
       )}
 
       {/* {properties.value && (

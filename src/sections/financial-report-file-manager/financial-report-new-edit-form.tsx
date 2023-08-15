@@ -121,10 +121,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const emailAddress = useSelector((state) => state.profile.profileData.email);
   const businessId = sessionStorage.getItem('orgId') ?? '0';
 
-  const mapDataReportFilesInfo = (dataForm: FormValuesProps, financialReportFiles: any) => {
+  const mapDataReportFilesInfo = (dataForm: FormValuesProps) => {
     const year = dataForm.year ? +dataForm.year : 0;
     const quarter = dataForm.quarter ? +dataForm.quarter.charAt(1) : 0;
-    let result: ReportFilesInfo = {
+    const result: ReportFilesInfo = {
       emailAddress,
       businessId: +businessId,
       messageType: 'UPLOAD',
@@ -146,7 +146,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        let dataApi = new FormData();
+        const dataApi = new FormData();
         // data.append(
         //   'taxFiles',
         //   fs.createReadStream('/C:/Users/Kyro/Downloads/HOADON_0316439932_1C23TMA_198.pdf')
@@ -154,7 +154,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
         financialReportFiles.map((file) => {
           dataApi.append('financialFiles', file.file);
         });
-        const reportFilesInfo = mapDataReportFilesInfo(data, financialReportFiles);
+        const reportFilesInfo = mapDataReportFilesInfo(data);
         const json = JSON.stringify(reportFilesInfo);
         const blob = new Blob([json], {
           type: 'application/json',
@@ -478,27 +478,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
             name="year"
             label="Năm"
             options={years.map((year) => year.toString())}
-            getOptionLabel={(option) => option.toString()}
+            getOptionLabel={(option) => option}
             isOptionEqualToValue={(option, value) => option === value}
-            renderOption={(props, option) => {
-              return <li {...props}>{option}</li>;
-            }}
+            renderOption={(_props, option) => <li {..._props}>{option}</li>}
           />
           <RHFAutocomplete
             name="quarter"
             label="Quý"
-            options={['Q1', 'Q2', 'Q3', 'Q4'].map((year) => year.toString())}
+            options={['Q1', 'Q2', 'Q3', 'Q4'].map((quarter) => quarter)}
             getOptionLabel={(option) => option.toString()}
             isOptionEqualToValue={(option, value) => option === value}
-            renderOption={(props, option) => {
-              return <li {...props}>{option}</li>;
-            }}
+            renderOption={(_props, option) => <li {..._props}>{option}</li>}
           />
 
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Bảng cân đối phát sinh tài khoản</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_BCDPSTK'}
+              name="FINANCIAL_BCDPSTK"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_BCDPSTK}
               //   onDelete={handleRemoveFile}
@@ -507,7 +503,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Bảng cân đối kế toán</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_BCDKT'}
+              name="FINANCIAL_BCDKT"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_BCDKT}
               onDelete={handleRemoveFile}
@@ -516,7 +512,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Bảng kết quả kinh doanh</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_BKQKD'}
+              name="FINANCIAL_BKQKD"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_BKQKD}
               //   onDelete={handleRemoveFile}
@@ -525,7 +521,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Bảng lưu chuyển tiền tệ</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_BLCTT'}
+              name="FINANCIAL_BLCTT"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_BLCTT}
               //   onDelete={handleRemoveFile}
@@ -534,7 +530,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Sổ chi tiết</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_SCT'}
+              name="FINANCIAL_SCT"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_SCT}
               //   onDelete={handleRemoveFile}
@@ -543,7 +539,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Thuyết minh báo cáo tài chính</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_STATEMENT_FOOTNOTES'}
+              name="FINANCIAL_STATEMENT_FOOTNOTES"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_STATEMENT_FOOTNOTES}
               //   onDelete={handleRemoveFile}
@@ -552,7 +548,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Quyết toán thuế thu nhập cá nhân</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_TAX_FINALIZATION_TNCN'}
+              name="FINANCIAL_TAX_FINALIZATION_TNCN"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNCN}
               //   onDelete={handleRemoveFile}
@@ -561,7 +557,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
           <Stack spacing={1.5}>
             <Typography variant="subtitle2">Quyết toán thuế thu nhập doanh nghiệp</Typography>
             <RHFUploadBox
-              name={'FINANCIAL_TAX_FINALIZATION_TNDN'}
+              name="FINANCIAL_TAX_FINALIZATION_TNDN"
               maxSize={3145728}
               onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNDN}
               //   onDelete={handleRemoveFile}

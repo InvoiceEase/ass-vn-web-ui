@@ -1,32 +1,31 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
+import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
+import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
+import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack, { StackProps } from '@mui/material/Stack';
-import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
+import { useResponsive } from 'src/hooks/use-responsive';
 // utils
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 // types
 import { IFileManager } from 'src/types/file';
 // components
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import FileThumbnail from 'src/components/file-thumbnail';
+import Iconify from 'src/components/iconify';
+import { useSnackbar } from 'src/components/snackbar';
 //
 import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerFileDetails from './file-manager-file-details';
 
 // ----------------------------------------------------------------------
 
@@ -205,7 +204,7 @@ export default function FileRecentItem({ file, onDelete, sx, ...other }: Props) 
         </MenuItem>
       </CustomPopover>
 
-      <FileManagerFileDetails
+      {/* <FileManagerFileDetails
         item={file}
         favorited={favorite.value}
         onFavorite={favorite.onToggle}
@@ -216,7 +215,7 @@ export default function FileRecentItem({ file, onDelete, sx, ...other }: Props) 
           details.onFalse();
           onDelete();
         }}
-      />
+      /> */}
 
       <FileManagerShareDialog
         open={share.value}

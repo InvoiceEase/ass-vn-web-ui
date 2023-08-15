@@ -100,10 +100,10 @@ export default function TaxReportNewEditForm(props?: Props) {
   const emailAddress = useSelector((state) => state.profile.profileData.email);
   const businessId = sessionStorage.getItem('orgId') ?? '0';
 
-  const mapDataReportFilesInfo = (dataForm: FormValuesProps, taxReportFiles: any) => {
+  const mapDataReportFilesInfo = (dataForm: FormValuesProps) => {
     const year = dataForm.year ? +dataForm.year : 0;
     const quarter = dataForm.quarter ? +dataForm.quarter.charAt(1) : 0;
-    let result: ReportFilesInfo = {
+    const result: ReportFilesInfo = {
       emailAddress,
       businessId: +businessId,
       messageType: 'UPLOAD',
@@ -125,7 +125,7 @@ export default function TaxReportNewEditForm(props?: Props) {
   const onSubmit = useCallback(
     async (data: FormValuesProps) => {
       try {
-        let dataApi = new FormData();
+        const dataApi = new FormData();
         // data.append(
         //   'taxFiles',
         //   fs.createReadStream('/C:/Users/Kyro/Downloads/HOADON_0316439932_1C23TMA_198.pdf')
@@ -133,7 +133,7 @@ export default function TaxReportNewEditForm(props?: Props) {
         taxReportFiles.map((file) => {
           dataApi.append('taxFiles', file.file);
         });
-        const reportFilesInfo = mapDataReportFilesInfo(data, taxReportFiles);
+        const reportFilesInfo = mapDataReportFilesInfo(data);
         const json = JSON.stringify(reportFilesInfo);
         const blob = new Blob([json], {
           type: 'application/json',
@@ -267,7 +267,7 @@ export default function TaxReportNewEditForm(props?: Props) {
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={3}>
+      <Grid>
         {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentFile && (
@@ -381,9 +381,7 @@ export default function TaxReportNewEditForm(props?: Props) {
               options={years.map((year) => year.toString())}
               getOptionLabel={(option) => option.toString()}
               isOptionEqualToValue={(option, value) => option === value}
-              renderOption={(props, option) => {
-                return <li {...props}>{option}</li>;
-              }}
+              renderOption={(_props, option) => <li {..._props}>{option}</li>}
             />
             <RHFAutocomplete
               name="quarter"
@@ -391,14 +389,12 @@ export default function TaxReportNewEditForm(props?: Props) {
               options={['Q1', 'Q2', 'Q3', 'Q4'].map((year) => year.toString())}
               getOptionLabel={(option) => option.toString()}
               isOptionEqualToValue={(option, value) => option === value}
-              renderOption={(props, option) => {
-                return <li {...props}>{option}</li>;
-              }}
+              renderOption={(_props, option) => <li {..._props}>{option}</li>}
             />
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Tờ khai thuế thu nhập cá nhân</Typography>
               <RHFUploadBox
-                name={'TAX_RETURN_TNCN'}
+                name="TAX_RETURN_TNCN"
                 maxSize={3145728}
                 onDrop={handleDropTAX_RETURN_TNCN}
                 //   onDelete={handleRemoveFile}
@@ -407,7 +403,7 @@ export default function TaxReportNewEditForm(props?: Props) {
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Tờ khai thuế giá trị gia tăng</Typography>
               <RHFUploadBox
-                name={'TAX_RETURN_GTGT'}
+                name="TAX_RETURN_GTGT"
                 maxSize={3145728}
                 onDrop={handleDropTAX_RETURN_GTGT}
                 //   onDelete={handleRemoveFile}
@@ -416,7 +412,7 @@ export default function TaxReportNewEditForm(props?: Props) {
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Bảng kê đầu ra</Typography>
               <RHFUploadBox
-                name={'TAX_OUTCOME'}
+                name="TAX_OUTCOME"
                 maxSize={3145728}
                 onDrop={handleDropTAX_OUTCOME}
                 //   onDelete={handleRemoveFile}
@@ -425,7 +421,7 @@ export default function TaxReportNewEditForm(props?: Props) {
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Bảng kê đầu vào</Typography>
               <RHFUploadBox
-                name={'TAX_INCOME'}
+                name="TAX_INCOME"
                 maxSize={3145728}
                 onDrop={handleDropTAX_INCOME}
                 //   onDelete={handleRemoveFile}

@@ -69,7 +69,7 @@ export default function TaxReportFolderManagerView() {
   const dateError = isDateError(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: _allFolders,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
