@@ -1,32 +1,24 @@
-import { useState, useRef, useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 // @mui
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Collapse from '@mui/material/Collapse';
 // types
-import { IFile } from 'src/types/file';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Iconify from 'src/components/iconify';
 import { TableProps } from 'src/components/table';
 //
-import FileManagerPanel from './file-manager-panel';
-import FileManagerFileItem from './file-manager-file-item';
+import { Box, Divider } from '@mui/material';
+import { IFinancialFolder } from 'src/types/financial';
 import FileManagerFolderItem from './file-manager-folder-item';
-import FileManagerActionSelected from './file-manager-action-selected';
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
+import FileManagerPanel from './file-manager-panel';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   table: TableProps;
-  data: IFile[];
-  dataFiltered: IFile[];
+  data: IFinancialFolder[];
+  dataFiltered: IFinancialFolder[];
   onOpenConfirm: VoidFunction;
-  onDeleteItem: (id: string) => void;
+  onDeleteItem?: (id: string) => void;
 };
 
 export default function FileManagerGridView({
@@ -62,45 +54,51 @@ export default function FileManagerGridView({
     setFolderName(event.target.value);
   }, []);
 
+  console.log('NghiaLog: tableData - ', data);
+
   return (
     <>
       <Box ref={containerRef}>
-        <FileManagerPanel
-          title="Folders"
-          subTitle={`${data.filter((item) => item.type === 'folder').length} folders`}
-          onOpen={newFolder.onTrue}
-          collapse={folders.value}
-          onCollapse={folders.onToggle}
-        />
+        {dataFiltered.map((folder) => (
+          <>
+            <FileManagerPanel
+              title={`Năm ${folder.year}`}
+              // onOpen={newFolder.onTrue}
+              // collapse={folders.value}
+              // onCollapse={folders.onToggle}
+            />
 
-        <Collapse in={!folders.value} unmountOnExit>
-          <Box
-            gap={3}
-            display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-              lg: 'repeat(4, 1fr)',
-            }}
-          >
-            {dataFiltered
-              .filter((i) => i.type === 'folder')
-              .map((folder) => (
-                <FileManagerFolderItem
-                  key={folder.id}
-                  folder={folder}
-                  selected={selected.includes(folder.id)}
-                  onSelect={() => onSelectItem(folder.id)}
-                  onDelete={() => onDeleteItem(folder.id)}
-                  sx={{ maxWidth: 'auto' }}
-                />
-              ))}
-          </Box>
-        </Collapse>
+            {/* <Collapse in={!folders.value} unmountOnExit> */}
+            <Box
+              gap={3}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              }}
+            >
+              {folder.quarter
+                // .filter((i) => i.type === 'folder')
+                .map((quarterFolder) => (
+                  <FileManagerFolderItem
+                    key={quarterFolder}
+                    folder={`Quý ${quarterFolder}`}
+                    year={folder.year}
+                    selected={selected.includes(quarterFolder)}
+                    onSelect={() => onSelectItem(quarterFolder)}
+                    // onDelete={() => onDeleteItem(folder.year)}
+                    sx={{ maxWidth: 'auto' }}
+                  />
+                ))}
+            </Box>
+            {/* </Collapse> */}
 
-        <Divider sx={{ my: 5, borderStyle: 'dashed' }} />
-
+            <Divider sx={{ my: 5, borderStyle: 'dashed' }} />
+          </>
+        ))}
+        {/*
         <FileManagerPanel
           title="Files"
           subTitle={`${data.filter((item) => item.type !== 'folder').length} files`}
@@ -133,9 +131,9 @@ export default function FileManagerGridView({
                 />
               ))}
           </Box>
-        </Collapse>
+        </Collapse> */}
 
-        {!!selected?.length && (
+        {/* {!!selected?.length && (
           <FileManagerActionSelected
             numSelected={selected.length}
             rowCount={data.length}
@@ -171,10 +169,10 @@ export default function FileManagerGridView({
               </>
             }
           />
-        )}
+        )} */}
       </Box>
 
-      <FileManagerShareDialog
+      {/* <FileManagerShareDialog
         open={share.value}
         inviteEmail={inviteEmail}
         onChangeInvite={handleChangeInvite}
@@ -182,11 +180,11 @@ export default function FileManagerGridView({
           share.onFalse();
           setInviteEmail('');
         }}
-      />
+      /> */}
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
+      {/* <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} /> */}
 
-      <FileManagerNewFolderDialog
+      {/* <FileManagerNewFolderDialog
         open={newFolder.value}
         onClose={newFolder.onFalse}
         title="New Folder"
@@ -197,7 +195,7 @@ export default function FileManagerGridView({
         }}
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
-      />
+      /> */}
     </>
   );
 }

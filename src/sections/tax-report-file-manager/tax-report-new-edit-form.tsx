@@ -178,7 +178,7 @@ export default function TaxReportNewEditForm(props?: Props) {
         reset();
         enqueueSnackbar('Tải lên thành công!');
         // enqueueSnackbar(currentFile ? 'Update success!' : 'Create success!');
-        router.push(paths.dashboard.file.financial.root);
+        router.push(paths.dashboard.file.tax.root);
         console.info('DATA', data);
         console.log('NghiaLog: taxReportFiles - ', taxReportFiles);
       } catch (error) {
@@ -360,93 +360,93 @@ export default function TaxReportNewEditForm(props?: Props) {
           </Card>
         </Grid> */}
 
-        <Grid xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              {/* <RHFTextField name="name" label="Full Name" />
+        {/* <Grid xs={12} md={8}> */}
+        <Card sx={{ p: 3 }}>
+          <Box
+            rowGap={3}
+            columnGap={2}
+            display="grid"
+            gridTemplateColumns={{
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(2, 1fr)',
+            }}
+          >
+            {/* <RHFTextField name="name" label="Full Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phoneNumber" label="Phone Number" /> */}
 
-              <RHFAutocomplete
-                name="year"
-                label="Năm"
-                options={years.map((year) => year.toString())}
-                getOptionLabel={(option) => option.toString()}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderOption={(props, option) => {
-                  return <li {...props}>{option}</li>;
-                }}
+            <RHFAutocomplete
+              name="year"
+              label="Năm"
+              options={years.map((year) => year.toString())}
+              getOptionLabel={(option) => option.toString()}
+              isOptionEqualToValue={(option, value) => option === value}
+              renderOption={(props, option) => {
+                return <li {...props}>{option}</li>;
+              }}
+            />
+            <RHFAutocomplete
+              name="quarter"
+              label="Quý"
+              options={['Q1', 'Q2', 'Q3', 'Q4'].map((year) => year.toString())}
+              getOptionLabel={(option) => option.toString()}
+              isOptionEqualToValue={(option, value) => option === value}
+              renderOption={(props, option) => {
+                return <li {...props}>{option}</li>;
+              }}
+            />
+            <Stack spacing={1.5}>
+              <Typography variant="subtitle2">Tờ khai thuế thu nhập cá nhân</Typography>
+              <RHFUploadBox
+                name={'TAX_RETURN_TNCN'}
+                maxSize={3145728}
+                onDrop={handleDropTAX_RETURN_TNCN}
+                //   onDelete={handleRemoveFile}
               />
-              <RHFAutocomplete
-                name="quarter"
-                label="Quý"
-                options={['Q1', 'Q2', 'Q3', 'Q4'].map((year) => year.toString())}
-                getOptionLabel={(option) => option.toString()}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderOption={(props, option) => {
-                  return <li {...props}>{option}</li>;
-                }}
+            </Stack>
+            <Stack spacing={1.5}>
+              <Typography variant="subtitle2">Tờ khai thuế giá trị gia tăng</Typography>
+              <RHFUploadBox
+                name={'TAX_RETURN_GTGT'}
+                maxSize={3145728}
+                onDrop={handleDropTAX_RETURN_GTGT}
+                //   onDelete={handleRemoveFile}
               />
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Tờ khai thuế thu nhập cá nhân</Typography>
-                <RHFUploadBox
-                  name={'TAX_RETURN_TNCN'}
-                  maxSize={3145728}
-                  onDrop={handleDropTAX_RETURN_TNCN}
-                  //   onDelete={handleRemoveFile}
-                />
-              </Stack>
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Tờ khai thuế giá trị gia tăng</Typography>
-                <RHFUploadBox
-                  name={'TAX_RETURN_GTGT'}
-                  maxSize={3145728}
-                  onDrop={handleDropTAX_RETURN_GTGT}
-                  //   onDelete={handleRemoveFile}
-                />
-              </Stack>
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Bảng kê đầu ra</Typography>
-                <RHFUploadBox
-                  name={'TAX_OUTCOME'}
-                  maxSize={3145728}
-                  onDrop={handleDropTAX_OUTCOME}
-                  //   onDelete={handleRemoveFile}
-                />
-              </Stack>
-              <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Bảng kê đầu vào</Typography>
-                <RHFUploadBox
-                  name={'TAX_INCOME'}
-                  maxSize={3145728}
-                  onDrop={handleDropTAX_INCOME}
-                  //   onDelete={handleRemoveFile}
-                />
-              </Stack>
-              {/* <RHFTextField name="state" label="State/Region" />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Typography variant="subtitle2">Bảng kê đầu ra</Typography>
+              <RHFUploadBox
+                name={'TAX_OUTCOME'}
+                maxSize={3145728}
+                onDrop={handleDropTAX_OUTCOME}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Typography variant="subtitle2">Bảng kê đầu vào</Typography>
+              <RHFUploadBox
+                name={'TAX_INCOME'}
+                maxSize={3145728}
+                onDrop={handleDropTAX_INCOME}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            {/* <RHFTextField name="state" label="State/Region" />
               <RHFTextField name="city" label="City" />
               <RHFTextField name="address" label="Address" />
               <RHFTextField name="zipCode" label="Zip/Code" />
               <RHFTextField name="company" label="Company" />
               <RHFTextField name="role" label="Role" /> */}
-            </Box>
+          </Box>
 
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                Tải lên
-              </LoadingButton>
-            </Stack>
-          </Card>
-        </Grid>
+          <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              Tải lên
+            </LoadingButton>
+          </Stack>
+        </Card>
       </Grid>
+      {/* </Grid> */}
     </FormProvider>
   );
 }

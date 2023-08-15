@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
 // @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 // types
 import { IFileFilters, IFileFilterValue } from 'src/types/file';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import FileThumbnail from 'src/components/file-thumbnail';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import CustomDateRangePicker, { shortDateLabel } from 'src/components/custom-date-range-picker';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import FileThumbnail from 'src/components/file-thumbnail';
+import Iconify from 'src/components/iconify';
+import Label from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ export default function FileManagerFilters({
     <TextField
       value={filters.name}
       onChange={handleFilterName}
-      placeholder="Search..."
+      placeholder="Tìm kiếm theo năm..."
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -212,11 +212,11 @@ export default function FileManagerFilters({
     >
       {renderFilterName}
 
-      <Stack spacing={1} direction="row" alignItems="center" justifyContent="flex-end" flexGrow={1}>
+      {/* <Stack spacing={1} direction="row" alignItems="center" justifyContent="flex-end" flexGrow={1}>
         {renderFilterDate}
 
         {renderFilterType}
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }

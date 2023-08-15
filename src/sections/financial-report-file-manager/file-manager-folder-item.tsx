@@ -1,45 +1,38 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
+import { CardProps } from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
-import { CardProps } from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
-import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 // utils
-import { fData } from 'src/utils/format-number';
 // types
-import { IFolderManager } from 'src/types/file';
 // components
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 //
-import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerFileDetails from './file-manager-file-details';
 import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
-  folder: IFolderManager;
+  folder: string;
   selected?: boolean;
   onSelect?: VoidFunction;
-  onDelete: VoidFunction;
+  onDelete?: VoidFunction;
+  year?: string;
 }
 
 export default function FileManagerFolderItem({
   folder,
+  year,
   selected,
   onSelect,
   onDelete,
@@ -52,7 +45,7 @@ export default function FileManagerFolderItem({
 
   const [inviteEmail, setInviteEmail] = useState('');
 
-  const [folderName, setFolderName] = useState(folder.name);
+  const [folderName, setFolderName] = useState(folder);
 
   const editFolder = useBoolean();
 
@@ -66,7 +59,7 @@ export default function FileManagerFolderItem({
 
   const details = useBoolean();
 
-  const favorite = useBoolean(folder.isFavorited);
+  // const favorite = useBoolean(folder.isFavorited);
 
   const handleChangeInvite = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(event.target.value);
@@ -76,63 +69,65 @@ export default function FileManagerFolderItem({
     setFolderName(event.target.value);
   }, []);
 
-  const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copied!');
-    copy(folder.url);
-  }, [copy, enqueueSnackbar, folder.url]);
+  // const handleCopy = useCallback(() => {
+  //   enqueueSnackbar('Copied!');
+  //   copy(folder.url);
+  // }, [copy, enqueueSnackbar, folder.url]);
 
-  const renderAction = (
-    <Stack
-      direction="row"
-      alignItems="center"
-      sx={{
-        top: 8,
-        right: 8,
-        position: 'absolute',
-      }}
-    >
-      <Checkbox
-        color="warning"
-        icon={<Iconify icon="eva:star-outline" />}
-        checkedIcon={<Iconify icon="eva:star-fill" />}
-        checked={favorite.value}
-        onChange={favorite.onToggle}
-      />
+  // const renderAction = (
+  //   <Stack
+  //     direction="row"
+  //     alignItems="center"
+  //     sx={{
+  //       top: 8,
+  //       right: 8,
+  //       position: 'absolute',
+  //     }}
+  //   >
+  //     <Checkbox
+  //       color="warning"
+  //       icon={<Iconify icon="eva:star-outline" />}
+  //       checkedIcon={<Iconify icon="eva:star-fill" />}
+  //       checked={favorite.value}
+  //       onChange={favorite.onToggle}
+  //     />
 
-      <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-        <Iconify icon="eva:more-vertical-fill" />
-      </IconButton>
-    </Stack>
+  //     <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+  //       <Iconify icon="eva:more-vertical-fill" />
+  //     </IconButton>
+  //   </Stack>
+  // );
+
+  const renderIcon = (
+    // (checkbox.value || selected) && onSelect ? (
+    //   <Checkbox
+    //     size="medium"
+    //     checked={selected}
+    //     onClick={onSelect}
+    //     icon={<Iconify icon="eva:radio-button-off-fill" />}
+    //     checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
+    //     sx={{ p: 0.75 }}
+    //   />
+    // ) : (
+    //   <Box component="img" src="/assets/icons/files/ic_folder.svg" sx={{ width: 36, height: 36 }} />
+    // );
+    <Box component="img" src="/assets/icons/files/ic_folder.svg" sx={{ width: 36, height: 36 }} />
   );
-
-  const renderIcon =
-    (checkbox.value || selected) && onSelect ? (
-      <Checkbox
-        size="medium"
-        checked={selected}
-        onClick={onSelect}
-        icon={<Iconify icon="eva:radio-button-off-fill" />}
-        checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
-        sx={{ p: 0.75 }}
-      />
-    ) : (
-      <Box component="img" src="/assets/icons/files/ic_folder.svg" sx={{ width: 36, height: 36 }} />
-    );
 
   const renderText = (
     <ListItemText
-      onClick={details.onTrue}
-      primary={folder.name}
-      secondary={
-        <>
-          {fData(folder.size)}
-          <Box
-            component="span"
-            sx={{ mx: 0.75, width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
-          />
-          {folder.totalFiles} files
-        </>
-      }
+      // onClick={details.onTrue}
+      primary={folder}
+      // secondary={
+      //   <>
+      //     {/* {fData(folder.size)} */}
+      //     <Box
+      //       component="span"
+      //       sx={{ mx: 0.75, width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
+      //     />
+      //     {/* {folder.totalFiles} files */}
+      //   </>
+      // }
       primaryTypographyProps={{
         noWrap: true,
         typography: 'subtitle1',
@@ -148,28 +143,29 @@ export default function FileManagerFolderItem({
     />
   );
 
-  const renderAvatar = (
-    <AvatarGroup
-      max={3}
-      sx={{
-        [`& .${avatarGroupClasses.avatar}`]: {
-          width: 24,
-          height: 24,
-          '&:first-of-type': {
-            fontSize: 12,
-          },
-        },
-      }}
-    >
-      {folder.shared?.map((person) => (
-        <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
-      ))}
-    </AvatarGroup>
-  );
+  // const renderAvatar = (
+  //   <AvatarGroup
+  //     max={3}
+  //     sx={{
+  //       [`& .${avatarGroupClasses.avatar}`]: {
+  //         width: 24,
+  //         height: 24,
+  //         '&:first-of-type': {
+  //           fontSize: 12,
+  //         },
+  //       },
+  //     }}
+  //   >
+  //     {folder.shared?.map((person) => (
+  //       <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
+  //     ))}
+  //   </AvatarGroup>
+  // );
 
   return (
     <>
       <Stack
+        onClick={details.onTrue}
         component={Paper}
         variant="outlined"
         spacing={1}
@@ -193,11 +189,11 @@ export default function FileManagerFolderItem({
           {renderIcon}
         </Box>
 
-        {renderAction}
+        {/* {renderAction} */}
 
         {renderText}
 
-        {!!folder?.shared?.length && renderAvatar}
+        {/* {!!folder?.shared?.length && renderAvatar} */}
       </Stack>
 
       <CustomPopover
@@ -206,7 +202,7 @@ export default function FileManagerFolderItem({
         arrow="right-top"
         sx={{ width: 160 }}
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             popover.onClose();
             handleCopy();
@@ -224,7 +220,7 @@ export default function FileManagerFolderItem({
         >
           <Iconify icon="solar:share-bold" />
           Share
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem
           onClick={() => {
@@ -238,7 +234,7 @@ export default function FileManagerFolderItem({
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -247,23 +243,24 @@ export default function FileManagerFolderItem({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </CustomPopover>
 
       <FileManagerFileDetails
-        item={folder}
-        favorited={favorite.value}
-        onFavorite={favorite.onToggle}
-        onCopyLink={handleCopy}
+        quarter={folder}
+        year={year}
+        // favorited={favorite.value}
+        // onFavorite={favorite.onToggle}
+        // onCopyLink={handleCopy}
         open={details.value}
         onClose={details.onFalse}
         onDelete={() => {
           details.onFalse();
-          onDelete();
+          // onDelete();
         }}
       />
 
-      <FileManagerShareDialog
+      {/* <FileManagerShareDialog
         open={share.value}
         shared={folder.shared}
         inviteEmail={inviteEmail}
@@ -273,7 +270,7 @@ export default function FileManagerFolderItem({
           share.onFalse();
           setInviteEmail('');
         }}
-      />
+      /> */}
 
       <FileManagerNewFolderDialog
         open={editFolder.value}
@@ -288,7 +285,7 @@ export default function FileManagerFolderItem({
         onChangeFolderName={handleChangeFolderName}
       />
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
@@ -298,7 +295,7 @@ export default function FileManagerFolderItem({
             Delete
           </Button>
         }
-      />
+      /> */}
     </>
   );
 }

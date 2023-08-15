@@ -1,14 +1,14 @@
 // @mui
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 // types
 import { IFileFilters, IFileFilterValue } from 'src/types/file';
 // components
-import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ export default function FileManagerFiltersResult({
       <Box sx={{ typography: 'body2' }}>
         <strong>{results}</strong>
         <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
+          kết quả tìm thấy
         </Box>
       </Box>
 
@@ -74,7 +74,7 @@ export default function FileManagerFiltersResult({
             onClick={onResetFilters}
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
           >
-            Clear
+            Xóa
           </Button>
         )}
       </Stack>

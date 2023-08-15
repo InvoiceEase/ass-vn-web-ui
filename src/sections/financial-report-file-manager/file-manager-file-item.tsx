@@ -1,43 +1,33 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
+import { CardProps } from '@mui/material/Card';
+import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
-import { CardProps } from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 // utils
 import { fDateTime } from 'src/utils/format-time';
-import { fData } from 'src/utils/format-number';
 // types
-import { IFileManager } from 'src/types/file';
 // components
+import { usePopover } from 'src/components/custom-popover';
+import FileThumbnail from 'src/components/file-thumbnail';
 import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useSnackbar } from 'src/components/snackbar';
 import TextMaxLine from 'src/components/text-max-line';
-import FileThumbnail from 'src/components/file-thumbnail';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 //
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerFileDetails from './file-manager-file-details';
+import { IFinancialFile } from 'src/types/financial';
 
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
-  file: IFileManager;
+  file: IFinancialFile;
   selected?: boolean;
   onSelect?: VoidFunction;
-  onDelete: VoidFunction;
+  onDelete?: VoidFunction;
 }
 
 export default function FileManagerFileItem({
@@ -62,7 +52,7 @@ export default function FileManagerFileItem({
 
   const details = useBoolean();
 
-  const favorite = useBoolean(file.isFavorited);
+  // const favorite = useBoolean(file.isFavorited);
 
   const popover = usePopover();
 
@@ -70,13 +60,23 @@ export default function FileManagerFileItem({
     setInviteEmail(event.target.value);
   }, []);
 
-  const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copied!');
-    copy(file.url);
-  }, [copy, enqueueSnackbar, file.url]);
+  // const handleCopy = useCallback(() => {
+  //   enqueueSnackbar('Copied!');
+  //   copy(file.url);
+  // }, [copy, enqueueSnackbar, file.url]);
 
-  const renderIcon =
-    (checkbox.value || selected) && onSelect ? (
+  const renderIcon = (
+    // (checkbox.value || selected) && onSelect ? (
+    //   <Checkbox
+    //     size="medium"
+    //     checked={selected}
+    //     onClick={onSelect}
+    //     icon={<Iconify icon="eva:radio-button-off-fill" />}
+    //     checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
+    //     sx={{ p: 0.75 }}
+    //   />
+    // ) :
+    <Stack sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
       <Checkbox
         size="medium"
         checked={selected}
@@ -85,37 +85,31 @@ export default function FileManagerFileItem({
         checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
         sx={{ p: 0.75 }}
       />
-    ) : (
-      <FileThumbnail file={file.type} sx={{ width: 36, height: 36 }} />
-    );
-
-  const renderAction = (
-    <Stack direction="row" alignItems="center" sx={{ top: 8, right: 8, position: 'absolute' }}>
-      <Checkbox
-        color="warning"
-        icon={<Iconify icon="eva:star-outline" />}
-        checkedIcon={<Iconify icon="eva:star-fill" />}
-        checked={favorite.value}
-        onChange={favorite.onToggle}
-      />
-
-      <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-        <Iconify icon="eva:more-vertical-fill" />
-      </IconButton>
+      <FileThumbnail file={file.fileExtension} sx={{ width: 36, height: 36 }} />
+      <TextMaxLine persistent variant="subtitle2" onClick={details.onTrue} sx={{ width: 1, mt: 3 }}>
+        {file.fileName}
+      </TextMaxLine>
     </Stack>
   );
 
+  // const renderAction = (
+  //   <Stack direction="row" alignItems="center" sx={{ top: 8, right: 8, position: 'absolute' }}>
+  //     <Checkbox
+  //       color="warning"
+  //       icon={<Iconify icon="eva:star-outline" />}
+  //       checkedIcon={<Iconify icon="eva:star-fill" />}
+  //       // checked={favorite.value}
+  //       // onChange={favorite.onToggle}
+  //     />
+
+  //     <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+  //       <Iconify icon="eva:more-vertical-fill" />
+  //     </IconButton>
+  //   </Stack>
+  // );
+
   const renderText = (
     <>
-      <TextMaxLine
-        persistent
-        variant="subtitle2"
-        onClick={details.onTrue}
-        sx={{ width: 1, mt: 2, mb: 0.5 }}
-      >
-        {file.name}
-      </TextMaxLine>
-
       <Stack
         direction="row"
         alignItems="center"
@@ -126,7 +120,7 @@ export default function FileManagerFileItem({
           color: 'text.disabled',
         }}
       >
-        {fData(file.size)}
+        {/* {fData(file.size)} */}
 
         <Box
           component="span"
@@ -146,25 +140,25 @@ export default function FileManagerFileItem({
     </>
   );
 
-  const renderAvatar = (
-    <AvatarGroup
-      max={3}
-      sx={{
-        mt: 1,
-        [`& .${avatarGroupClasses.avatar}`]: {
-          width: 24,
-          height: 24,
-          '&:first-of-type': {
-            fontSize: 12,
-          },
-        },
-      }}
-    >
-      {file.shared?.map((person) => (
-        <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
-      ))}
-    </AvatarGroup>
-  );
+  // const renderAvatar = (
+  //   <AvatarGroup
+  //     max={3}
+  //     sx={{
+  //       mt: 1,
+  //       [`& .${avatarGroupClasses.avatar}`]: {
+  //         width: 24,
+  //         height: 24,
+  //         '&:first-of-type': {
+  //           fontSize: 12,
+  //         },
+  //       },
+  //     }}
+  //   >
+  //     {file.shared?.map((person) => (
+  //       <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
+  //     ))}
+  //   </AvatarGroup>
+  // );
 
   return (
     <>
@@ -192,11 +186,11 @@ export default function FileManagerFileItem({
 
         {renderText}
 
-        {renderAvatar}
+        {/* {renderAvatar} */}
 
-        {renderAction}
+        {/* {renderAction} */}
       </Stack>
-
+      {/*
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -206,7 +200,7 @@ export default function FileManagerFileItem({
         <MenuItem
           onClick={() => {
             popover.onClose();
-            handleCopy();
+            // handleCopy();
           }}
         >
           <Iconify icon="eva:link-2-fill" />
@@ -235,9 +229,9 @@ export default function FileManagerFileItem({
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
 
-      <FileManagerFileDetails
+      {/* <FileManagerFileDetails
         item={file}
         favorited={favorite.value}
         onFavorite={favorite.onToggle}
@@ -248,9 +242,9 @@ export default function FileManagerFileItem({
           details.onFalse();
           onDelete();
         }}
-      />
+      /> */}
 
-      <FileManagerShareDialog
+      {/* <FileManagerShareDialog
         open={share.value}
         shared={file.shared}
         inviteEmail={inviteEmail}
@@ -260,8 +254,8 @@ export default function FileManagerFileItem({
           share.onFalse();
           setInviteEmail('');
         }}
-      />
-
+      /> */}
+      {/*
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
@@ -272,7 +266,7 @@ export default function FileManagerFileItem({
             Delete
           </Button>
         }
-      />
+      /> */}
     </>
   );
 }

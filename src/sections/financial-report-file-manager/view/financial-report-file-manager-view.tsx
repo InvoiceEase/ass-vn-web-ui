@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 // utils
 import { fTimestamp } from 'src/utils/format-time';
 // _mock
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
+import { _allFiles } from 'src/_mock';
 // types
 import { IFile, IFileFilters, IFileFilterValue } from 'src/types/file';
 // hooks
@@ -19,7 +19,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import { isDateError } from 'src/components/custom-date-range-picker';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import EmptyContent from 'src/components/empty-content';
 import { fileFormat } from 'src/components/file-thumbnail';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
@@ -27,11 +26,8 @@ import { getComparator, useTable } from 'src/components/table';
 //
 import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
-import FileManagerFilters from '../file-manager-filters';
 import FileManagerFiltersResult from '../file-manager-filters-result';
-import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
-import FileManagerTable from '../file-manager-table';
 
 // ----------------------------------------------------------------------
 
@@ -44,7 +40,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function TaxReportFileManagerView() {
+export default function FinancialReportFileManagerView() {
   const table = useTable({ defaultRowsPerPage: 10 });
 
   const settings = useSettingsContext();
@@ -131,7 +127,7 @@ export default function TaxReportFileManagerView() {
       direction={{ xs: 'column', md: 'row' }}
       alignItems={{ xs: 'flex-end', md: 'center' }}
     >
-      <FileManagerFilters
+      {/* <FileManagerFilters
         openDateRange={openDateRange.value}
         onCloseDateRange={openDateRange.onFalse}
         onOpenDateRange={openDateRange.onTrue}
@@ -141,7 +137,7 @@ export default function TaxReportFileManagerView() {
         //
         dateError={dateError}
         typeOptions={FILE_TYPE_OPTIONS}
-      />
+      /> */}
 
       <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
         <ToggleButton value="list">
@@ -171,7 +167,7 @@ export default function TaxReportFileManagerView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Quản lý Báo cáo thuế</Typography>
+          <Typography variant="h4">Quản lý Báo cáo tài chính</Typography>
           {/* <Button
             variant="contained"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
@@ -181,7 +177,7 @@ export default function TaxReportFileManagerView() {
           </Button> */}
           <Button
             component={RouterLink}
-            href={paths.dashboard.file.tax.upload}
+            href={paths.dashboard.file.financial.upload}
             variant="contained"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
@@ -200,7 +196,7 @@ export default function TaxReportFileManagerView() {
           {canReset && renderResults}
         </Stack>
 
-        {notFound ? (
+        {/* {notFound ? (
           <EmptyContent
             filled
             title="No Data"
@@ -229,7 +225,7 @@ export default function TaxReportFileManagerView() {
               />
             )}
           </>
-        )}
+        )} */}
       </Container>
 
       <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />

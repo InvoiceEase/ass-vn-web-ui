@@ -1,6 +1,6 @@
 // sections
 
-import TaxReportFileManagerView from 'src/sections/tax-report-file-manager/view/file-manager-view';
+import TaxReportFileManagerView from 'src/sections/tax-report-file-manager/view/tax-report-file-manager-view';
 
 // ----------------------------------------------------------------------
 

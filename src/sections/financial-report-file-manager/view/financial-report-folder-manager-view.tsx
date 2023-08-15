@@ -1,37 +1,34 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 // utils
-import { fTimestamp } from 'src/utils/format-time';
 // _mock
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
 // types
-import { IFile, IFileFilters, IFileFilterValue } from 'src/types/file';
+import { IFileFilters, IFileFilterValue } from 'src/types/file';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import { isDateError } from 'src/components/custom-date-range-picker';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import EmptyContent from 'src/components/empty-content';
-import { fileFormat } from 'src/components/file-thumbnail';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { getComparator, useTable } from 'src/components/table';
 //
+import { FILE_TYPE_OPTIONS } from 'src/_mock';
+import { getFinancialFolders } from 'src/redux/slices/financial';
+import { useDispatch, useSelector } from 'src/redux/store';
 import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
+import { IFinancialFolder } from 'src/types/financial';
 import FileManagerFilters from '../file-manager-filters';
 import FileManagerFiltersResult from '../file-manager-filters-result';
 import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
-import FileManagerTable from '../file-manager-table';
 
 // ----------------------------------------------------------------------
 
@@ -44,10 +41,12 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function FinancialReportFileManagerView() {
+export default function FinancialReportFolderManagerView() {
   const table = useTable({ defaultRowsPerPage: 10 });
 
   const settings = useSettingsContext();
+
+  const dispatch = useDispatch();
 
   const openDateRange = useBoolean();
 
@@ -57,7 +56,13 @@ export default function FinancialReportFileManagerView() {
 
   const [view, setView] = useState('list');
 
-  const [tableData, setTableData] = useState(_allFiles);
+  useEffect(() => {
+    dispatch(getFinancialFolders());
+  }, []);
+
+  const _allFolders = useSelector((state) => state.financial.folders);
+
+  const [tableData, setTableData] = useState(_allFolders);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -100,26 +105,26 @@ export default function FinancialReportFileManagerView() {
     [table]
   );
 
-  const handleDeleteItem = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
+  // const handleDeleteItem = useCallback(
+  //   (id: string) => {
+  //     const deleteRow = tableData.filter((row) => row.id !== id);
+  //     setTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
+  //     table.onUpdatePageDeleteRow(dataInPage.length);
+  //   },
+  //   [dataInPage.length, table, tableData]
+  // );
 
-  const handleDeleteItems = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-    setTableData(deleteRows);
+  // const handleDeleteItems = useCallback(() => {
+  //   const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+  //   setTableData(deleteRows);
 
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  //   table.onUpdatePageDeleteRows({
+  //     totalRows: tableData.length,
+  //     totalRowsInPage: dataInPage.length,
+  //     totalRowsFiltered: dataFiltered.length,
+  //   });
+  // }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
@@ -143,7 +148,7 @@ export default function FinancialReportFileManagerView() {
         typeOptions={FILE_TYPE_OPTIONS}
       />
 
-      <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
+      {/* <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
         <ToggleButton value="list">
           <Iconify icon="solar:list-bold" />
         </ToggleButton>
@@ -151,7 +156,7 @@ export default function FinancialReportFileManagerView() {
         <ToggleButton value="grid">
           <Iconify icon="mingcute:dot-grid-fill" />
         </ToggleButton>
-      </ToggleButtonGroup>
+      </ToggleButtonGroup> */}
     </Stack>
   );
 
@@ -210,7 +215,7 @@ export default function FinancialReportFileManagerView() {
           />
         ) : (
           <>
-            {view === 'list' ? (
+            {/* {view === 'list' ? (
               <FileManagerTable
                 table={table}
                 tableData={tableData}
@@ -227,14 +232,21 @@ export default function FinancialReportFileManagerView() {
                 onDeleteItem={handleDeleteItem}
                 onOpenConfirm={confirm.onTrue}
               />
-            )}
+            )} */}
+            <FileManagerGridView
+              table={table}
+              data={tableData}
+              dataFiltered={dataFiltered}
+              // onDeleteItem={handleDeleteItem}
+              onOpenConfirm={confirm.onTrue}
+            />
           </>
         )}
       </Container>
 
       <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
@@ -255,7 +267,7 @@ export default function FinancialReportFileManagerView() {
             Delete
           </Button>
         }
-      />
+      /> */}
     </>
   );
 }
@@ -268,7 +280,7 @@ function applyFilter({
   filters,
   dateError,
 }: {
-  inputData: IFile[];
+  inputData: IFinancialFolder[];
   comparator: (a: any, b: any) => number;
   filters: IFileFilters;
   dateError: boolean;
@@ -286,24 +298,22 @@ function applyFilter({
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter(
-      (file) => file.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
-    );
+    inputData = inputData.filter((folder) => folder.year.indexOf(name.toLowerCase()) !== -1);
   }
 
-  if (type.length) {
-    inputData = inputData.filter((file) => type.includes(fileFormat(file.type)));
-  }
+  // if (type.length) {
+  //   inputData = inputData.filter((file) => type.includes(fileFormat(file.type)));
+  // }
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter(
-        (file) =>
-          fTimestamp(file.createdAt) >= fTimestamp(startDate) &&
-          fTimestamp(file.createdAt) <= fTimestamp(endDate)
-      );
-    }
-  }
+  // if (!dateError) {
+  //   if (startDate && endDate) {
+  //     inputData = inputData.filter(
+  //       (file) =>
+  //         fTimestamp(file.createdAt) >= fTimestamp(startDate) &&
+  //         fTimestamp(file.createdAt) <= fTimestamp(endDate)
+  //     );
+  //   }
+  // }
 
   return inputData;
 }

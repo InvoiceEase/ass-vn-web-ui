@@ -1,5 +1,6 @@
 // sections
-import FinancialReportFileManagerView from 'src/sections/financial-report-file-manager/view/file-manager-view';
+
+import FinancialReportFolderManagerView from 'src/sections/financial-report-file-manager/view/financial-report-folder-manager-view';
 
 // ----------------------------------------------------------------------
 
@@ -8,5 +9,5 @@ export const metadata = {
 };
 
 export default function FinancialReportFileManagerPage() {
-  return <FinancialReportFileManagerView />;
+  return <FinancialReportFolderManagerView />;
 }

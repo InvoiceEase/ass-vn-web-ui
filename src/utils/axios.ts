@@ -52,4 +52,11 @@ export const API_ENDPOINTS = {
   provider: {
     list: '/api/v1/providers',
   },
+  financial: {
+    folders: '/api/v1/files/reports/storage',
+    files: '/api/v1/files/reports/storage/financial',
+  },
+  tax: {
+    files: '/api/v1/files/reports/storage/tax',
+  },
 };

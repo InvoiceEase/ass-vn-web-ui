@@ -1,9 +1,9 @@
 import { Dispatch, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IFinancialFile, IFinancialState } from 'src/types/financial';
+import { ITaxFile, ITaxState } from 'src/types/tax';
 import { API_ENDPOINTS } from 'src/utils/axios';
 
-const initialState: IFinancialState = {
+const initialState: ITaxState = {
   folders: [],
   foldersStatus: {
     loading: false,
@@ -19,20 +19,20 @@ const initialState: IFinancialState = {
 };
 
 const slice = createSlice({
-  name: 'financial',
+  name: 'tax',
   initialState,
   reducers: {
-    getFinancialFoldersStart(state) {
+    getTaxFoldersStart(state) {
       state.foldersStatus.loading = true;
       state.foldersStatus.empty = false;
       state.foldersStatus.error = null;
     },
-    getFinancialFoldersFailure(state, action) {
+    getTaxFoldersFailure(state, action) {
       state.foldersStatus.loading = false;
       state.foldersStatus.empty = false;
       state.foldersStatus.error = action.payload;
     },
-    getFinancialFoldersSuccess(state, action) {
+    getTaxFoldersSuccess(state, action) {
       const folders = action.payload;
       state.foldersStatus.empty = !folders.length;
       state.foldersStatus.error = null;
@@ -40,17 +40,17 @@ const slice = createSlice({
 
       state.folders = folders;
     },
-    getFinancialFilesStart(state) {
+    getTaxFilesStart(state) {
       state.filesStatus.loading = true;
       state.filesStatus.empty = false;
       state.filesStatus.error = null;
     },
-    getFinancialFilesFailure(state, action) {
+    getTaxFilesFailure(state, action) {
       state.filesStatus.loading = false;
       state.filesStatus.empty = false;
       state.filesStatus.error = action.payload;
     },
-    getFinancialFilesSuccess(state, action) {
+    getTaxFilesSuccess(state, action) {
       const files = action.payload;
       state.filesStatus.empty = !files.length;
       state.filesStatus.error = null;
@@ -63,9 +63,9 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export function getFinancialFolders() {
+export function getTaxFolders() {
   return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.getFinancialFoldersStart());
+    dispatch(slice.actions.getTaxFoldersStart());
 
     const token = sessionStorage.getItem('token');
 
@@ -81,26 +81,24 @@ export function getFinancialFolders() {
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.financial.folders}`,
         {
           version: 0,
-          reportType: 'FINANCIAL',
+          reportType: 'TAX',
         },
         {
           headers: headersList,
         }
       );
       if (response.status === 200) {
-        dispatch(
-          slice.actions.getFinancialFoldersSuccess(response.data.reportStorageFolderMappingList)
-        );
+        dispatch(slice.actions.getTaxFoldersSuccess(response.data.reportStorageFolderMappingList));
       }
     } catch (error) {
-      dispatch(slice.actions.getFinancialFoldersFailure(error));
+      dispatch(slice.actions.getTaxFoldersFailure(error));
     }
   };
 }
 
-export function getFinancialFiles(year: string | undefined, quarter: string) {
+export function getTaxFiles(year: string | undefined, quarter: string) {
   return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.getFinancialFilesStart());
+    dispatch(slice.actions.getTaxFilesStart());
     const token = sessionStorage.getItem('token');
 
     const accessToken: string = `Bearer ${token}`;
@@ -114,7 +112,7 @@ export function getFinancialFiles(year: string | undefined, quarter: string) {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.financial.files}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.tax.files}`,
         {
           version: 0,
           businessId: businessId ?? '',
@@ -124,12 +122,12 @@ export function getFinancialFiles(year: string | undefined, quarter: string) {
       );
       if (response.status === 200) {
         const quarterFiles = response.data.filter(
-          (item: IFinancialFile) => item.quarter === quarter.split(' ')[1]
+          (item: ITaxFile) => item.quarter === quarter.split(' ')[1]
         );
-        dispatch(slice.actions.getFinancialFilesSuccess(quarterFiles));
+        dispatch(slice.actions.getTaxFilesSuccess(quarterFiles));
       }
     } catch (error) {
-      dispatch(slice.actions.getFinancialFilesFailure(error));
+      dispatch(slice.actions.getTaxFilesFailure(error));
     }
   };
 }
