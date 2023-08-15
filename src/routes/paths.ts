@@ -177,5 +177,15 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}/edit`,
       },
     },
+    file: {
+      financial: {
+        root: `${ROOTS.DASHBOARD}/financial-report-file-manager`,
+        upload: `${ROOTS.DASHBOARD}/financial-report-file-manager/upload`,
+      },
+      tax: {
+        root: `${ROOTS.DASHBOARD}/tax-report-file-manager`,
+        upload: `${ROOTS.DASHBOARD}/tax-report-file-manager/upload`,
+      },
+    },
   },
 };

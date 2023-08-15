@@ -57,12 +57,12 @@ export function useNavData(role: string | null = 'ADMIN') {
         subheader: t('Tổng quát'),
         items: [
           { title: t('Quản lý'), path: paths.dashboard.root, icon: ICONS.dashboard },
-          {
-            title: t('Tìm kiếm Agency'),
-            path: paths.dashboard.general.ecommerce,
-            icon: ICONS.ecommerce,
-          },
-          { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
+          // {
+          //   title: t('Tìm kiếm Agency'),
+          //   path: paths.dashboard.general.ecommerce,
+          //   icon: ICONS.ecommerce,
+          // },
+          // { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
           // { title: t('banking'), path: paths.dashboard.general.banking, icon: ICONS.banking },
           // { title: t('booking'), path: paths.dashboard.general.booking, icon: ICONS.booking },
           // { title: t('file'), path: paths.dashboard.general.file, icon: ICONS.file },
@@ -72,7 +72,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('Lưu trữ'),
+        subheader: t('Hồ sơ'),
         items: [
           // USER
           // {
@@ -135,13 +135,13 @@ export function useNavData(role: string | null = 'ADMIN') {
             children: [
               {
                 title: t('Báo cáo tài chính'),
-                path: paths.dashboard.order.root,
+                path: paths.dashboard.file.financial.root,
               },
 
               // FINANCE_REPORT_EVERY_3_MONTH
               {
-                title: t('Báo cáo quý / tháng'),
-                path: paths.dashboard.order.root,
+                title: t('Báo cáo thuế'),
+                path: paths.dashboard.file.tax.root,
               },
             ],
           },
@@ -334,30 +334,22 @@ export function useNavData(role: string | null = 'ADMIN') {
         subheader: t('Tổng quát'),
         items: [
           { title: t('Quản lý'), path: paths.dashboard.root, icon: ICONS.dashboard },
-          {
-            title: t('Tìm kiếm Agency'),
-            path: paths.dashboard.general.ecommerce,
-            icon: ICONS.ecommerce,
-          },
-          { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
+          // {
+          //   title: t('Tìm kiếm Agency'),
+          //   path: paths.dashboard.general.ecommerce,
+          //   icon: ICONS.ecommerce,
+          // },
+          // { title: t('Hợp đồng'), path: paths.dashboard.general.analytics, icon: ICONS.file },
           // { title: t('banking'), path: paths.dashboard.general.banking, icon: ICONS.banking },
           // { title: t('booking'), path: paths.dashboard.general.booking, icon: ICONS.booking },
           // { title: t('file'), path: paths.dashboard.general.file, icon: ICONS.file },
         ],
       },
 
-      {
-        subheader: t('Kết nối'),
-        items: [
-          { title: t('Nhà cung cấp'), path: paths.dashboard.provider.root, icon: ICONS.order },
-          { title: t('Nhân viên'), path: paths.dashboard.user.list, icon: ICONS.user },
-        ],
-      },
-
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('Lưu trữ'),
+        subheader: t('Hồ sơ'),
         items: [
           // USER
           // {
@@ -420,13 +412,13 @@ export function useNavData(role: string | null = 'ADMIN') {
             children: [
               {
                 title: t('Báo cáo tài chính'),
-                path: paths.dashboard.order.root,
+                path: paths.dashboard.file.financial.root,
               },
 
               // FINANCE_REPORT_EVERY_3_MONTH
               {
-                title: t('Báo cáo quý / tháng'),
-                path: paths.dashboard.order.root,
+                title: t('Báo cáo thuế'),
+                path: paths.dashboard.file.tax.root,
               },
             ],
           },
@@ -607,6 +599,13 @@ export function useNavData(role: string | null = 'ADMIN') {
       //     },
       //   ],
       // },
+      {
+        subheader: t('Kết nối'),
+        items: [
+          { title: t('Nhà cung cấp'), path: paths.dashboard.provider.root, icon: ICONS.order },
+          { title: t('Nhân viên'), path: paths.dashboard.user.list, icon: ICONS.user },
+        ],
+      },
     ],
     [t]
   );
@@ -616,7 +615,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
-        subheader: t('Lưu trữ'),
+        subheader: t('Hồ sơ'),
         items: [
           // USER
           // {
@@ -681,13 +680,13 @@ export function useNavData(role: string | null = 'ADMIN') {
             children: [
               {
                 title: t('Báo cáo tài chính'),
-                path: paths.dashboard.order.root,
+                path: paths.dashboard.file.financial.root,
               },
 
               // FINANCE_REPORT_EVERY_3_MONTH
               {
-                title: t('Báo cáo quý / tháng'),
-                path: paths.dashboard.order.root,
+                title: t('Báo cáo thuế'),
+                path: paths.dashboard.file.tax.root,
               },
             ],
           },
