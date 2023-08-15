@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
     search: '/api/product/search',
   },
   business: {
-    list: '/api/v1/contracts',
+    list: '/api/v1/businesses',
     types: '/api/v1/businessTypes',
   },
   profile: {
@@ -51,6 +51,10 @@ export const API_ENDPOINTS = {
   },
   provider: {
     list: '/api/v1/providers',
+  },
+  users: {
+    list: '/api/v1/users/filter',
+    detail: '/api/v1/users/',
   },
   financial: {
     folders: '/api/v1/files/reports/storage',

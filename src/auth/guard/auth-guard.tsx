@@ -49,7 +49,6 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           headers: { Authorization: `Bearer ${token}` },
         };
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}`;
-        console.log(process.env.NEXT_PUBLIC_BE_ADMIN_API);
         const resp = await axios.get(url, config);
         if (resp.status === 200) {
           setChecked(true);
@@ -60,11 +59,16 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           sessionStorage.setItem('orgId', resp.data.organizationId);
           if (resp.data.role.includes(RoleCodeEnum.Auditor)) {
             // if user is accountant navigate to mail as default screen
-            router.prefetch(paths.dashboard.mail);
+            // router.prefetch(paths.dashboard.mail);
             router.replace(paths.dashboard.mail);
-          } else {
-            router.prefetch(paths.dashboard.root);
+          } else if (
+            resp.data.role.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`)
+          ) {
+            // router.prefetch(paths.dashboard.root);
             router.replace(paths.dashboard.root);
+          } else if (resp.data.role.includes(RoleCodeEnum.Admin)) {
+            // router.prefetch(paths.dashboard.user.list);
+            router.replace(paths.dashboard.user.list);
           }
         } else {
           router.replace('');

@@ -9,6 +9,12 @@ export type IUserTableFilters = {
   status: string;
 };
 
+export type IUserTableFiltersAdmin = {
+  name: string;
+  role: string;
+  status: string;
+};
+
 // ----------------------------------------------------------------------
 
 export type IUserSocialLink = {
@@ -106,6 +112,14 @@ export type IUserItem = {
   avatarUrl: string;
   phoneNumber: string;
   isVerified: boolean;
+};
+
+export type IAuditorItem = {
+  fullName: string;
+  role: string;
+  email: string;
+  phoneNumber: string;
+  password:string;
 };
 
 // export type IUserAccount = {

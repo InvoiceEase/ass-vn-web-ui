@@ -42,7 +42,6 @@ import { getProviders } from 'src/redux/slices/provider';
 import { useDispatch, useSelector } from 'src/redux/store';
 import ProviderTableRow from 'src/sections/provider/provider-table-row';
 import { IProvider } from 'src/types/provider';
-import UserTableFiltersResult from '../../user/user-table-filters-result';
 import ProviderTableToolbar from '../provider-table-toolbar';
 
 // ----------------------------------------------------------------------
@@ -231,7 +230,7 @@ export default function ProviderListView() {
             roleOptions={_roles}
           />
 
-          {canReset && (
+          {/* {canReset && (
             <UserTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
@@ -241,7 +240,7 @@ export default function ProviderListView() {
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction

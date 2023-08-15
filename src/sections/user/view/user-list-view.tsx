@@ -1,34 +1,34 @@
 'use client';
 
 import isEqual from 'lodash/isEqual';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
+import { alpha } from '@mui/material/styles';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import { alpha } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
-import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 // routes
 import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/profile';
+import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // _mock
-import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _roles, USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
+import Label from 'src/components/label';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
-import Label from 'src/components/label';
 import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
 import {
@@ -42,18 +42,18 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import Typography from '@mui/material/Typography';
+import { getAuditors } from 'src/redux/slices/auditor';
+import { useDispatch, useSelector } from 'src/redux/store';
+import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 
-// ----------------------------------------------------------------------
-
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
-
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
+  { id: 'name', label: 'Name', width: 500 },
   { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
+  // { id: 'email', label: 'Email', width: 300 },
   { id: 'role', label: 'Role', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
@@ -61,13 +61,15 @@ const TABLE_HEAD = [
 
 const defaultFilters = {
   name: '',
-  role: [],
+  role: '',
   status: 'all',
 };
 
-// ----------------------------------------------------------------------
-
 export default function UserListView() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAuditors());
+  }, []);
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -76,10 +78,27 @@ export default function UserListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_userList);
+  const _userList = useSelector((state) => state.auditor.auditors);
 
   const [filters, setFilters] = useState(defaultFilters);
-
+  const [tableData, setTableData] = useState(_userList);
+  const [role, setRole] = useState(['']);
+  const [userStatus, setUserStatus] = useState(['']);
+  useEffect(() => {
+    setTableData(_userList);
+    const userRole: string[] = [];
+    const userSts: string[] = ['all'];
+    _userList.forEach((item) => {
+      if (!userRole.includes(item.roleName)) {
+        userRole.push(item.roleName);
+      }
+      if (!userSts.includes(item.status)) {
+        userSts.push(item.status);
+      }
+    });
+    setRole(userRole);
+    setUserStatus(userSts);
+  }, [_userList]);
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -91,7 +110,7 @@ export default function UserListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 52 : 72;
+  // const denseHeight = table.dense ? 52 : 72;
 
   const canReset = !isEqual(defaultFilters, filters);
 
@@ -150,28 +169,7 @@ export default function UserListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="List"
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
-          ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.user.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New User
-            </Button>
-          }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
-
+        <Typography sx={{mb:5}} variant="h4">Quản lí người dùng</Typography>
         <Card>
           <Tabs
             value={filters.status}
@@ -181,45 +179,35 @@ export default function UserListView() {
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
             }}
           >
-            {STATUS_OPTIONS.map((tab) => (
+            {userStatus.map((tab) => (
               <Tab
-                key={tab.value}
+                key={tab}
                 iconPosition="end"
-                value={tab.value}
-                label={tab.label}
+                value={tab}
+                label={tab}
                 icon={
                   <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
+                    variant={((tab === 'all' || tab === filters.status) && 'filled') || 'soft'}
                     color={
-                      (tab.value === 'active' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
-                      'default'
+                      (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
                     }
                   >
-                    {tab.value === 'all' && _userList.length}
-                    {tab.value === 'active' &&
-                      _userList.filter((user) => user.status === 'active').length}
+                    {tab === 'all' && _userList.length}
+                    {tab === 'Active' &&
+                      _userList.filter((user) => user.status === 'Active').length}
 
-                    {tab.value === 'pending' &&
-                      _userList.filter((user) => user.status === 'pending').length}
-                    {tab.value === 'banned' &&
-                      _userList.filter((user) => user.status === 'banned').length}
-                    {tab.value === 'rejected' &&
-                      _userList.filter((user) => user.status === 'rejected').length}
+                    {tab === 'Banned' &&
+                      _userList.filter((user) => user.status === 'Banned').length}
                   </Label>
                 }
               />
             ))}
           </Tabs>
-
           <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
-            roleOptions={_roles}
+            roleOptions={role}
           />
 
           {canReset && (
@@ -289,7 +277,6 @@ export default function UserListView() {
                     ))}
 
                   <TableEmptyRows
-                    height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
                   />
 
@@ -306,10 +293,19 @@ export default function UserListView() {
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
             //
-            dense={table.dense}
-            onChangeDense={table.onChangeDense}
+            // dense={table.dense}
+            // onChangeDense={table.onChangeDense}
           />
         </Card>
+        <Button
+          sx={{ mt: 6 }}
+          component={RouterLink}
+          href={paths.dashboard.user.new}
+          variant="contained"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+        >
+          Thêm Kiểm Duyệt Viên
+        </Button>
       </Container>
 
       <ConfirmDialog
@@ -338,16 +334,14 @@ export default function UserListView() {
   );
 }
 
-// ----------------------------------------------------------------------
-
 function applyFilter({
   inputData,
   comparator,
   filters,
 }: {
-  inputData: IUserItem[];
+  inputData: IAuditor[];
   comparator: (a: any, b: any) => number;
-  filters: IUserTableFilters;
+  filters: IUserTableFiltersAdmin;
 }) {
   const { name, status, role } = filters;
 
@@ -363,7 +357,9 @@ function applyFilter({
 
   if (name) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (user) =>
+        user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -372,7 +368,7 @@ function applyFilter({
   }
 
   if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.role));
+    inputData = inputData.filter((user) => role.includes(user.roleName));
   }
 
   return inputData;

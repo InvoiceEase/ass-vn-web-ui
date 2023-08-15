@@ -8,8 +8,31 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
+env:
+  DEPLOYMENT_NAME: ${{ secrets.SERVICE_NAME }}
+  CONTAINER_NAME: ${{ secrets.SERVICE_NAME }}
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/invoiceease/${{ github.event.repository.name }}
+  ENV_DEPLOY: dev
+  GCP_PROJECT_KEY: ${{ secrets.GCP_PROJECT_KEY }}
+  CLUSTER_NAME: ass-super-cluster
+  CLUSTER_REGION: asia-east1
+  GRGIT_USER: ${{ github.actor }}
+  GRGIT_PASS: ${{ secrets.TOKEN }}
 jobs:
+  clean-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old image
+        uses: smartsquaregmbh/delete-old-packages@v0.5.0
+        with:
+          token: ${{ env.GRGIT_PASS }}
+          type: container
+          organization: InvoiceEase
+          keep: 1
+          version-pattern: ^${{ env.ENV_DEPLOY }}-[a-zA-Z0-9]*
+          names: |
+            ${{ github.event.repository.name }}
   ci-cd-dev-env:
     runs-on: ubuntu-latest
     env:
@@ -40,39 +63,42 @@ jobs:
       - name: Build Next.js app
         run: yarn build
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
 
-      - name: Login to Container Registry
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.ENV_DEPLOY }}-${{ github.sha }}
 
-      - name: Build, tag, and push Docker image to Amazon ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ secrets.AWS_REPO_NAME }}
-          IMAGE_TAG: ${{ github.sha }}
+      - name: Authenticate with Google Cloud
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_PROJECT_KEY }}'
+
+      - name: Configure Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: '>= 363.0.0'
+
+      - name: Use gcloud cli
+        run: gcloud info
+
+      - name: Set GKE Cluster
+        uses: 'google-github-actions/get-gke-credentials@v1'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.CLUSTER_REGION }}
+
+      - name: Update deployment with new image
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-      - name: Update KubeConfig
-        shell: bash
-        run: |
-          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER }}
-
-      - name: Change image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ secrets.AWS_REPO_NAME }}
-          IMAGE_TAG: ${{ github.sha }}
-        shell: bash
-        run: |
-          kubectl set image deployment/${{ secrets.DEPLOYMENT }} ${{ secrets.CONTAINER_NAME }}=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+          kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} ${{ env.CONTAINER_NAME }}=${{ env.IMAGE_NAME }}:${{ env.ENV_DEPLOY }}-${{ github.sha }}
 
       - name: Generate discord_notification.json
         if: ${{ always() }}
