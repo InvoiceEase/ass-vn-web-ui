@@ -8,7 +8,17 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
+env:
+  DEPLOYMENT_NAME: ${{ secrets.SERVICE_NAME }}
+  CONTAINER_NAME: ${{ secrets.SERVICE_NAME }}
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/invoiceease/${{ github.event.repository.name }}
+  ENV_DEPLOY: dev
+  GCP_PROJECT_KEY: ${{ secrets.GCP_PROJECT_KEY }}
+  CLUSTER_NAME: ass-super-cluster
+  CLUSTER_REGION: asia-east1
+  GRGIT_USER: ${{ github.actor }}
+  GRGIT_PASS: ${{ secrets.TOKEN }}
 jobs:
   clean-docker-image:
     runs-on: ubuntu-latest
@@ -26,16 +36,6 @@ jobs:
   ci-cd-dev-env:
     runs-on: ubuntu-latest
     env:
-      DEPLOYMENT_NAME: ${{ secrets.SERVICE_NAME }}
-      CONTAINER_NAME: ${{ secrets.SERVICE_NAME }}
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ghcr.io/invoiceease/${{ github.event.repository.name }}
-      ENV_DEPLOY: dev
-      GCP_PROJECT_KEY: ${{ secrets.GCP_PROJECT_KEY }}
-      CLUSTER_NAME: ass-super-cluster
-      CLUSTER_REGION: asia-east1
-      GRGIT_USER: ${{ github.actor }}
-      GRGIT_PASS: ${{ secrets.TOKEN }}
       NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
       NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
       NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
