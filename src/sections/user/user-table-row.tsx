@@ -37,7 +37,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { fullName, phoneNumber, roleName, email, status } = row;
+  const { name, phoneNumber, roleName, email, status } = row;
 
   const confirm = useBoolean();
 
@@ -54,7 +54,7 @@ export default function UserTableRow({
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
-            primary={fullName}
+            primary={name}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
@@ -62,7 +62,7 @@ export default function UserTableRow({
         </TableCell>
 
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell> */}
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{fullName}</TableCell> */}
+        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell> */}
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{roleName}</TableCell>

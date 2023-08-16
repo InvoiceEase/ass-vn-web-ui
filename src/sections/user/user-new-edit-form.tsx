@@ -58,13 +58,13 @@ export default function UserNewEditForm({ currentUser }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
   const resolver = {
-    fullName: Yup.string().required('Name is required'),
+    name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     password: Yup.string().required('Password is required'),
   };
   const resolverCurren = {
-    fullName: Yup.string().required('Name is required'),
+    name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     password: Yup.string().required('Password is required'),
@@ -73,14 +73,14 @@ export default function UserNewEditForm({ currentUser }: Props) {
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
 
   const defaultNoCurr = {
-    fullName: '',
+    name: '',
     email: '',
     phoneNumber: '',
     password: '',
     role: 'AUDITOR',
   };
   const defaultVlCurr = {
-    fullName: currentUser?.fullName || '',
+    name: currentUser?.name || '',
     email: currentUser?.email || '',
     phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
     password: currentUser?.password || '',
@@ -232,7 +232,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField disabled={!!currentUser} name="fullName" label="Họ Tên" />
+              <RHFTextField disabled={!!currentUser} name="name" label="Họ Tên" />
               <RHFTextField disabled={!!currentUser} name="email" label="Email" />
               <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Số điện thoại" />
               <RHFTextField disabled name="role" label="Chức vụ" value="Kiểm duyệt viên" />

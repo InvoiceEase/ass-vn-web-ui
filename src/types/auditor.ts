@@ -5,7 +5,7 @@ export type IAuditor = {
   modifiedBy: string;
   version: string;
   id: string;
-  fullName: string;
+  name: string;
   email: string;
   phoneNumber: string;
   dateOfBirth: string | Date;
