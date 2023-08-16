@@ -119,8 +119,8 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     const accessToken: string = `Bearer ${token}`;
     setLoading(true);
     const urlUp =
-      'https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare';
-    const urlComp = 'https://accountant-support-system.site/ass-admin/api/v1/files';
+      'https://accountant-support-system.site/ass-admin/api/v1/files';
+    const urlComp = 'https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare';
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
