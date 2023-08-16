@@ -39,7 +39,7 @@ export default function UserEditView() {
             name: 'User',
             href: paths.dashboard.user.root,
           },
-          { name: currentUser?.fullName },
+          { name: currentUser?.name},
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
