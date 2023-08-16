@@ -54,6 +54,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
     numberOfCompareSuccess: 0,
     errorInvoicesSpare: 0,
     errorInvoicesNotFound: 0,
+    errorInvoicesOther: 0,
   };
   const lstError = [
     {
@@ -64,11 +65,12 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       invoiceSerial: '',
       modifiedAt: '',
       version: 0,
-      senderName: "",
-      taxNumber: "",
+      senderName: '',
+      taxNumber: '',
     },
   ];
   const [lstErrorInvSpare, setLstErrorInvSpare] = useState(lstError);
+  const [lstErrorOther, setLstErrorOther] = useState(lstError);
   const [lstErrorInvNotFound, setLstErrorInvNotFound] = useState(lstError);
   const [comp, setComp] = useState(false);
   const [stsFiles, setStsFiles] = useState(statusFiles);
@@ -173,20 +175,24 @@ export default function UploadView({ mail, onClickCancel }: Props) {
               const numberofErrorInvSpare = response.data.errorInvoices.filter(
                 (item: { errorList: string | string[] }) => item.errorList.includes('spare')
               );
-              const numberofErrorInvNotFoud = response.data.errorInvoices.filter(
+              const numberofErrorInvNotFound = response.data.errorInvoices.filter(
                 (item: { errorList: string | string[] }) => item.errorList.includes('not_found')
               );
+              const numberofErrorInvOther = response.data.errorInvoices.filter(
+                (item: { errorList: string | string[] }) =>
+                  !item.errorList.includes('not_found') && !item.errorList.includes('spare')
+              );
               setLstErrorInvSpare(numberofErrorInvSpare);
-              setLstErrorInvNotFound(numberofErrorInvNotFoud);
+              setLstErrorInvNotFound(numberofErrorInvNotFound);
+              setLstErrorOther(numberofErrorInvOther);
               setStsFiles({
                 ...stsFiles,
                 numberOfInvoices: response.data.numberOfInvoices,
                 numberOfCompareSuccess: response.data.numberOfCompareSuccess,
                 errorInvoicesSpare: numberofErrorInvSpare.length,
-                errorInvoicesNotFound: numberofErrorInvNotFoud.length,
+                errorInvoicesNotFound: numberofErrorInvNotFound.length,
+                errorInvoicesOther: numberofErrorInvOther.length,
               });
-              console.log('numberofErrorInvSpare', lstErrorInvSpare);
-              console.log('numberofErrorInvNotFoud', numberofErrorInvNotFoud);
               setComp(true);
             }
           }
@@ -196,6 +202,9 @@ export default function UploadView({ mail, onClickCancel }: Props) {
         console.log(error);
         onClickCancel();
       });
+  };
+  const handleOnclickInvoice = (id: string) => {
+    router.push(paths.dashboard.invoice.details(id));
   };
   return (
     <>
@@ -284,55 +293,86 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           <TimelineDot variant="outlined" />
                           <TimelineConnector />
                         </TimelineSeparator>
-                        <TimelineContent  >
-                          {stsFiles.errorInvoicesSpare + stsFiles.errorInvoicesNotFound} hóa đơn
-                          không xác thực gồm
+                        <TimelineContent>
+                          {stsFiles.errorInvoicesSpare +
+                            stsFiles.errorInvoicesNotFound +
+                            stsFiles.errorInvoicesOther}{' '}
+                          hóa đơn không xác thực gồm
                         </TimelineContent>
                       </TimelineItem>
-                      <TimelineItem>
-                        <TimelineSeparator>
-                          <TimelineDot />
-                          <TimelineConnector />
-                        </TimelineSeparator>
-                        <TimelineContent sx={{fontWeight: "bold"}}>
-                          Danh sách {stsFiles.errorInvoicesSpare} hóa đơn không có trên cơ quan thuế
-                          <List>
-                            {lstErrorInvSpare.map((item) => (
-                              <ListItem disablePadding>
-                                <ListItemButton>
+                      {lstErrorInvSpare.length>0 && (
+                        <TimelineItem>
+                          <TimelineSeparator>
+                            <TimelineDot />
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <TimelineContent sx={{ fontWeight: 'bold' }}>
+                            Danh sách {stsFiles.errorInvoicesSpare} hóa đơn không có trên cơ quan
+                            thuế
+                            <List>
+                              {lstErrorInvSpare.map((item) => (
+                                <ListItem disablePadding>
+                                  <ListItemButton onClick={() => handleOnclickInvoice(item.id)}>
+                                    <Iconify width={23} icon="mdi:dot" />
+                                    <ListItemText
+                                      primary={`Ký hiệu hóa đơn: ${item.invoiceSerial}`}
+                                      secondary={`Số hóa đơn: ${item.invoiceNumber} `}
+                                    />
+                                  </ListItemButton>
+                                </ListItem>
+                              ))}
+                            </List>
+                          </TimelineContent>
+                        </TimelineItem>
+                      )}
+                      {lstErrorOther.length>0 && (
+                        <TimelineItem>
+                          <TimelineSeparator>
+                            <TimelineDot />
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <TimelineContent sx={{ fontWeight: 'bold' }}>
+                            Danh sách {stsFiles.errorInvoicesOther} hóa đơn sai thông tin
+                            <List>
+                              {lstErrorOther.map((item) => (
+                                <ListItem disablePadding>
+                                  <ListItemButton onClick={() => handleOnclickInvoice(item.id)}>
+                                    <Iconify width={23} icon="mdi:dot" />
+                                    <ListItemText
+                                      primary={`Ký hiệu hóa đơn: ${item.invoiceSerial}`}
+                                      secondary={`Số hóa đơn: ${item.invoiceNumber} `}
+                                    />
+                                  </ListItemButton>
+                                </ListItem>
+                              ))}
+                            </List>
+                          </TimelineContent>
+                        </TimelineItem>
+                      )}
+                      {lstErrorInvNotFound.length>0 && (
+                        <TimelineItem>
+                          <TimelineSeparator>
+                            <TimelineDot />
+                            <TimelineConnector />
+                          </TimelineSeparator>
+                          <TimelineContent sx={{ fontWeight: 'bold' }}>
+                            Danh sách {stsFiles.errorInvoicesNotFound} hóa đơn thiếu cần bổ sung
+                            <List>
+                              {lstErrorInvNotFound.map((item) => (
+                                <ListItem disablePadding>
+                                  {/* <ListItemButton> */}
                                   <Iconify width={23} icon="mdi:dot" />
                                   <ListItemText
-                                    primary={`Ký hiệu hóa đơn: ${item.invoiceSerial}`}
-                                    secondary={`Số hóa đơn: ${item.invoiceNumber} `}
+                                    primary={`MST người bán: ${item.taxNumber}`}
+                                    secondary={`Ký hiệu hóa đơn: ${item.invoiceSerial}  -  Số hóa đơn: ${item.invoiceNumber}`}
                                   />
-                                </ListItemButton>
-                              </ListItem>
-                            ))}
-                          </List>
-                        </TimelineContent>
-                      </TimelineItem>
-                      <TimelineItem>
-                        <TimelineSeparator>
-                          <TimelineDot />
-                          <TimelineConnector />
-                        </TimelineSeparator>
-                        <TimelineContent sx={{fontWeight: "bold"}}>
-                          Danh sách {stsFiles.errorInvoicesNotFound} hóa đơn thiếu cần bổ sung
-                          <List>
-                            {lstErrorInvNotFound.map((item) => (
-                              <ListItem disablePadding>
-                                {/* <ListItemButton> */}
-                                <Iconify width={23} icon="mdi:dot" />
-                                <ListItemText
-                                  primary={`MST người bán: ${item.taxNumber}`}
-                                  secondary={`Ký hiệu hóa đơn: ${item.invoiceSerial}  -  Số hóa đơn: ${item.invoiceNumber}`}
-                                />
-                                {/* </ListItemButton> */}
-                              </ListItem>
-                            ))}
-                          </List>
-                        </TimelineContent>
-                      </TimelineItem>
+                                  {/* </ListItemButton> */}
+                                </ListItem>
+                              ))}
+                            </List>
+                          </TimelineContent>
+                        </TimelineItem>
+                      )}
                     </Timeline>
                   )}
                 </Stack>
