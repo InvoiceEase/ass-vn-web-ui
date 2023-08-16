@@ -16,11 +16,11 @@ export default function InvoiceInfoField({ invoiceCharacter, invoiceSerial, isSi
           Đã cấp mã hóa đơn
         </Typography>
       )}
-      {isSigned !== undefined && (
+      {/* {isSigned !== undefined && (
         <Typography variant="body1" color="#118D57">
           {isSigned ? 'Hoá đơn đã được ký điện tử' : 'Hoá đơn chưa được ký điện tử'}
         </Typography>
-      )}
+      )} */}
       {invoiceCharacter && (
         <Typography variant="body1" color="#118D57">
           {`Tính chất hoá đơn: ${invoiceCharacter}`}
