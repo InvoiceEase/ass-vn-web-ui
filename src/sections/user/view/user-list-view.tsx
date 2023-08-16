@@ -51,18 +51,18 @@ import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', width: 500 },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
+  { id: 'name', label: 'Họ Tên', width: 500 },
+  { id: 'phoneNumber', label: 'Số điện thoại', width: 180 },
   // { id: 'email', label: 'Email', width: 300 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'role', label: 'Chức vụ', width: 180 },
+  { id: 'status', label: 'Trạng thái', width: 100 },
   { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   name: '',
   role: '',
-  status: 'all',
+  status: 'All',
 };
 
 export default function UserListView() {
@@ -87,7 +87,7 @@ export default function UserListView() {
   useEffect(() => {
     setTableData(_userList);
     const userRole: string[] = [];
-    const userSts: string[] = ['all'];
+    const userSts: string[] = ['All'];
     _userList.forEach((item) => {
       if (!userRole.includes(item.roleName)) {
         userRole.push(item.roleName);
@@ -187,12 +187,12 @@ export default function UserListView() {
                 label={tab}
                 icon={
                   <Label
-                    variant={((tab === 'all' || tab === filters.status) && 'filled') || 'soft'}
+                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
                     color={
                       (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
                     }
                   >
-                    {tab === 'all' && _userList.length}
+                    {tab === 'All' && _userList.length}
                     {tab === 'Active' &&
                       _userList.filter((user) => user.status === 'Active').length}
 
@@ -363,7 +363,7 @@ function applyFilter({
     );
   }
 
-  if (status !== 'all') {
+  if (status !== 'All') {
     inputData = inputData.filter((user) => user.status === status);
   }
 

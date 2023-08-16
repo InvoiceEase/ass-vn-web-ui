@@ -103,11 +103,11 @@ export default function UserTableToolbar({
             width: { xs: 1, md: 200 },
           }}
         >
-          <InputLabel>Role</InputLabel>
+          <InputLabel>Chức vụ</InputLabel>
           <Select
             value={filters.role}
             onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
+            input={<OutlinedInput label="Chức vụ" />}
             renderValue={(selected) => selected}
             MenuProps={{
               PaperProps: {
@@ -129,7 +129,7 @@ export default function UserTableToolbar({
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder="Tim kiếm theo tên hoặc email..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
