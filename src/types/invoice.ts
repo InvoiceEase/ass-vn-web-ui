@@ -57,6 +57,7 @@ export type IInvoice = {
   taxDeclarationId: number | null;
   invoiceName: string;
   errorFieldList: string | null;
+  pdfFilePath?: string;
 };
 
 export type IInvoicePage = {

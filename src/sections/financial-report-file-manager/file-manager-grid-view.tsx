@@ -54,8 +54,6 @@ export default function FileManagerGridView({
     setFolderName(event.target.value);
   }, []);
 
-  console.log('NghiaLog: tableData - ', data);
-
   return (
     <>
       <Box ref={containerRef}>

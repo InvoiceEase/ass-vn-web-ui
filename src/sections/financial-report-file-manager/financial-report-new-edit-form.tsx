@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
@@ -15,12 +15,15 @@ import { paths } from 'src/routes/paths';
 // assets
 import { years } from 'src/assets/data';
 // components
-import { Typography } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import axios from 'axios';
+import FileThumbnail from 'src/components/file-thumbnail/file-thumbnail';
 import FormProvider, { RHFAutocomplete, RHFUploadBox } from 'src/components/hook-form';
+import Iconify from 'src/components/iconify/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
 import { useSelector } from 'src/redux/store';
+import { IFinancialFile } from 'src/types/financial';
 import { IFinancialFileInfo } from 'src/types/report';
 
 // ----------------------------------------------------------------------
@@ -41,6 +44,7 @@ interface FormValuesProps {
 type Props = {
   year?: number | string;
   quarter?: string;
+  files?: IFinancialFile[];
   FINANCIAL_BCDKT?: CustomFile | string | any;
   FINANCIAL_BLCTT?: CustomFile | string | any;
   FINANCIAL_BKQKD?: CustomFile | string | any;
@@ -62,6 +66,8 @@ interface ReportFilesInfo {
 export default function FinancialReportNewEditForm(props?: Props) {
   const router = useRouter();
 
+  const financialReportFilesInRedux = useSelector((state) => state.financial.files);
+
   const [financialReportFiles, setFinancialReportFiles] = useState<any[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
@@ -69,30 +75,40 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const NewFinancialReportSchema = Yup.object().shape({
     year: Yup.string().required('Năm là bắt buộc'),
     quarter: Yup.string().required('Quý là bắt buộc'),
-    FINANCIAL_BCDKT: Yup.string().required('Bảng cân đối kế toán là bắt buộc'),
-    FINANCIAL_BLCTT: Yup.string().required('Bảng lưu chuyển tiền tệ là bắt buộc'),
-    FINANCIAL_BKQKD: Yup.string().required('Bảng kết quả kinh doanh là bắt buộc'),
-    FINANCIAL_BCDPSTK: Yup.string().required('Bảng cân đối phát sinh tài khoản là bắt buộc'),
-    FINANCIAL_SCT: Yup.string().required('Sổ chi tiết là bắt buộc'),
-    FINANCIAL_TAX_FINALIZATION_TNCN: Yup.string().required(
-      'FINANCIAL_TAX_FINALIZATION_TNCN là bắt buộc'
-    ),
-    FINANCIAL_TAX_FINALIZATION_TNDN: Yup.string().required(
-      'Quyết toán thuế thu nhập cá nhân là bắt buộc'
-    ),
-    FINANCIAL_STATEMENT_FOOTNOTES: Yup.string().required(
-      'Thuyết minh báo cáo tài chính là bắt buộc'
-    ),
+    FINANCIAL_BCDKT: !props?.year
+      ? Yup.string().required('Bảng cân đối kế toán là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_BLCTT: !props?.year
+      ? Yup.string().required('Bảng lưu chuyển tiền tệ là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_BKQKD: !props?.year
+      ? Yup.string().required('Bảng kết quả kinh doanh là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_BCDPSTK: !props?.year
+      ? Yup.string().required('Bảng cân đối phát sinh tài khoản là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_SCT: !props?.year
+      ? Yup.string().required('Sổ chi tiết là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_TAX_FINALIZATION_TNCN: !props?.year
+      ? Yup.string().required('FINANCIAL_TAX_FINALIZATION_TNCN là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_TAX_FINALIZATION_TNDN: !props?.year
+      ? Yup.string().required('Quyết toán thuế thu nhập cá nhân là bắt buộc')
+      : Yup.string().notRequired(),
+    FINANCIAL_STATEMENT_FOOTNOTES: !props?.year
+      ? Yup.string().required('Thuyết minh báo cáo tài chính là bắt buộc')
+      : Yup.string().notRequired(),
   });
 
   const defaultValues = useMemo(
     () => ({
       year: props?.year || '',
       quarter: props?.quarter || '',
-      FINANCIAL_BCDKT: props?.FINANCIAL_BCDKT || {},
+      FINANCIAL_BCDKT: props?.FINANCIAL_BCDKT || '',
       FINANCIAL_BLCTT: props?.FINANCIAL_BLCTT || '',
       FINANCIAL_BKQKD: props?.FINANCIAL_BKQKD || '',
-      FINANCIAL_BCDPSTK: props?.FINANCIAL_BCDPSTK || {},
+      FINANCIAL_BCDPSTK: props?.FINANCIAL_BCDPSTK || '',
       FINANCIAL_SCT: props?.FINANCIAL_SCT || '',
       FINANCIAL_TAX_FINALIZATION_TNCN: props?.FINANCIAL_TAX_FINALIZATION_TNCN || '',
       FINANCIAL_TAX_FINALIZATION_TNDN: props?.FINANCIAL_TAX_FINALIZATION_TNDN || '',
@@ -121,13 +137,29 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const emailAddress = useSelector((state) => state.profile.profileData.email);
   const businessId = sessionStorage.getItem('orgId') ?? '0';
 
+  const getReportsByYearAndQuarter = (
+    year: string | number | undefined,
+    quarter: string | undefined
+  ) => {
+    const result = financialReportFilesInRedux.filter(
+      (file) => file.year === year && file.quarter === quarter
+    );
+    return result;
+  };
+
+  const getReportFileIdInRedux = (reportType: string) => {
+    const reports = getReportsByYearAndQuarter(props?.year, props?.quarter);
+    const report = reports.filter((item) => item.reportType === reportType)[0];
+    return report.id;
+  };
+
   const mapDataReportFilesInfo = (dataForm: FormValuesProps) => {
     const year = dataForm.year ? +dataForm.year : 0;
-    const quarter = dataForm.quarter ? +dataForm.quarter.charAt(1) : 0;
+    const quarter = dataForm.quarter ? +dataForm.quarter : 0;
     const result: ReportFilesInfo = {
       emailAddress,
       businessId: +businessId,
-      messageType: 'UPLOAD',
+      messageType: props?.year ? 'UPDATE' : 'UPLOAD',
       taxFileInfoList: [],
       financialFileInfoList: [],
     };
@@ -137,7 +169,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
         quarter,
         reportType: file.reportType,
         fileName: file.file.name,
-        currentReportFileId: '',
+        currentReportFileId: props?.year ? getReportFileIdInRedux(file.reportType) : '',
       });
     });
     return result;
@@ -196,22 +228,20 @@ export default function FinancialReportNewEditForm(props?: Props) {
           dataApi,
           config
         );
-        reset();
-        enqueueSnackbar('Tải lên thành công!');
-        // enqueueSnackbar(currentFile ? 'Update success!' : 'Create success!');
-        router.push(paths.dashboard.file.financial.root);
-        console.info('DATA', data);
-        console.log('NghiaLog: financialReportFiles - ', financialReportFiles);
+        if (response.status === 200) {
+          reset();
+          enqueueSnackbar('Tải lên thành công!');
+          router.push(paths.dashboard.file.financial.root);
+        } else {
+          enqueueSnackbar('Tải lên thất bại!', { variant: 'error' });
+        }
       } catch (error) {
+        enqueueSnackbar('Tải lên thất bại!', { variant: 'error' });
         console.error(error);
       }
     },
     [enqueueSnackbar, reset, router, financialReportFiles]
   );
-
-  useEffect(() => {
-    console.log('NghiaLog: financialReportFiles - ', financialReportFiles);
-  }, [financialReportFiles]);
 
   const handleDropFINANCIAL_BCDKT = useCallback(
     (acceptedFiles: File[]) => {
@@ -223,12 +253,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_BCDKT', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({
-            reportType: 'FINANCIAL_BCDKT',
-            file: newFile,
-          })
-        );
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_BCDKT'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_BCDKT',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_BCDKT', file: newFile });
+        });
       }
     },
     [setValue]
@@ -243,9 +284,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_BKQKD', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({ reportType: 'FINANCIAL_BKQKD', file: newFile })
-        );
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_BKQKD'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_BKQKD',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_BKQKD', file: newFile });
+        });
       }
     },
     [setValue]
@@ -261,9 +316,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_BCDPSTK', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({ reportType: 'FINANCIAL_BCDPSTK', file: newFile })
-        );
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_BCDPSTK'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_BCDPSTK',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_BCDPSTK', file: newFile });
+        });
       }
     },
     [setValue]
@@ -278,9 +347,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_BLCTT', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({ reportType: 'FINANCIAL_BLCTT', file: newFile })
-        );
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_BLCTT'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_BLCTT',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_BLCTT', file: newFile });
+        });
       }
     },
     [setValue]
@@ -295,9 +378,23 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_SCT', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({ reportType: 'FINANCIAL_SCT', file: newFile })
-        );
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_SCT'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_SCT',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_SCT', file: newFile });
+        });
       }
     },
     [setValue]
@@ -311,10 +408,24 @@ export default function FinancialReportNewEditForm(props?: Props) {
       });
 
       if (file) {
-        setValue('FINANCIAL_STATEMENT_FOOTNOTES', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({ reportType: 'FINANCIAL_STATEMENT_FOOTNOTES', file: newFile })
-        );
+        setValue('FINANCIAL_STATEMENT_FOOTNOTES', newFile);
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_STATEMENT_FOOTNOTES'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_STATEMENT_FOOTNOTES',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({ reportType: 'FINANCIAL_STATEMENT_FOOTNOTES', file: newFile });
+        });
       }
     },
     [setValue]
@@ -329,12 +440,26 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_TAX_FINALIZATION_TNCN', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_TAX_FINALIZATION_TNCN'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_TAX_FINALIZATION_TNCN',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({
             reportType: 'FINANCIAL_TAX_FINALIZATION_TNCN',
             file: newFile,
-          })
-        );
+          });
+        });
       }
     },
     [setValue]
@@ -349,25 +474,43 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
       if (file) {
         setValue('FINANCIAL_TAX_FINALIZATION_TNDN', newFile, { shouldValidate: true });
-        setFinancialReportFiles((prevState) =>
-          prevState.concat({
+        setFinancialReportFiles((prevState) => {
+          const indexOfChangeFile = prevState.findIndex(
+            (item) => item.reportType === 'FINANCIAL_TAX_FINALIZATION_TNDN'
+          );
+          if (indexOfChangeFile !== -1) {
+            prevState.splice(indexOfChangeFile, 1);
+            const newState = [
+              ...prevState,
+              (prevState[indexOfChangeFile] = {
+                reportType: 'FINANCIAL_TAX_FINALIZATION_TNDN',
+                file: newFile,
+              }),
+            ];
+            return newState;
+          }
+          return prevState.concat({
             reportType: 'FINANCIAL_TAX_FINALIZATION_TNDN',
             file: newFile,
-          })
-        );
+          });
+        });
       }
     },
     [setValue]
   );
 
-  const handleRemoveFile = useCallback(() => {
-    setValue('FINANCIAL_BCDKT', null);
-  }, [setValue]);
+  // const handleRemoveFile = useCallback(() => {
+  //   setValue('FINANCIAL_BCDKT', null);
+  // }, [setValue]);
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      {/* <Grid container> */}
-      {/* <Grid xs={12} md={4}>
+    <>
+      <Typography variant="h4" sx={{ mb: 6 }}>
+        {props?.year ? 'Cập nhật Báo cáo tài chính' : 'Tải lên Báo cáo tài chính'}
+      </Typography>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        {/* <Grid container> */}
+        {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentFile && (
               <Label
@@ -459,126 +602,314 @@ export default function FinancialReportNewEditForm(props?: Props) {
           </Card>
         </Grid> */}
 
-      {/* <Grid> */}
-      <Card sx={{ p: 3 }}>
-        <Box
-          rowGap={3}
-          columnGap={2}
-          display="grid"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
-          }}
-        >
-          {/* <RHFTextField name="name" label="Full Name" />
+        {/* <Grid> */}
+        <Card sx={{ p: 3 }}>
+          <Box
+            rowGap={3}
+            columnGap={2}
+            display="grid"
+            gridTemplateColumns={{
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(2, 1fr)',
+            }}
+          >
+            {/* <RHFTextField name="name" label="Full Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phoneNumber" label="Phone Number" /> */}
 
-          <RHFAutocomplete
-            name="year"
-            label="Năm"
-            options={years.map((year) => year.toString())}
-            getOptionLabel={(option) => option}
-            isOptionEqualToValue={(option, value) => option === value}
-            renderOption={(_props, option) => <li {..._props}>{option}</li>}
-          />
-          <RHFAutocomplete
-            name="quarter"
-            label="Quý"
-            options={['Q1', 'Q2', 'Q3', 'Q4'].map((quarter) => quarter)}
-            getOptionLabel={(option) => option.toString()}
-            isOptionEqualToValue={(option, value) => option === value}
-            renderOption={(_props, option) => <li {..._props}>{option}</li>}
-          />
+            <RHFAutocomplete
+              disabled={!!props?.year}
+              name="year"
+              label="Năm"
+              options={years.map((year) => year.toString())}
+              getOptionLabel={(option) => option}
+              isOptionEqualToValue={(option, value) => option === value}
+              renderOption={(_props, option) => <li {..._props}>{option}</li>}
+            />
+            <RHFAutocomplete
+              disabled={!!props?.quarter}
+              name="quarter"
+              label="Quý"
+              options={['1', '2', '3', '4'].map((quarter) => quarter)}
+              getOptionLabel={(option) => option.toString()}
+              isOptionEqualToValue={(option, value) => option === value}
+              renderOption={(_props, option) => <li {..._props}>{option}</li>}
+            />
 
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Bảng cân đối phát sinh tài khoản</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_BCDPSTK"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_BCDPSTK}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Bảng cân đối kế toán</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_BCDKT"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_BCDKT}
-              onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Bảng kết quả kinh doanh</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_BKQKD"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_BKQKD}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Bảng lưu chuyển tiền tệ</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_BLCTT"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_BLCTT}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Sổ chi tiết</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_SCT"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_SCT}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Thuyết minh báo cáo tài chính</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_STATEMENT_FOOTNOTES"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_STATEMENT_FOOTNOTES}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Quyết toán thuế thu nhập cá nhân</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_TAX_FINALIZATION_TNCN"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNCN}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Quyết toán thuế thu nhập doanh nghiệp</Typography>
-            <RHFUploadBox
-              name="FINANCIAL_TAX_FINALIZATION_TNDN"
-              maxSize={3145728}
-              onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNDN}
-              //   onDelete={handleRemoveFile}
-            />
-          </Stack>
-          {/* <RHFTextField name="state" label="State/Region" />
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Bảng cân đối phát sinh tài khoản</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDPSTK')[0]
+                          ?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDPSTK')[0]
+                        ?.fileName
+                    }.${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDPSTK')[0]
+                        ?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_BCDPSTK"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_BCDPSTK}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Bảng cân đối kế toán</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDKT')[0]
+                          ?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDKT')[0]
+                        ?.fileName
+                    }.${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BCDKT')[0]
+                        ?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_BCDKT"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_BCDKT}
+                // onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Bảng kết quả kinh doanh</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter((file) => file.reportType === 'FINANCIAL_BKQKD')[0]
+                          ?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BKQKD')[0]
+                        ?.fileName
+                    }.${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BKQKD')[0]
+                        ?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_BKQKD"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_BKQKD}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Bảng lưu chuyển tiền tệ</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter((file) => file.reportType === 'FINANCIAL_BLCTT')[0]
+                          ?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BLCTT')[0]
+                        ?.fileName
+                    }.${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_BLCTT')[0]
+                        ?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_BLCTT"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_BLCTT}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Sổ chi tiết</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter((file) => file.reportType === 'FINANCIAL_SCT')[0]
+                          ?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_SCT')[0]
+                        ?.fileName
+                    }.${
+                      props?.files?.filter((file) => file.reportType === 'FINANCIAL_SCT')[0]
+                        ?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_SCT"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_SCT}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Thuyết minh báo cáo tài chính</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter(
+                          (file) => file.reportType === 'FINANCIAL_STATEMENT_FOOTNOTES'
+                        )[0]?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_STATEMENT_FOOTNOTES'
+                      )[0]?.fileName
+                    }.${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_STATEMENT_FOOTNOTES'
+                      )[0]?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_STATEMENT_FOOTNOTES"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_STATEMENT_FOOTNOTES}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Quyết toán thuế thu nhập cá nhân</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter(
+                          (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNCN'
+                        )[0]?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNCN'
+                      )[0]?.fileName
+                    }.${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNCN'
+                      )[0]?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_TAX_FINALIZATION_TNCN"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNCN}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            <Stack spacing={1.5}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Typography variant="subtitle2">Quyết toán thuế thu nhập doanh nghiệp</Typography>
+              {props?.year && (
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Stack sx={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FileThumbnail
+                      sx={{ mr: 1 }}
+                      file={
+                        props?.files?.filter(
+                          (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNDN'
+                        )[0]?.fileExtension ?? ''
+                      }
+                    />
+                    {`${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNDN'
+                      )[0]?.fileName
+                    }.${
+                      props?.files?.filter(
+                        (file) => file.reportType === 'FINANCIAL_TAX_FINALIZATION_TNDN'
+                      )[0]?.fileExtension
+                    }`}
+                  </Stack>
+                  <Iconify icon="eva:arrow-down-fill" width={24} sx={{ mt: 1, mb: 1 }} />
+                </Stack>
+              )}
+              <RHFUploadBox
+                name="FINANCIAL_TAX_FINALIZATION_TNDN"
+                maxSize={3145728}
+                onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNDN}
+                //   onDelete={handleRemoveFile}
+              />
+            </Stack>
+            {/* <RHFTextField name="state" label="State/Region" />
               <RHFTextField name="city" label="City" />
               <RHFTextField name="address" label="Address" />
               <RHFTextField name="zipCode" label="Zip/Code" />
               <RHFTextField name="company" label="Company" />
               <RHFTextField name="role" label="Role" /> */}
-        </Box>
+          </Box>
 
-        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Tải lên
-          </LoadingButton>
-        </Stack>
-      </Card>
-      {/* </Grid> */}
-      {/* </Grid> */}
-    </FormProvider>
+          <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              {props?.year ? 'Cập nhật' : 'Tải lên'}
+            </LoadingButton>
+          </Stack>
+        </Card>
+        {/* </Grid> */}
+        {/* </Grid> */}
+      </FormProvider>
+    </>
   );
 }

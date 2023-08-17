@@ -10,13 +10,17 @@ import Typography from '@mui/material/Typography';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import { CircularProgress } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { getTaxFiles } from 'src/redux/slices/tax';
 import { useDispatch, useSelector } from 'src/redux/store';
 import FileManagerFileItem from './file-manager-file-item';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { saveAs } from 'file-saver';
+import { RouterLink } from 'src/routes/components';
+import { paths } from 'src/routes/paths';
 //
 
 // ----------------------------------------------------------------------
@@ -77,7 +81,7 @@ export default function FileManagerFileDetails({
 
   const files = useSelector((state) => state.tax.files);
 
-  const isLoadingFiles = useSelector((state) => state.financial.filesStatus.loading);
+  const isLoadingFiles = useSelector((state) => state.tax.filesStatus.loading);
 
   // const [tags, setTags] = useState(item.tags.slice(0, 3));
 
@@ -136,51 +140,52 @@ export default function FileManagerFileDetails({
     </Stack>
   );
 
-  const onDownloadFiles = () => {
+  const onDownloadFiles = (cloudFilePath: string) => {
     // Create a reference to the file we want to download
     const storage = getStorage();
-    selected.map((fileId) => {
-      const file = files.filter((_file) => _file.id === fileId)[0];
-      const starsRef = ref(storage, file.cloudFilePath);
+    // selected.map((fileId) => {
+    //   const file = files.filter((_file) => _file.id === fileId)[0];
+    const starsRef = ref(storage, cloudFilePath);
 
-      // Get the download URL
-      getDownloadURL(starsRef)
-        .then((url) => {
-          // Insert url into an <img> tag to "download"
-          // This can be downloaded directly:
-          const xhr = new XMLHttpRequest();
-          xhr.responseType = 'blob';
-          xhr.onload = (event) => {
-            const blob = xhr.response;
-          };
-          xhr.open('GET', url);
-          xhr.send();
-        })
-        .catch((error) => {
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          switch (error.code) {
-            case 'storage/object-not-found':
-              // File doesn't exist
-              break;
-            case 'storage/unauthorized':
-              // User doesn't have permission to access the object
-              break;
-            case 'storage/canceled':
-              // User canceled the upload
-              break;
+    // Get the download URL
+    getDownloadURL(starsRef)
+      .then((url) => {
+        // Insert url into an <img> tag to "download"
+        // This can be downloaded directly:
+        // const xhr = new XMLHttpRequest();
+        // xhr.responseType = 'blob';
+        // xhr.onload = (event) => {
+        //   const blob = xhr.response;
+        // };
+        // xhr.open('GET', url);
+        // xhr.send();
+        saveAs(url);
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            break;
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            break;
 
-            // ...
+          // ...
 
-            case 'storage/unknown':
-              // Unknown error occurred, inspect the server response
-              break;
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
 
-            default:
-              break;
-          }
-        });
-    });
+          default:
+            break;
+        }
+      });
+    // });
   };
 
   const getReportTypeName = (reportType: string) => {
@@ -207,11 +212,11 @@ export default function FileManagerFileDetails({
         sx={{ typography: 'subtitle1' }}
       >
         Các tài liệu
-        {selected.length > 0 && (
+        {/* {selected.length > 0 && (
           <IconButton size="small" onClick={onDownloadFiles}>
             <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
           </IconButton>
-        )}
+        )} */}
       </Stack>
       {isLoadingFiles ? (
         <CircularProgress color="primary" />
@@ -220,14 +225,21 @@ export default function FileManagerFileDetails({
           <>
             <Divider sx={{ borderStyle: 'dashed' }} />
             <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
-            <FileManagerFileItem
-              key={file.id}
-              file={file}
-              selected={selected.includes(file.id)}
-              onSelect={() => onSelectItem(file.id)}
-              // onDelete={() => onDeleteItem(file.id)}
-              sx={{ maxWidth: 'auto' }}
-            />
+            <Stack
+              sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+            >
+              <FileManagerFileItem
+                key={file.id}
+                file={file}
+                // selected={selected.includes(file.id)}
+                // onSelect={() => onSelectItem(file.id)}
+                // onDelete={() => onDeleteItem(file.id)}
+                sx={{ width: 290 }}
+              />
+              <IconButton size="small" onClick={() => onDownloadFiles(file.cloudFilePath)}>
+                <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+              </IconButton>
+            </Stack>
           </>
         ))
       )}
@@ -302,7 +314,7 @@ export default function FileManagerFileDetails({
           backdrop: { invisible: true },
         }}
         PaperProps={{
-          sx: { width: 400 },
+          sx: { width: '30vw' },
         }}
         {...other}
       >
@@ -348,18 +360,18 @@ export default function FileManagerFileDetails({
           {/* {renderShared} */}
         </Scrollbar>
 
-        {/* <Box sx={{ p: 2.5 }}>
+        <Box sx={{ p: 2.5 }}>
           <Button
             fullWidth
-            variant="soft"
-            color="error"
             size="large"
-            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-            onClick={onDelete}
+            component={RouterLink}
+            href={paths.dashboard.file.tax.update(year ?? '', quarter.split(' ')[1])}
+            variant="contained"
+            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
-            Delete
+            Cập nhật
           </Button>
-        </Box> */}
+        </Box>
       </Drawer>
 
       {/* <FileManagerShareDialog
