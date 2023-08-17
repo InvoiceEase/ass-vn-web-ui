@@ -26,7 +26,6 @@ import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
 import { IFinancialFolder } from 'src/types/financial';
 import FileManagerFiltersResult from '../file-manager-filters-result';
-import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -62,12 +61,16 @@ export default function FinancialReportFileManagerView() {
 
   const [tableData, setTableData] = useState(_allFolders);
 
+  useEffect(() => {
+    setTableData(_allFolders);
+  }, [_allFolders]);
+
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isDateError(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: _allFolders,
+    inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -235,7 +238,7 @@ export default function FinancialReportFileManagerView() {
         )} */}
       </Container>
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
+      {/* <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} /> */}
 
       {/* <ConfirmDialog
         open={confirm.value}

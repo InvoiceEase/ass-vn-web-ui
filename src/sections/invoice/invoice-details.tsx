@@ -20,6 +20,7 @@ import InvoiceToolbar from './invoice-toolbar';
 
 import { Divider } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { useSelector } from 'src/redux/store';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 import InvoiceErrorField from './invoice-error-field';
 import InvoiceInfoField from './invoice-info-field';
@@ -55,6 +56,8 @@ type Props = {
 
 export default function InvoiceDetails({ invoice }: Props) {
   const [currentStatus, setCurrentStatus] = useState(invoice?.status);
+
+  const invoicePdfFilePath = useSelector((state) => state.invoice.invoiceDetails?.pdfFilePath);
 
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
@@ -177,7 +180,7 @@ export default function InvoiceDetails({ invoice }: Props) {
   const getInvoicePDF = () => {
     // Create a reference to the file we want to download
     const storage = getStorage();
-    const starsRef = ref(storage, 'FUck/1C23TPL_00000046.pdf');
+    const starsRef = ref(storage, invoicePdfFilePath);
 
     // Get the download URL
     getDownloadURL(starsRef)
@@ -212,8 +215,10 @@ export default function InvoiceDetails({ invoice }: Props) {
   };
 
   useEffect(() => {
-    getInvoicePDF();
-  }, []);
+    if (invoicePdfFilePath) {
+      getInvoicePDF();
+    }
+  }, [invoicePdfFilePath]);
 
   const formatDate = (date: string) => new Date(date).toLocaleDateString();
   return (
