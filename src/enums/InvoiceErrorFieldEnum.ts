@@ -5,4 +5,5 @@ export enum InvoiceErrorFieldEnum {
   ReceiverName = 'receiver_name',
   SenderAddress = 'sender_address',
   ReceiverAddress = 'receiver_address',
+  Spare ='spare',
 }

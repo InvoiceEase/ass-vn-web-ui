@@ -277,7 +277,7 @@ export default function InvoiceDetails({ invoice }: Props) {
                   </Box>
                   <Box>
                     <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />
-                    <InvoiceInfoField isSigned={invoice?.invoiceSerial?.charAt(1) === 'K'} />
+                    {/* <InvoiceInfoField isSigned={invoice?.invoiceSerial?.charAt(1) === 'K'} /> */}
                     <InvoiceInfoField invoiceCharacter={invoice?.invoiceCharacter} />
                   </Box>
                 </Stack>
