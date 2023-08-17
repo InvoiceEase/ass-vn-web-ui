@@ -62,7 +62,7 @@ const TABLE_HEAD = [
 const defaultFilters = {
   name: '',
   role: '',
-  status: 'all',
+  status: 'All',
 };
 
 export default function UserListView() {
@@ -87,7 +87,7 @@ export default function UserListView() {
   useEffect(() => {
     setTableData(_userList);
     const userRole: string[] = [];
-    const userSts: string[] = ['all'];
+    const userSts: string[] = ['All'];
     _userList.forEach((item) => {
       if (!userRole.includes(item.roleName)) {
         userRole.push(item.roleName);
@@ -157,8 +157,7 @@ export default function UserListView() {
 
   const handleSelectRow = useCallback(
     (id: string) => {
-      debugger
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.user.detail(id));
     },
     [router]
   );
@@ -177,7 +176,9 @@ export default function UserListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Typography sx={{mb:5}} variant="h4">Quản lí người dùng</Typography>
+        <Typography sx={{ mb: 5 }} variant="h4">
+          Quản lí người dùng
+        </Typography>
         <Card>
           <Tabs
             value={filters.status}
@@ -195,12 +196,12 @@ export default function UserListView() {
                 label={tab}
                 icon={
                   <Label
-                    variant={((tab === 'all' || tab === filters.status) && 'filled') || 'soft'}
+                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
                     color={
                       (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
                     }
                   >
-                    {tab === 'all' && _userList.length}
+                    {tab === 'All' && _userList.length}
                     {tab === 'Active' &&
                       _userList.filter((user) => user.status === 'Active').length}
 
@@ -210,6 +211,15 @@ export default function UserListView() {
                 }
               />
             ))}
+            <Button
+              // sx={{ mt: 6 }}
+              component={RouterLink}
+              href={paths.dashboard.user.new}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              Thêm Kiểm Duyệt Viên
+            </Button>
           </Tabs>
           <UserTableToolbar
             filters={filters}
@@ -305,15 +315,6 @@ export default function UserListView() {
             // onChangeDense={table.onChangeDense}
           />
         </Card>
-        <Button
-          sx={{ mt: 6 }}
-          component={RouterLink}
-          href={paths.dashboard.user.new}
-          variant="contained"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          Thêm Kiểm Duyệt Viên
-        </Button>
       </Container>
 
       <ConfirmDialog
@@ -366,12 +367,12 @@ function applyFilter({
   if (name) {
     inputData = inputData.filter(
       (user) =>
-        user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.userFullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
-  if (status !== 'all') {
+  if (status !== 'All') {
     inputData = inputData.filter((user) => user.status === status);
   }
 
