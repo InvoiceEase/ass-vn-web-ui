@@ -358,39 +358,33 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                 />
                 <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" />
                 {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                isView &&
-                defaultBizAud.length > 1 ? (
-                  <Stack sx={{ display: 'flex' }}>
-                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                      Công ty đã đăng ký
-                    </Typography>
-                    <List>
-                      {defaultBizAud.map((item) => (
-                        <ListItem disablePadding>
-                          <Iconify width={33} icon="mdi:dot" />
-                          <ListItemText secondary={` ${item.name}`} />
-                          <ListItemButton
-                            sx={{ maxWidth: 50, maxHeight: 50 }}
-                            onClick={() => handleConfirmDeleteComp(item.name)}
-                          >
-                            <Iconify
-                              width={50}
-                              height={100}
-                              color="red"
-                              icon="solar:trash-bin-trash-bold"
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Stack>
-                ) : (
-                  <Stack sx={{ display: 'flex' }}>
-                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                      Chưa đăng ký công ty
-                    </Typography>
-                  </Stack>
-                )}
+                  isView &&
+                  defaultBizAud.length > 1 && (
+                    <Stack sx={{ display: 'flex' }}>
+                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                        Công ty đã đăng ký
+                      </Typography>
+                      <List>
+                        {defaultBizAud.map((item) => (
+                          <ListItem disablePadding>
+                            <Iconify width={33} icon="mdi:dot" />
+                            <ListItemText secondary={` ${item.name}`} />
+                            <ListItemButton
+                              sx={{ maxWidth: 50, maxHeight: 50 }}
+                              onClick={() => handleConfirmDeleteComp(item.name)}
+                            >
+                              <Iconify
+                                width={50}
+                                height={100}
+                                color="red"
+                                icon="solar:trash-bin-trash-bold"
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Stack>
+                  )}
                 {!isView && (
                   <RHFTextField
                     sx={{ fontWeight: 'bold' }}
