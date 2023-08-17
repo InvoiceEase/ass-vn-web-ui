@@ -49,13 +49,13 @@ export default function TableHeadCustom({
       <TableRow>
         {onSelectAllRows && (
           <TableCell padding="checkbox">
-            <Checkbox
+            {/* <Checkbox
               indeterminate={!!numSelected && numSelected < rowCount}
               checked={!!rowCount && numSelected === rowCount}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 onSelectAllRows(event.target.checked)
               }
-            />
+            /> */}
           </TableCell>
         )}
 

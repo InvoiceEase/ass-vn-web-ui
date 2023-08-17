@@ -15,7 +15,7 @@ import { useSelector } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
-export default function UserEditView() {
+export default function UserDetailView() {
   const settings = useSettingsContext();
 
   const params = useParams();
@@ -46,7 +46,7 @@ export default function UserEditView() {
         }}
       />
 
-      <UserNewEditForm currentUser={currentUser} />
+      <UserNewEditForm currentUser={currentUser} isView/>
     </Container>
   );
 }

@@ -28,22 +28,28 @@ type AuthGuardProps = {
 export default function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
 
-  const { authenticated, method } = useAuthContext();
+  const { authenticated, method, logout } = useAuthContext();
 
   const [checked, setChecked] = useState(false);
 
+  const parseJWT = (token: string) =>
+    JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
   const check = useCallback(async () => {
     if (!authenticated) {
-      const searchParams = new URLSearchParams({ returnTo: window.location.href }).toString();
-
-      const loginPath = loginPaths[method];
-
-      const href = `${loginPath}?${searchParams}`;
-
       router.replace('');
     } else {
+      // await logout();
+      const defaultDate = new Date().getTime();
       const uid = sessionStorage.getItem('uid');
       const token = sessionStorage.getItem('token');
+      const JWT = parseJWT(token ?? '');
+      const date = JWT.exp;
+      if (date > defaultDate) {
+        console.log('LOG OUT');
+        await logout();
+        router.replace('');
+        return;
+      }
       if (uid) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
