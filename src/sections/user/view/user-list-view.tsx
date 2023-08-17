@@ -14,6 +14,8 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import Tooltip from '@mui/material/Tooltip';
+import Stack from '@mui/material/Stack';
+
 // routes
 import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hook';
@@ -176,9 +178,24 @@ export default function UserListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Typography sx={{ mb: 5 }} variant="h4">
-          Quản lí người dùng
-        </Typography>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ mt: 3 }}
+        >
+          <Typography sx={{ mb: 5, flexGrow:1 }} variant="h4">
+            Quản lí người dùng
+          </Typography>
+          <Button
+            sx={{ mb:5}}
+            component={RouterLink}
+            href={paths.dashboard.user.new}
+            variant="contained"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
+            Thêm Kiểm Duyệt Viên
+          </Button>
+        </Stack>
         <Card>
           <Tabs
             value={filters.status}
@@ -186,6 +203,8 @@ export default function UserListView() {
             sx={{
               px: 2.5,
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+              display: 'flex',
+              position: 'static',
             }}
           >
             {userStatus.map((tab) => (
@@ -211,15 +230,6 @@ export default function UserListView() {
                 }
               />
             ))}
-            <Button
-              // sx={{ mt: 6 }}
-              component={RouterLink}
-              href={paths.dashboard.user.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              Thêm Kiểm Duyệt Viên
-            </Button>
           </Tabs>
           <UserTableToolbar
             filters={filters}

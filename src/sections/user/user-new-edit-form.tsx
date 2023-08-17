@@ -38,6 +38,7 @@ import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
 import { IBusiness } from 'src/types/business';
 import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
+import { Container } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -98,7 +99,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       router.push(paths.dashboard.user.list);
     }
   };
-  const defaultRole = [{ name: 'Kiểm duyệt viên', value: 'AUDITOR' }];
   useEffect(() => {
     dispatch(getBusinesses());
     if (currentUser?.roleName === 'Kiểm duyệt viên' && isView) {
@@ -111,6 +111,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const [deleteComp, setDeleteComp] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [date, setDate] = useState(new Date());
+  const [bizDelete, setBizDelete] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
   const resolver = {
@@ -149,9 +150,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     [currentUser]
   );
 
-  const handleChangeDate = (value: Date) => {
-    setDate(value);
-  };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
@@ -179,17 +177,15 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       if (!currentUser) {
         try {
           setError(false);
-          const userRole = defaultRole.filter((item) => item.value === data.role);
-          data.role = userRole[0].value;
+          data.role = 'AUDITOR';
           data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
-          console.log('data', data);
+          console.log('Data', data);
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
           const response = await axios.post(
             url,
-            {},
+            { params: data },
             {
               headers: headersList,
-              params: data,
             }
           );
           if (response.status === 200) {
@@ -214,6 +210,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
             setErrorMsg('Vui lòng chọn ngày sau hôm nay');
             setError(true);
           } else {
+            setError(false);
             const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
             const bizId = bizLst.filter((item) => item.name.localeCompare(data.businessId) === 0);
             data.businessId = bizId[0].id;
@@ -262,8 +259,37 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     [setValue]
   );
   const handleConfirmDeleteComp = (name: string | null) => {
+    const bizLst = defaultBizAud.filter((item) => item.name === name);
+    setBizDelete(bizLst[0].id);
     setDeleteComp(name ?? '');
     confirm.onTrue();
+  };
+  const handleDeleteComp = async () => {
+    const token = sessionStorage.getItem('token');
+    const accessToken: string = `Bearer ${token}`;
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`,
+        {
+          params: {
+            auditorId: currentUser?.id,
+            businessId: bizDelete,
+          },
+          headers: headersList,
+        }
+      );
+      if (response.status === 200) {
+        router.push(paths.dashboard.user.detail(currentUser?.id ?? ''));
+      }
+    } catch (e) {
+      setError(true);
+      setErrorMsg('Hủy thất bại');
+      confirm.onFalse();
+    }
   };
   const headerText = () => {
     if (isView) {
@@ -274,23 +300,16 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     }
     return 'Đăng ký kiểm duyệt viên';
   };
-  const handleTextBizAud = () => {
-    let text = '';
-    defaultBizAud.forEach((item) => {
-      text += `${item.name}, `;
-    });
-    return text;
-  };
   return (
     <>
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Hủy đăng ký"
-        content={`Hủy đăng ký công ty ${deleteComp} cho ${currentUser?.userFullName}`}
+        title="Hủy quyền truy cập"
+        content={`Hủy quyền truy cập của ${currentUser?.userFullName} vào công ty ${deleteComp}`}
         action={
-          <Button variant="contained" color="error">
-            Xóa
+          <Button onClick={handleDeleteComp} variant="contained" color="error">
+            Hủy
           </Button>
         }
       />
@@ -338,7 +357,9 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                   label="Số điện thoại"
                 />
                 <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" />
-                {currentUser?.roleName === 'Kiểm duyệt viên' && isView && (
+                {currentUser?.roleName === 'Kiểm duyệt viên' &&
+                isView &&
+                defaultBizAud.length > 1 ? (
                   <Stack sx={{ display: 'flex' }}>
                     <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
                       Công ty đã đăng ký
@@ -362,6 +383,12 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                         </ListItem>
                       ))}
                     </List>
+                  </Stack>
+                ) : (
+                  <Stack sx={{ display: 'flex' }}>
+                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                      Chưa đăng ký công ty
+                    </Typography>
                   </Stack>
                 )}
                 {!isView && (
@@ -396,11 +423,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                       isOptionEqualToValue={(option, value) => option === value}
                       renderOption={(props, option) => <li {...props}>{option}</li>}
                     />
-                    {/* <DateCalendar
-                    defaultValue={new Date()}
-                    onChange={(value) => handleChangeDate(value)}
-                    disablePast
-                  /> */}
                     <DatePicker
                       defaultValue={new Date()}
                       value={date}
@@ -412,23 +434,28 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                   </>
                 )}
               </Box>
-              {!isView && (
-                <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <Stack
+                direction="row-reverse"
+                spacing={2}
+                alignItems="end"
+                alignContent="end"
+                sx={{ mt: 3 }}
+              >
+                {!isView && (
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                     {!currentUser ? 'Thêm' : 'Lưu'}
                   </LoadingButton>
-                </Stack>
-              )}
-              <Button
-                onClick={() => {
-                  router.back();
-                }}
-                sx={{ mt: 10 }}
-                variant="contained"
-                color="error"
-              >
-                Quay về
-              </Button>
+                )}
+                <Button
+                  onClick={() => {
+                    router.back();
+                  }}
+                  variant="contained"
+                  color="error"
+                >
+                  Quay về
+                </Button>
+              </Stack>
             </Card>
           </Grid>
         </Grid>
