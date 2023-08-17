@@ -42,14 +42,38 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
 
 type Props = {
   currentUser?: IAuditor;
+  isView?: boolean;
 };
 
-export default function UserNewEditForm({ currentUser }: Props) {
+export default function UserNewEditForm({ currentUser, isView }: Props) {
   const router = useRouter();
   const dispatch = useDispatch();
   const DEFAULT_DATE = new Date();
+  const defaultBizForAuditor = [
+    {
+      id: '',
+      createdAt: '',
+      modifiedAt: '',
+      version: null,
+      name: '',
+      address: '',
+      website: null,
+      taxNumber: null,
+      email: '',
+      logo: null,
+      invoiceReceivedEmail: '',
+      engName: null,
+    },
+  ];
+  const [defaultBizAud, setDefaultBizAud] = useState(defaultBizForAuditor);
+  const loadBizForAuditor = async () => {
+    // const response = await axios.get(),
+  };
   useEffect(() => {
     dispatch(getBusinesses());
+    if (currentUser?.roleName === 'Kiểm duyệt viên' && isView) {
+      loadBizForAuditor();
+    }
   }, []);
   const businesses = useSelector((state) => state.business.businesses);
   const [error, setError] = useState(false);
@@ -58,13 +82,13 @@ export default function UserNewEditForm({ currentUser }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
   const resolver = {
-    name: Yup.string().required('Name is required'),
+    userFullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     password: Yup.string().required('Password is required'),
   };
   const resolverCurren = {
-    name: Yup.string().required('Name is required'),
+    userFullName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     password: Yup.string().required('Password is required'),
@@ -73,18 +97,18 @@ export default function UserNewEditForm({ currentUser }: Props) {
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
 
   const defaultNoCurr = {
-    name: '',
+    userFullName: '',
     email: '',
     phoneNumber: '',
     password: '',
-    role: 'AUDITOR',
+    role: 'Kiểm duyệt viên',
   };
   const defaultVlCurr = {
-    name: currentUser?.name || '',
+    userFullName: currentUser?.userFullName || '',
     email: currentUser?.email || '',
     phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
-    password: currentUser?.password || '',
-    role: currentUser?.roleName || 'AUDITOR',
+    password: '',
+    role: currentUser?.roleName || 'Kiểm duyệt viên',
     businessId: '',
   };
   const defaultValues = useMemo(
@@ -232,28 +256,29 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField disabled={!!currentUser} name="name" label="Họ Tên" />
+              <RHFTextField disabled={!!currentUser} name="userFullName" label="Họ Tên" />
               <RHFTextField disabled={!!currentUser} name="email" label="Email" />
               <RHFTextField disabled={!!currentUser} name="phoneNumber" label="Số điện thoại" />
-              <RHFTextField disabled name="role" label="Chức vụ" value="Kiểm duyệt viên" />
-
-              <RHFTextField
-                name="password"
-                label="Mật khẩu"
-                type={password.value ? 'text' : 'password'}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={password.onToggle} edge="end">
-                        <Iconify
-                          icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                        />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              {currentUser && (
+              <RHFTextField disabled name="role" label="Chức vụ" />
+              {!isView && (
+                <RHFTextField
+                  name="password"
+                  label="Mật khẩu"
+                  type={password.value ? 'text' : 'password'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={password.onToggle} edge="end">
+                          <Iconify
+                            icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+              {currentUser && !isView && (
                 <>
                   <RHFAutocomplete
                     name="businessId"
@@ -281,12 +306,13 @@ export default function UserNewEditForm({ currentUser }: Props) {
                 </>
               )}
             </Box>
-
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Thêm' : 'Lưu'}
-              </LoadingButton>
-            </Stack>
+            {!isView && (
+              <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!currentUser ? 'Thêm' : 'Lưu'}
+                </LoadingButton>
+              </Stack>
+            )}
           </Card>
         </Grid>
       </Grid>

@@ -37,7 +37,7 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
 }: Props) {
-  const { name, phoneNumber, roleName, email, status } = row;
+  const { userFullName, phoneNumber, roleName, email, status } = row;
 
   const confirm = useBoolean();
 
@@ -49,12 +49,12 @@ export default function UserTableRow({
     <>
       <TableRow hover selected={selected}>
         <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
+          {/* <Checkbox checked={selected} onClick={onSelectRow} /> */}
         </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
-            primary={name}
+            primary={userFullName}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
@@ -103,16 +103,15 @@ export default function UserTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        {status !== 'Banned' && (
+        {(status !== 'Banned') && (
           <MenuItem
             onClick={() => {
-              confirm.onTrue();
+              onSelectRow();
               popover.onClose();
             }}
-            sx={{ color: 'error.main' }}
           >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Banned
+            <Iconify icon="mdi:eye" />
+            Xem chi tiết
           </MenuItem>
         )}
         {roleName === 'Kiểm duyệt viên' && (
@@ -124,6 +123,18 @@ export default function UserTableRow({
           >
             <Iconify icon="solar:pen-bold" />
             Đăng ký
+          </MenuItem>
+        )}
+        {status !== 'Banned' && (
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Banned
           </MenuItem>
         )}
       </CustomPopover>

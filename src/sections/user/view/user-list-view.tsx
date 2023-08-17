@@ -51,18 +51,18 @@ import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Họ Tên', width: 500 },
-  { id: 'phoneNumber', label: 'Số điện thoại', width: 180 },
+  { id: 'name', label: 'Name', width: 300 },
+  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
   // { id: 'email', label: 'Email', width: 300 },
-  { id: 'role', label: 'Chức vụ', width: 180 },
-  { id: 'status', label: 'Trạng thái', width: 100 },
+  { id: 'role', label: 'Role', width: 180 },
+  { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   name: '',
   role: '',
-  status: 'All',
+  status: 'all',
 };
 
 export default function UserListView() {
@@ -87,7 +87,7 @@ export default function UserListView() {
   useEffect(() => {
     setTableData(_userList);
     const userRole: string[] = [];
-    const userSts: string[] = ['All'];
+    const userSts: string[] = ['all'];
     _userList.forEach((item) => {
       if (!userRole.includes(item.roleName)) {
         userRole.push(item.roleName);
@@ -155,6 +155,14 @@ export default function UserListView() {
     [router]
   );
 
+  const handleSelectRow = useCallback(
+    (id: string) => {
+      debugger
+      router.push(paths.dashboard.user.edit(id));
+    },
+    [router]
+  );
+
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       handleFilters('status', newValue);
@@ -187,12 +195,12 @@ export default function UserListView() {
                 label={tab}
                 icon={
                   <Label
-                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
+                    variant={((tab === 'all' || tab === filters.status) && 'filled') || 'soft'}
                     color={
                       (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
                     }
                   >
-                    {tab === 'All' && _userList.length}
+                    {tab === 'all' && _userList.length}
                     {tab === 'Active' &&
                       _userList.filter((user) => user.status === 'Active').length}
 
@@ -270,7 +278,7 @@ export default function UserListView() {
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
+                        onSelectRow={() => handleSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
                       />
@@ -358,12 +366,12 @@ function applyFilter({
   if (name) {
     inputData = inputData.filter(
       (user) =>
-        user.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        user.fullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
-  if (status !== 'All') {
+  if (status !== 'all') {
     inputData = inputData.filter((user) => user.status === status);
   }
 
