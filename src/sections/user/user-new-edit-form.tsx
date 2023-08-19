@@ -181,14 +181,10 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
           data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
           console.log('Data', data);
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
-          const response = await axios.post(
-            url,
-            { params: data },
-            {
-              headers: headersList,
-            }
-          );
-          if (response.status === 200) {
+          const response = await axios.post(url, data, {
+            headers: headersList,
+          });
+          if (response.status === 201) {
             enqueueSnackbar('Thêm thành công');
             router.push(paths.dashboard.user.list);
           } else {
@@ -272,13 +268,17 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       Authorization: accessToken,
     };
     try {
+      const data = {
+        version: 0,
+        auditorId: currentUser?.id,
+        businessId: bizDelete,
+        password: '',
+        expiredDate: '',
+      };
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`,
         {
-          params: {
-            auditorId: currentUser?.id,
-            businessId: bizDelete,
-          },
+          params: data,
           headers: headersList,
         }
       );
@@ -357,34 +357,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                   label="Số điện thoại"
                 />
                 <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" />
-                {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                  isView &&
-                  defaultBizAud.length > 1 && (
-                    <Stack sx={{ display: 'flex' }}>
-                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Công ty đã đăng ký
-                      </Typography>
-                      <List>
-                        {defaultBizAud.map((item) => (
-                          <ListItem disablePadding>
-                            <Iconify width={33} icon="mdi:dot" />
-                            <ListItemText secondary={` ${item.name}`} />
-                            <ListItemButton
-                              sx={{ maxWidth: 50, maxHeight: 50 }}
-                              onClick={() => handleConfirmDeleteComp(item.name)}
-                            >
-                              <Iconify
-                                width={50}
-                                height={100}
-                                color="red"
-                                icon="solar:trash-bin-trash-bold"
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Stack>
-                  )}
+
                 {!isView && (
                   <RHFTextField
                     sx={{ fontWeight: 'bold' }}
@@ -427,6 +400,34 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                     />
                   </>
                 )}
+                {currentUser?.roleName === 'Kiểm duyệt viên' &&
+                  isView &&
+                  defaultBizAud.length > 1 && (
+                    <Stack sx={{ display: 'flex' }}>
+                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                        Công ty đã đăng ký
+                      </Typography>
+                      <List>
+                        {defaultBizAud.map((item) => (
+                          <ListItem disablePadding>
+                            <Iconify width={33} icon="mdi:dot" />
+                            <ListItemText secondary={` ${item.name}`} />
+                            <ListItemButton
+                              sx={{ maxWidth: 50, maxHeight: 50 }}
+                              onClick={() => handleConfirmDeleteComp(item.name)}
+                            >
+                              <Iconify
+                                width={50}
+                                height={100}
+                                color="red"
+                                icon="solar:trash-bin-trash-bold"
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Stack>
+                  )}
               </Box>
               <Stack
                 direction="row-reverse"

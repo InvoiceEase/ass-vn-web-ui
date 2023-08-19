@@ -55,29 +55,34 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           headers: { Authorization: `Bearer ${token}` },
         };
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/${uid}`;
-        const resp = await axios.get(url, config);
-        if (resp.status === 200) {
-          setChecked(true);
-          // sessionStorage.setItem('roleCode', resp.data.roleCode);
-          sessionStorage.setItem('userId', resp.data.id);
-          sessionStorage.setItem('userName', resp.data.name);
-          sessionStorage.setItem('roleCode', resp.data.role);
-          sessionStorage.setItem('orgId', resp.data.organizationId);
-          if (resp.data.role.includes(RoleCodeEnum.Auditor)) {
-            // if user is accountant navigate to mail as default screen
-            // router.prefetch(paths.dashboard.mail);
-            router.replace(paths.dashboard.mail);
-          } else if (
-            resp.data.role.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`)
-          ) {
-            // router.prefetch(paths.dashboard.root);
-            router.replace(paths.dashboard.root);
-          } else if (resp.data.role.includes(RoleCodeEnum.Admin)) {
-            // router.prefetch(paths.dashboard.user.list);
-            router.replace(paths.dashboard.user.list);
+        try {
+          const resp = await axios.get(url, config);
+          if (resp.status === 200) {
+            setChecked(true);
+            // sessionStorage.setItem('roleCode', resp.data.roleCode);
+            sessionStorage.setItem('userId', resp.data.id);
+            sessionStorage.setItem('userName', resp.data.name);
+            sessionStorage.setItem('roleCode', resp.data.role);
+            sessionStorage.setItem('orgId', resp.data.organizationId);
+            if (resp.data.role.includes(RoleCodeEnum.Auditor)) {
+              // if user is accountant navigate to mail as default screen
+              // router.prefetch(paths.dashboard.mail);
+              router.replace(paths.dashboard.mail);
+            } else if (
+              resp.data.role.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`)
+            ) {
+              // router.prefetch(paths.dashboard.root);
+              router.replace(paths.dashboard.root);
+            } else if (resp.data.role.includes(RoleCodeEnum.Admin)) {
+              // router.prefetch(paths.dashboard.user.list);
+              router.replace(paths.dashboard.user.list);
+            }
+          } else {
+            router.replace('');
           }
-        } else {
-          router.replace('');
+        } catch (e) {
+          console.log('error', e);
+          router.back();
         }
       } else {
         router.replace('');
