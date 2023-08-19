@@ -74,7 +74,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
   const NewFinancialReportSchema = Yup.object().shape({
     year: Yup.string().required('Năm là bắt buộc'),
-    quarter: Yup.string().required('Quý là bắt buộc'),
+    // quarter: Yup.string().required('Quý là bắt buộc'),
     FINANCIAL_BCDKT: !props?.year
       ? Yup.string().required('Bảng cân đối kế toán là bắt buộc')
       : Yup.string().notRequired(),
@@ -104,7 +104,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const defaultValues = useMemo(
     () => ({
       year: props?.year || '',
-      quarter: props?.quarter || '',
+      // quarter: props?.quarter || '',
       FINANCIAL_BCDKT: props?.FINANCIAL_BCDKT || '',
       FINANCIAL_BLCTT: props?.FINANCIAL_BLCTT || '',
       FINANCIAL_BKQKD: props?.FINANCIAL_BKQKD || '',
@@ -604,6 +604,15 @@ export default function FinancialReportNewEditForm(props?: Props) {
 
         {/* <Grid> */}
         <Card sx={{ p: 3 }}>
+          <RHFAutocomplete
+            disabled={!!props?.year}
+            name="year"
+            label="Năm"
+            options={years.map((year) => year.toString())}
+            getOptionLabel={(option) => option}
+            isOptionEqualToValue={(option, value) => option === value}
+            renderOption={(_props, option) => <li {..._props}>{option}</li>}
+          />
           <Box
             rowGap={3}
             columnGap={2}
@@ -617,16 +626,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phoneNumber" label="Phone Number" /> */}
 
-            <RHFAutocomplete
-              disabled={!!props?.year}
-              name="year"
-              label="Năm"
-              options={years.map((year) => year.toString())}
-              getOptionLabel={(option) => option}
-              isOptionEqualToValue={(option, value) => option === value}
-              renderOption={(_props, option) => <li {..._props}>{option}</li>}
-            />
-            <RHFAutocomplete
+            {/* <RHFAutocomplete
               disabled={!!props?.quarter}
               name="quarter"
               label="Quý"
@@ -634,7 +634,7 @@ export default function FinancialReportNewEditForm(props?: Props) {
               getOptionLabel={(option) => option.toString()}
               isOptionEqualToValue={(option, value) => option === value}
               renderOption={(_props, option) => <li {..._props}>{option}</li>}
-            />
+            /> */}
 
             <Stack spacing={1.5}>
               <Divider sx={{ borderStyle: 'dashed' }} />

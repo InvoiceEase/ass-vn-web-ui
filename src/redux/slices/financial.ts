@@ -98,7 +98,7 @@ export function getFinancialFolders() {
   };
 }
 
-export function getFinancialFiles(year: string | undefined, quarter: string) {
+export function getFinancialFiles(year: string | undefined) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getFinancialFilesStart());
     const token = sessionStorage.getItem('token');
@@ -123,9 +123,7 @@ export function getFinancialFiles(year: string | undefined, quarter: string) {
         { headers: headersList }
       );
       if (response.status === 200) {
-        const quarterFiles = response.data.filter(
-          (item: IFinancialFile) => item.quarter === quarter.split(' ')[1]
-        );
+        const quarterFiles = response.data.filter((item: IFinancialFile) => item.year === year);
         dispatch(slice.actions.getFinancialFilesSuccess(quarterFiles));
       }
     } catch (error) {
