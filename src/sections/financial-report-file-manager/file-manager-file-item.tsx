@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import { CardProps } from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -15,7 +14,6 @@ import { fDateTime } from 'src/utils/format-time';
 // components
 import { usePopover } from 'src/components/custom-popover';
 import FileThumbnail from 'src/components/file-thumbnail';
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import TextMaxLine from 'src/components/text-max-line';
 //
@@ -77,15 +75,15 @@ export default function FileManagerFileItem({
     //   />
     // ) :
     <Stack sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-      <Checkbox
+      {/* <Checkbox
         size="medium"
         checked={selected}
         onClick={onSelect}
         icon={<Iconify icon="eva:radio-button-off-fill" />}
         checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
         sx={{ p: 0.75 }}
-      />
-      <FileThumbnail file={file.fileExtension} sx={{ width: 36, height: 36 }} />
+      /> */}
+      <FileThumbnail file={file.fileExtension} sx={{ width: 36, height: 36, mr: 1 }} />
       <TextMaxLine persistent variant="subtitle2" onClick={details.onTrue} sx={{ width: 1, mt: 3 }}>
         {file.fileName}
       </TextMaxLine>
@@ -109,35 +107,33 @@ export default function FileManagerFileItem({
   // );
 
   const renderText = (
-    <>
-      <Stack
-        direction="row"
-        alignItems="center"
-        sx={{
-          maxWidth: 0.99,
-          whiteSpace: 'nowrap',
-          typography: 'caption',
-          color: 'text.disabled',
-        }}
-      >
-        {/* {fData(file.size)} */}
+    <Stack
+      direction="row"
+      alignItems="center"
+      sx={{
+        maxWidth: 0.99,
+        whiteSpace: 'nowrap',
+        typography: 'caption',
+        color: 'text.disabled',
+      }}
+    >
+      {/* {fData(file.size)} */}
 
-        <Box
-          component="span"
-          sx={{
-            mx: 0.75,
-            width: 2,
-            height: 2,
-            flexShrink: 0,
-            borderRadius: '50%',
-            bgcolor: 'currentColor',
-          }}
-        />
-        <Typography noWrap component="span" variant="caption">
-          {fDateTime(file.modifiedAt)}
-        </Typography>
-      </Stack>
-    </>
+      <Box
+        component="span"
+        sx={{
+          mx: 0.75,
+          width: 2,
+          height: 2,
+          flexShrink: 0,
+          borderRadius: '50%',
+          bgcolor: 'currentColor',
+        }}
+      />
+      <Typography component="span" variant="caption">
+        {fDateTime(file.modifiedAt)}
+      </Typography>
+    </Stack>
   );
 
   // const renderAvatar = (
@@ -172,10 +168,10 @@ export default function FileManagerFileItem({
           bgcolor: 'unset',
           cursor: 'pointer',
           position: 'relative',
-          ...((checkbox.value || selected) && {
-            bgcolor: 'background.paper',
-            boxShadow: (theme) => theme.customShadows.z20,
-          }),
+          // ...((checkbox.value || selected) && {
+          backgroundColor: 'background.paper',
+          boxShadow: (theme) => theme.customShadows.z20,
+          // }),
           ...sx,
         }}
         {...other}

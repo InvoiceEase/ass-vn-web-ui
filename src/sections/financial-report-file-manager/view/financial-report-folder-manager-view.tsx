@@ -64,6 +64,10 @@ export default function FinancialReportFolderManagerView() {
 
   const [tableData, setTableData] = useState(_allFolders);
 
+  useEffect(() => {
+    setTableData(_allFolders);
+  }, [_allFolders]);
+
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isDateError(filters.startDate, filters.endDate);
