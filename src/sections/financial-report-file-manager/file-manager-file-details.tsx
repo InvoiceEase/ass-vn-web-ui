@@ -22,6 +22,7 @@ import { paths } from 'src/routes/paths';
 import FileManagerFileItem from './file-manager-file-item';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { saveAs } from 'file-saver';
+import { IFinancialFile } from 'src/types/financial';
 //
 
 // ----------------------------------------------------------------------
@@ -54,6 +55,17 @@ export default function FileManagerFileDetails({
 
   // const hasShared = shared && !!shared.length;
 
+  const reportTypes = [
+    FinancialReportTypesEnum.FINANCIAL_BCDKT,
+    FinancialReportTypesEnum.FINANCIAL_BCDPSTK,
+    FinancialReportTypesEnum.FINANCIAL_BKQKD,
+    FinancialReportTypesEnum.FINANCIAL_BLCTT,
+    FinancialReportTypesEnum.FINANCIAL_SCT,
+    FinancialReportTypesEnum.FINANCIAL_STATEMENT_FOOTNOTES,
+    FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNCN,
+    FinancialReportTypesEnum.FINANCIAL_TAX_FINALIZATION_TNDN,
+  ];
+
   const toggleTags = useBoolean(true);
 
   const share = useBoolean();
@@ -61,6 +73,9 @@ export default function FileManagerFileDetails({
   const properties = useBoolean(true);
 
   const [inviteEmail, setInviteEmail] = useState('');
+
+  const [isHistory, setIsHistory] = useState(false);
+  const [historyReportType, setHistoryReportType] = useState('');
 
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -212,6 +227,147 @@ export default function FileManagerFileDetails({
     // });
   };
 
+  const handleHistory = (reportType: string) => {
+    setIsHistory(!isHistory);
+    setHistoryReportType(reportType);
+  };
+
+  const renderHistoryFile = (
+    <Stack spacing={1.5}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ typography: 'subtitle1' }}
+      >
+        <IconButton size="small" onClick={() => handleHistory('')}>
+          <Iconify icon="eva:arrow-back-outline" sx={{ width: 26, height: 26 }} />
+        </IconButton>
+        Lịch sử chỉnh sửa
+      </Stack>
+      {isLoadingFiles ? (
+        <CircularProgress color="primary" />
+      ) : (
+        // reportTypes.map((reportType) => {
+        //   const reportFileAllVersion = files.filter(
+        //     (currentFile) => currentFile.reportType === reportType
+        //   );
+
+        //   let renderFiles: IFinancialFile[] = [];
+
+        //   if (reportFileAllVersion.length > 1) {
+        //     renderFiles = reportFileAllVersion.filter((item) => item.status === 'CURRENT');
+        //   } else {
+        //     renderFiles = reportFileAllVersion;
+        //   }
+
+        //   return renderFiles.map((renderFile) => (
+        //     <>
+        //       <Divider sx={{ borderStyle: 'dashed' }} />
+        //       <Stack
+        //         sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        //       >
+        //         <Box>
+        //           <Typography variant="subtitle2">
+        //             {getReportTypeName(renderFile.reportType)}
+        //           </Typography>
+        //           {reportFileAllVersion.length > 1 && (
+        //             <Typography variant="caption">(Đã chỉnh sửa)</Typography>
+        //           )}
+        //         </Box>
+        //         {reportFileAllVersion.length > 1 && (
+        //           <IconButton
+        //             size="small"
+        //             onClick={() => onDownloadFiles(renderFile.cloudFilePath)}
+        //           >
+        //             <Iconify icon="eva:clock-outline" sx={{ width: 26, height: 26 }} />
+        //           </IconButton>
+        //         )}
+        //       </Stack>
+        //       <Stack
+        //         sx={{
+        //           flexDirection: 'row',
+        //           justifyContent: 'space-between',
+        //           alignItems: 'center',
+        //         }}
+        //       >
+        //         <FileManagerFileItem
+        //           key={renderFile.id}
+        //           file={renderFile}
+        //           // selected={selected.includes(file.id)}
+        //           // onSelect={() => onSelectItem(file.id)}
+        //           // onDelete={() => onDeleteItem(file.id)}
+        //           sx={{ width: 360 }}
+        //         />
+        //         <IconButton size="small" onClick={() => handleHistory(renderFile.reportType)}>
+        //           <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+        //         </IconButton>
+        //       </Stack>
+        //     </>
+        //   ));
+        // })
+        files
+          .filter((item) => item.reportType === historyReportType)
+          .map((renderFile) => (
+            <>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Stack
+                sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <Typography variant="subtitle2">
+                  {getReportTypeName(renderFile.reportType)}
+                </Typography>
+              </Stack>
+              <Stack
+                sx={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <FileManagerFileItem
+                  key={renderFile.id}
+                  file={renderFile}
+                  // selected={selected.includes(file.id)}
+                  // onSelect={() => onSelectItem(file.id)}
+                  // onDelete={() => onDeleteItem(file.id)}
+                  sx={{ width: 360 }}
+                />
+                <IconButton size="small" onClick={() => onDownloadFiles(renderFile.cloudFilePath)}>
+                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+                </IconButton>
+              </Stack>
+            </>
+          ))
+      )}
+
+      {/* {properties.value && (
+        <>
+          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
+            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
+              Size
+            </Box>
+            {fData(size)}
+          </Stack>
+
+          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
+            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
+              Modified
+            </Box>
+            {fDateTime(modifiedAt)}
+          </Stack>
+
+          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
+            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
+              Type
+            </Box>
+            {fileFormat(type)}
+          </Stack>
+        </>
+      )} */}
+    </Stack>
+  );
+
   const renderProperties = (
     <Stack spacing={1.5}>
       <Stack
@@ -230,27 +386,84 @@ export default function FileManagerFileDetails({
       {isLoadingFiles ? (
         <CircularProgress color="primary" />
       ) : (
-        files.map((file) => (
-          <>
-            <Divider sx={{ borderStyle: 'dashed' }} />
-            <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
-            <Stack
-              sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <FileManagerFileItem
-                key={file.id}
-                file={file}
-                // selected={selected.includes(file.id)}
-                // onSelect={() => onSelectItem(file.id)}
-                // onDelete={() => onDeleteItem(file.id)}
-                sx={{ width: 290 }}
-              />
-              <IconButton size="small" onClick={() => onDownloadFiles(file.cloudFilePath)}>
-                <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
-              </IconButton>
-            </Stack>
-          </>
-        ))
+        reportTypes.map((reportType) => {
+          const reportFileAllVersion = files.filter(
+            (currentFile) => currentFile.reportType === reportType
+          );
+
+          let renderFiles: IFinancialFile[] = [];
+
+          if (reportFileAllVersion.length > 1) {
+            renderFiles = reportFileAllVersion.filter((item) => item.status === 'CURRENT');
+          } else {
+            renderFiles = reportFileAllVersion;
+          }
+
+          return renderFiles.map((renderFile) => (
+            <>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              <Stack
+                sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+              >
+                <Box>
+                  <Typography variant="subtitle2">
+                    {getReportTypeName(renderFile.reportType)}
+                  </Typography>
+                  {reportFileAllVersion.length > 1 && (
+                    <Typography variant="caption">(Đã chỉnh sửa)</Typography>
+                  )}
+                </Box>
+                {reportFileAllVersion.length > 1 && (
+                  <IconButton size="small" onClick={() => handleHistory(renderFile.reportType)}>
+                    <Iconify icon="eva:clock-outline" sx={{ width: 26, height: 26 }} />
+                  </IconButton>
+                )}
+              </Stack>
+              <Stack
+                sx={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <FileManagerFileItem
+                  key={renderFile.id}
+                  file={renderFile}
+                  // selected={selected.includes(file.id)}
+                  // onSelect={() => onSelectItem(file.id)}
+                  // onDelete={() => onDeleteItem(file.id)}
+                  sx={{ width: 360 }}
+                />
+                <IconButton size="small" onClick={() => onDownloadFiles(renderFile.cloudFilePath)}>
+                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+                </IconButton>
+              </Stack>
+            </>
+          ));
+        })
+        // files
+        //   .filter((currentFile) => currentFile.status === 'CURRENT')
+        //   .map((file) => (
+        //     <>
+        //       <Divider sx={{ borderStyle: 'dashed' }} />
+        //       <Typography variant="subtitle2">{getReportTypeName(file.reportType)}</Typography>
+        //       <Stack
+        //         sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        //       >
+        //         <FileManagerFileItem
+        //           key={file.id}
+        //           file={file}
+        //           // selected={selected.includes(file.id)}
+        //           // onSelect={() => onSelectItem(file.id)}
+        //           // onDelete={() => onDeleteItem(file.id)}
+        //           sx={{ width: 290 }}
+        //         />
+        //         <IconButton size="small" onClick={() => onDownloadFiles(file.cloudFilePath)}>
+        //           <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+        //         </IconButton>
+        //       </Stack>
+        //     </>
+        //   ))
       )}
 
       {/* {properties.value && (
@@ -323,7 +536,7 @@ export default function FileManagerFileDetails({
           backdrop: { invisible: true },
         }}
         PaperProps={{
-          sx: { width: '30vw' },
+          sx: { width: '35vw' },
         }}
         {...other}
       >
@@ -363,24 +576,26 @@ export default function FileManagerFileDetails({
 
             {/* {renderTags} */}
 
-            {renderProperties}
+            {isHistory ? renderHistoryFile : renderProperties}
           </Stack>
 
           {/* {renderShared} */}
         </Scrollbar>
 
-        <Box sx={{ p: 2.5 }}>
-          <Button
-            fullWidth
-            size="large"
-            component={RouterLink}
-            href={paths.dashboard.file.financial.update(year ?? '', quarter.split(' ')[1])}
-            variant="contained"
-            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-          >
-            Cập nhật
-          </Button>
-        </Box>
+        {!isHistory && (
+          <Box sx={{ p: 2.5 }}>
+            <Button
+              fullWidth
+              size="large"
+              component={RouterLink}
+              href={paths.dashboard.file.financial.update(year ?? '', quarter.split(' ')[1])}
+              variant="contained"
+              startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            >
+              Cập nhật
+            </Button>
+          </Box>
+        )}
       </Drawer>
 
       {/* <FileManagerShareDialog
