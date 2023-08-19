@@ -131,7 +131,7 @@ export default function FileManagerFileItem({
         }}
       />
       <Typography component="span" variant="caption">
-        {fDateTime(file.modifiedAt)}
+        {fDateTime(file.createdAt)}
       </Typography>
     </Stack>
   );

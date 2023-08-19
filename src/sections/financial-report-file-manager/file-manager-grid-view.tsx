@@ -9,7 +9,6 @@ import { TableProps } from 'src/components/table';
 import { Box, Divider } from '@mui/material';
 import { IFinancialFolder } from 'src/types/financial';
 import FileManagerFolderItem from './file-manager-folder-item';
-import FileManagerPanel from './file-manager-panel';
 
 // ----------------------------------------------------------------------
 
@@ -54,17 +53,19 @@ export default function FileManagerGridView({
     setFolderName(event.target.value);
   }, []);
 
+  console.log('NghiaLog: dataFiltered - ', dataFiltered);
+
   return (
     <>
       <Box ref={containerRef}>
         {dataFiltered.map((folder) => (
           <>
-            <FileManagerPanel
+            {/* <FileManagerPanel
               title={`Năm ${folder.year}`}
               // onOpen={newFolder.onTrue}
               // collapse={folders.value}
               // onCollapse={folders.onToggle}
-            />
+            /> */}
 
             {/* <Collapse in={!folders.value} unmountOnExit> */}
             <Box
@@ -77,19 +78,19 @@ export default function FileManagerGridView({
                 lg: 'repeat(4, 1fr)',
               }}
             >
-              {folder.quarter
+              {/* {folder.quarter
                 // .filter((i) => i.type === 'folder')
-                .map((quarterFolder) => (
-                  <FileManagerFolderItem
-                    key={quarterFolder}
-                    folder={`Quý ${quarterFolder}`}
-                    year={folder.year}
-                    selected={selected.includes(quarterFolder)}
-                    onSelect={() => onSelectItem(quarterFolder)}
-                    // onDelete={() => onDeleteItem(folder.year)}
-                    sx={{ maxWidth: 'auto' }}
-                  />
-                ))}
+                .map((quarterFolder) => ( */}
+              <FileManagerFolderItem
+                key={folder.year}
+                folder={`Năm ${folder.year}`}
+                year={folder.year}
+                selected={selected.includes(folder.year)}
+                onSelect={() => onSelectItem(folder.year)}
+                // onDelete={() => onDeleteItem(folder.year)}
+                sx={{ maxWidth: 'auto' }}
+              />
+              {/* ))} */}
             </Box>
             {/* </Collapse> */}
 

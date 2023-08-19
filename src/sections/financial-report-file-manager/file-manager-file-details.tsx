@@ -83,7 +83,7 @@ export default function FileManagerFileDetails({
 
   useEffect(() => {
     if (open) {
-      dispatch(getFinancialFiles(year, quarter));
+      dispatch(getFinancialFiles(year));
     }
   }, [year, open]);
 
@@ -569,7 +569,7 @@ export default function FileManagerFileDetails({
             /> */}
 
             <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
-              {quarter} - {`Năm ${year}`}
+              {`Năm ${year}`}
             </Typography>
 
             <Divider sx={{ borderStyle: 'dashed' }} />
