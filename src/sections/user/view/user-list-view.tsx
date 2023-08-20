@@ -51,6 +51,8 @@ import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 300 },
@@ -81,6 +83,7 @@ export default function UserListView() {
   const confirm = useBoolean();
 
   const _userList = useSelector((state) => state.auditor.auditors);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [filters, setFilters] = useState(defaultFilters);
   const [tableData, setTableData] = useState(_userList);
@@ -130,15 +133,69 @@ export default function UserListView() {
   );
 
   const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+    async (id: string) => {
+      const resetedUser = _userList.filter((item) => item.id === id);
+      const token = sessionStorage.getItem('token');
+      const accessToken: string = `Bearer ${token}`;
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      try {
+        const req = {
+          version: 0,
+          userId: Number(resetedUser[0].id),
+          firebaseUserId: resetedUser[0].firebaseUserId,
+          status: 'BANNED',
+        };
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status?version=${req.version}&userId=${req.userId}&firebaseUserId=${req.firebaseUserId}&status=${req.status}`,
+          {},
+          { headers: headersList }
+        );
+        if (response.status === 200) {
+          enqueueSnackbar("Đã cấm người dùng thành công")
+          router.replace(paths.dashboard.user.list);
+        }
+      } catch (e) {
+        confirm.onFalse();
+      }
     },
     [dataInPage.length, table, tableData]
   );
 
+  const handeResetRow = useCallback(
+    async (id: string) => {
+      const resetedUser = _userList.filter((item) => item.id === id);
+      const token = sessionStorage.getItem('token');
+      const accessToken: string = `Bearer ${token}`;
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      try {
+        const req = {
+          version: 0,
+          userId: Number(resetedUser[0].id),
+          firebaseUserId: Number(resetedUser[0].firebaseUserId),
+          status: 'BANNED',
+        };
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status`,
+          {
+            data: req,
+            headers: headersList,
+          }
+        );
+        if (response.status === 200) {
+          router.refresh();
+        }
+      } catch (e) {
+        confirm.onFalse();
+      }
+    },
+    [dataInPage.length, table, tableData]
+  );
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
     setTableData(deleteRows);
@@ -178,16 +235,12 @@ export default function UserListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{ mt: 3 }}
-        >
-          <Typography sx={{ mb: 5, flexGrow:1 }} variant="h4">
+        <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
+          <Typography sx={{ mb: 5, flexGrow: 1 }} variant="h4">
             Quản lí người dùng
           </Typography>
           <Button
-            sx={{ mb:5}}
+            sx={{ mb: 5 }}
             component={RouterLink}
             href={paths.dashboard.user.new}
             variant="contained"
@@ -301,6 +354,7 @@ export default function UserListView() {
                         onSelectRow={() => handleSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
+                        onResetRow={() => handeResetRow(row.id)}
                       />
                     ))}
 

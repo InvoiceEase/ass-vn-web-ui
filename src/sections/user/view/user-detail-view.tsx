@@ -12,6 +12,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 import UserNewEditForm from '../user-new-edit-form';
 import { useSelector } from 'src/redux/store';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ export default function UserDetailView() {
   const _userList = useSelector((state) => state.auditor.auditors);
 
   const currentUser = _userList.find((user) => user.id === id);
+  useEffect(()=>{console.log('use', currentUser)},[])
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

@@ -65,7 +65,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       id: '',
       createdAt: '',
       modifiedAt: '',
-      version: null,
+      version: 0,
       name: '',
       address: '',
       website: null,
@@ -77,6 +77,22 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     },
   ];
   const [defaultBizAud, setDefaultBizAud] = useState(defaultBizForAuditor);
+
+  const businesses = useSelector((state) => state.business.businesses);
+  const [error, setError] = useState(false);
+  const [deleteComp, setDeleteComp] = useState('');
+  const [onLoad, setOnload] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [bizDelete, setBizDelete] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
+  const password = useBoolean();
+  const resolver = {
+    userFullName: Yup.string().required('Vui lòng nhập họ tên'),
+    email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
+    phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
+    password: Yup.string().required('Vui lòng nhập mật khẩu'),
+  };
   const loadBizForAuditor = async () => {
     try {
       const token = sessionStorage.getItem('token');
@@ -101,25 +117,10 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   };
   useEffect(() => {
     dispatch(getBusinesses());
-    if (currentUser?.roleName === 'Kiểm duyệt viên' && isView) {
+    if (currentUser?.roleName === 'Kiểm duyệt viên') {
       loadBizForAuditor();
     }
   }, []);
-
-  const businesses = useSelector((state) => state.business.businesses);
-  const [error, setError] = useState(false);
-  const [deleteComp, setDeleteComp] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [bizDelete, setBizDelete] = useState('');
-  const { enqueueSnackbar } = useSnackbar();
-  const password = useBoolean();
-  const resolver = {
-    userFullName: Yup.string().required('Vui lòng nhập họ tên'),
-    email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
-    phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu'),
-  };
   const resolverCurren = {
     userFullName: Yup.string().required('Vui lòng nhập họ tên'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
@@ -198,6 +199,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         }
       } else {
         try {
+          const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
           if (
             date?.getDate() === DEFAULT_DATE.getDate() &&
             date?.getMonth() === DEFAULT_DATE.getMonth() &&
@@ -207,14 +209,13 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
             setError(true);
           } else {
             setError(false);
-            const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
             const bizId = bizLst.filter((item) => item.name.localeCompare(data.businessId) === 0);
             data.businessId = bizId[0].id;
             const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
             const param = {
               version: 0,
               businessId: data.businessId,
-              userId: currentUser.id,
+              auditorId: currentUser.id,
               password: data.password,
               expiredDate: date.toISOString(),
             };
@@ -267,25 +268,30 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       accept: '*/*',
       Authorization: accessToken,
     };
+    setOnload(true);
     try {
-      const data = {
+      const req = {
         version: 0,
-        auditorId: currentUser?.id,
-        businessId: bizDelete,
+        auditorId: Number(currentUser?.id),
+        businessId: Number(bizDelete),
         password: '',
         expiredDate: '',
       };
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`,
         {
-          params: data,
+          data: req,
           headers: headersList,
         }
       );
       if (response.status === 200) {
-        router.push(paths.dashboard.user.detail(currentUser?.id ?? ''));
+        enqueueSnackbar('Hủy quyền truy cập thành công');
+        setOnload(false);
+        router.refresh();
+        confirm.onFalse();
       }
     } catch (e) {
+      setOnload(false)
       setError(true);
       setErrorMsg('Hủy thất bại');
       confirm.onFalse();
@@ -308,9 +314,9 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         title="Hủy quyền truy cập"
         content={`Hủy quyền truy cập của ${currentUser?.userFullName} vào công ty ${deleteComp}`}
         action={
-          <Button onClick={handleDeleteComp} variant="contained" color="error">
-            Hủy
-          </Button>
+          <LoadingButton loading={onLoad} onClick={handleDeleteComp} variant="contained" color="error">
+            Hủy quyền truy cập
+          </LoadingButton>
         }
       />
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
@@ -402,7 +408,8 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                 )}
                 {currentUser?.roleName === 'Kiểm duyệt viên' &&
                   isView &&
-                  defaultBizAud.length > 1 && (
+                  defaultBizAud.length >= 1 &&
+                  defaultBizAud[0] !== defaultBizForAuditor[0] && (
                     <Stack sx={{ display: 'flex' }}>
                       <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
                         Công ty đã đăng ký
@@ -426,6 +433,15 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                           </ListItem>
                         ))}
                       </List>
+                    </Stack>
+                  )}
+                {currentUser?.roleName === 'Kiểm duyệt viên' &&
+                  isView &&
+                  defaultBizAud.length < 1 && (
+                    <Stack sx={{ display: 'flex' }}>
+                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                        Chưa đăng ký công ty
+                      </Typography>
                     </Stack>
                   )}
               </Box>

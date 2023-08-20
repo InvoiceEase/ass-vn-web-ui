@@ -28,6 +28,7 @@ type Props = {
   row: IAuditor;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
+  onResetRow: VoidFunction;
 };
 
 export default function UserTableRow({
@@ -36,6 +37,7 @@ export default function UserTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
+  onResetRow,
 }: Props) {
   const { userFullName, phoneNumber, roleName, email, status } = row;
 
@@ -44,7 +46,10 @@ export default function UserTableRow({
   const quickEdit = useBoolean();
 
   const popover = usePopover();
-
+  const handleDelete = () => {
+    confirm.onFalse();
+    onDeleteRow();
+  };
   return (
     <>
       <TableRow hover selected={selected}>
@@ -103,7 +108,7 @@ export default function UserTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        {(status !== 'Banned') && (
+        {status !== 'Banned' && (
           <MenuItem
             onClick={() => {
               onSelectRow();
@@ -134,7 +139,7 @@ export default function UserTableRow({
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Banned
+            Cấm
           </MenuItem>
         )}
       </CustomPopover>
@@ -143,10 +148,10 @@ export default function UserTableRow({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
-        content="Bạn vẫn muốn ban người này?"
+        content="Bạn vẫn muốn cấm người này?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Ban
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Cấm
           </Button>
         }
       />
