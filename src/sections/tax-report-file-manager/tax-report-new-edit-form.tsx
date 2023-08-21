@@ -135,7 +135,7 @@ export default function TaxReportNewEditForm(props?: Props) {
     const result: ReportFilesInfo = {
       emailAddress,
       businessId: +businessId,
-      messageType: props?.year ? 'UPDATE' : 'UPLOAD',
+      messageType: props?.year ? 'UPDATE_REPORT' : 'UPLOAD_REPORT',
       taxFileInfoList: [],
       financialFileInfoList: [],
     };

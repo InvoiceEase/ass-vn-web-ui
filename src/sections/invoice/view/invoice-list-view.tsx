@@ -109,6 +109,11 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const loading = useSelector((state) => state.invoice.invoicesStatus.loading);
 
   const [tableData, setTableData] = useState(_invoices);
+
+  useEffect(() => {
+    setTableData(_invoices);
+  }, [_invoices]);
+
   const [openUpload, setOpenUpload] = useState(false);
   const [filters, setFilters] = useState(defaultFilters);
   const handleUpload = () => {
@@ -182,10 +187,10 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
       count: getInvoiceLength(InvoiceStatusConfig.unapproved.status),
     },
     {
-      value: InvoiceStatusConfig.wrong.status,
-      label: InvoiceStatusConfig.wrong.status,
-      color: InvoiceStatusConfig.wrong.color,
-      count: getInvoiceLength(InvoiceStatusConfig.wrong.status),
+      value: InvoiceStatusConfig.notAuthenticated.status,
+      label: InvoiceStatusConfig.notAuthenticated.status,
+      color: InvoiceStatusConfig.notAuthenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.notAuthenticated.status),
     },
   ] as const;
 

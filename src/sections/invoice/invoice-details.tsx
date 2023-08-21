@@ -18,9 +18,11 @@ import { IInvoice } from 'src/types/invoice';
 import { fCurrency } from 'src/utils/format-number';
 import InvoiceToolbar from './invoice-toolbar';
 
-import { Divider } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import { useSelector } from 'src/redux/store';
+import { InvoiceErrorFieldEnum } from 'src/enums/InvoiceErrorFieldEnum';
+import { updateInvoiceStatus } from 'src/redux/slices/invoices';
+import { useDispatch, useSelector } from 'src/redux/store';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 import InvoiceErrorField from './invoice-error-field';
 import InvoiceInfoField from './invoice-info-field';
@@ -57,11 +59,17 @@ type Props = {
 export default function InvoiceDetails({ invoice }: Props) {
   const [currentStatus, setCurrentStatus] = useState(invoice?.status);
 
+  const dispatch = useDispatch();
+
   const invoicePdfFilePath = useSelector((state) => state.invoice.invoiceDetails?.pdfFilePath);
 
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
   }, []);
+
+  useEffect(() => {
+    setCurrentStatus(invoice?.status);
+  }, [invoice?.status]);
 
   const renderTotal = (
     <>
@@ -221,6 +229,11 @@ export default function InvoiceDetails({ invoice }: Props) {
   }, [invoicePdfFilePath]);
 
   const formatDate = (date: string) => new Date(date).toLocaleDateString();
+
+  const handleUpdate = async (status: string) => {
+    dispatch(updateInvoiceStatus(invoice, status));
+  };
+
   return (
     <>
       <InvoiceToolbar
@@ -271,9 +284,14 @@ export default function InvoiceDetails({ invoice }: Props) {
                 </Typography>
                 <Stack direction="row">
                   <Box sx={{ mr: 3 }}>
-                    {invoice?.errorFieldList?.split(',').map((item) => (
-                      <InvoiceErrorField type={item} />
-                    ))}
+                    {invoice?.errorFieldList
+                      ?.split(',')
+                      .map(
+                        (item) =>
+                          item !== InvoiceErrorFieldEnum.TotalPrice && (
+                            <InvoiceErrorField type={item} />
+                          )
+                      )}
                   </Box>
                   <Box>
                     <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />
@@ -282,6 +300,33 @@ export default function InvoiceDetails({ invoice }: Props) {
                   </Box>
                 </Stack>
               </Stack>
+              {currentStatus === InvoiceStatusConfig.authenticated.status && (
+                <Stack
+                  sx={{
+                    position: 'absolute',
+                    flexDirection: 'row',
+                    bottom: 20,
+                    right: 20,
+                  }}
+                >
+                  <Button
+                    sx={{ mr: 2 }}
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
+                  >
+                    Không duyệt
+                  </Button>
+                  <Button
+                    sx={{ mr: 2 }}
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
+                  >
+                    Duyệt
+                  </Button>
+                </Stack>
+              )}
             </Stack>
             <Stack spacing={1} direction="column">
               <Label
@@ -295,8 +340,8 @@ export default function InvoiceDetails({ invoice }: Props) {
                     InvoiceStatusConfig.unapproved.color) ||
                   (currentStatus === InvoiceStatusConfig.unauthenticated.status &&
                     InvoiceStatusConfig.unauthenticated.color) ||
-                  (currentStatus === InvoiceStatusConfig.wrong.status &&
-                    InvoiceStatusConfig.wrong.color) ||
+                  (currentStatus === InvoiceStatusConfig.notAuthenticated.status &&
+                    InvoiceStatusConfig.notAuthenticated.color) ||
                   'default'
                 }
               >
