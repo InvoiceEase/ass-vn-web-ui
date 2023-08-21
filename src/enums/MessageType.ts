@@ -1,0 +1,7 @@
+export enum MessageType {
+    MAIL = 'MAIL',
+    UPLOAD_MAIL = 'UPLOAD_MAIL',
+    UPLOAD_INVOICE = 'UPLOAD_INVOICE',
+    UPLOAD_REPORT = 'UPLOAD_REPORT',
+    UPDATE_REPORT = 'UPDATE_REPORT'
+  }

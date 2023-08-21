@@ -33,6 +33,7 @@ import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 import Typography from 'src/theme/overrides/components/typography';
 import Iconify from 'src/components/iconify/iconify';
+import { MessageType } from 'src/enums/MessageType';
 // ----------------------------------------------------------------------
 type Props = {
   mail?: IMail;
@@ -139,6 +140,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       data.append('mailId', mail?.id ?? '');
       data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
       data.append('emailAddress', mail?.mailFrom ?? '');
+      data.append('messageType ', MessageType.MAIL);
     }
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
