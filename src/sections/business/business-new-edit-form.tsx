@@ -51,11 +51,11 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
 }
 
 type Props = {
-  currentUser?: IAuditor;
+  currentBiz?: IBusiness;
   isView?: boolean;
 };
 
-export default function BusinessNewEditForm({ currentUser, isView }: Props) {
+export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
   const router = useRouter();
   const confirm = useBoolean();
   const dispatch = useDispatch();
@@ -66,16 +66,13 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
       createdAt: '',
       modifiedAt: '',
       version: 0,
-      name: '',
-      address: '',
-      website: null,
-      taxNumber: null,
-      email: '',
-      logo: null,
-      invoiceReceivedEmail: '',
-      engName: null,
+      userFullName: '',
+      firebaseUserId: '',
+      role: '',
+      organizationId: '',
     },
   ];
+  const OPTION_AUDIT = [true, false];
   const [defaultBizAud, setDefaultBizAud] = useState(defaultBizForAuditor);
 
   const businesses = useSelector((state) => state.business.businesses);
@@ -88,12 +85,37 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const password = useBoolean();
   const resolver = {
-    userFullName: Yup.string().required('Vui lòng nhập họ tên'),
+    name: Yup.string().required('Vui lòng nhập tên doanh nghiệp'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
-    phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu'),
+    taxNumber: Yup.string().required('Vui lòng nhập mã số thuế'),
+    invoiceReceivedEmail: Yup.string().required('Vui lòng nhập mail nhận hóa đơn'),
+    engName: Yup.string().required('Vui lòng nhập tên tiếng anh'),
+    representPersonName: Yup.string().required('Vui lòng nhập tên người đại diện'),
   };
-  const loadBizForAuditor = async () => {
+  const defaultNoCurr = {
+    id: currentBiz?.id || '',
+    createdAt: currentBiz?.createdAt || '',
+    modifiedAt: currentBiz?.modifiedAt || '',
+    version: currentBiz?.version || 0,
+    name: currentBiz?.name || '',
+    address: currentBiz?.address || '',
+    website: currentBiz?.website || '',
+    taxNumber: currentBiz?.taxNumber || '',
+    email: currentBiz?.email || '',
+    logo: currentBiz?.logo || '',
+    invoiceReceivedEmail: currentBiz?.invoiceReceivedEmail || '',
+    engName: currentBiz?.engName || '',
+    representPersonName: currentBiz?.representPersonName || '',
+    needAudit: currentBiz?.needAudit || true,
+    digitalSignatureDueDate: currentBiz?.digitalSignatureDueDate || '',
+    digitalSignaturePeriod: currentBiz?.digitalSignaturePeriod || 0,
+    digitalSignatureRegisDate: currentBiz?.digitalSignatureRegisDate || '',
+    declarationPeriod: currentBiz?.declarationPeriod || 0,
+    businessTypeId: currentBiz?.businessTypeId || 0,
+    domainBusinessId: currentBiz?.domainBusinessId || 0,
+  };
+
+  const loadAuditoForBiz = async () => {
     try {
       const token = sessionStorage.getItem('token');
       const accessToken: string = `Bearer ${token}`;
@@ -102,7 +124,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
         Authorization: accessToken,
       };
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/businesses/${currentUser?.id}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors/${currentBiz?.id}`,
         {
           headers: headersList,
         }
@@ -117,8 +139,8 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
   };
   useEffect(() => {
     dispatch(getBusinesses());
-    if (currentUser?.roleName === 'Kiểm duyệt viên') {
-      loadBizForAuditor();
+    if (currentBiz) {
+      loadAuditoForBiz();
     }
   }, []);
   const resolverCurren = {
@@ -128,27 +150,12 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
     password: Yup.string().required('Vui lòng nhập mật khẩu'),
     businessId: Yup.string().required('Company is required'),
   };
-  const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
+  const NewUserSchema = Yup.object().shape(currentBiz ? resolverCurren : resolver);
 
-  const defaultNoCurr = {
-    userFullName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    role: 'Kiểm duyệt viên',
-  };
-  const defaultVlCurr = {
-    userFullName: currentUser?.userFullName || '',
-    email: currentUser?.email || '',
-    phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
-    password: '',
-    role: currentUser?.roleName || 'Kiểm duyệt viên',
-    businessId: '',
-  };
   const defaultValues = useMemo(
-    () => (!currentUser ? defaultNoCurr : defaultVlCurr),
+    () => defaultNoCurr,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentUser]
+    [currentBiz]
   );
 
   const methods = useForm<FormValuesProps>({
@@ -175,7 +182,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
         accept: '*/*',
         Authorization: accessToken,
       };
-      if (!currentUser) {
+      if (!currentBiz) {
         try {
           setError(false);
           data.role = 'AUDITOR';
@@ -215,7 +222,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
             const param = {
               version: 0,
               businessId: data.businessId,
-              auditorId: currentUser.id,
+              auditorId: currentBiz.id,
               password: data.password,
               expiredDate: date.toISOString(),
             };
@@ -238,7 +245,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
         }
       }
     },
-    [currentUser, enqueueSnackbar, reset, router, date]
+    [currentBiz, enqueueSnackbar, reset, router, date]
   );
 
   const handleDrop = useCallback(
@@ -255,12 +262,12 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
     },
     [setValue]
   );
-  const handleConfirmDeleteComp = (name: string | null) => {
-    const bizLst = defaultBizAud.filter((item) => item.name === name);
-    setBizDelete(bizLst[0].id);
-    setDeleteComp(name ?? '');
-    confirm.onTrue();
-  };
+  // const handleConfirmDeleteComp = (name: string | null) => {
+  //   const bizLst = defaultBizAud.filter((item) => item.name === name);
+  //   setBizDelete(bizLst[0].id);
+  //   setDeleteComp(name ?? '');
+  //   confirm.onTrue();
+  // };
   const handleDeleteComp = async () => {
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
@@ -272,7 +279,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
     try {
       const req = {
         version: 0,
-        auditorId: Number(currentUser?.id),
+        auditorId: Number(currentBiz?.id),
         businessId: Number(bizDelete),
         password: '',
         expiredDate: '',
@@ -291,7 +298,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
         confirm.onFalse();
       }
     } catch (e) {
-      setOnload(false)
+      setOnload(false);
       setError(true);
       setErrorMsg('Hủy thất bại');
       confirm.onFalse();
@@ -299,26 +306,26 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
   };
   const headerText = () => {
     if (isView) {
-      return `Thông tin ${currentUser?.roleName}`;
+      return `Thông tin ${currentBiz?.name}`;
     }
-    if (!currentUser) {
-      return 'Thêm kiểm duyệt viên';
+    if (!currentBiz) {
+      return 'Thêm doanh nghiệp';
     }
-    return 'Đăng ký kiểm duyệt viên';
+    return 'Chỉnh sửa doanh nghiệp';
   };
   return (
     <>
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Hủy quyền truy cập"
-        content={`Hủy quyền truy cập của ${currentUser?.userFullName} vào công ty ${deleteComp}`}
+        content={`Hủy quyền truy cập của ${currentBiz?.nam} vào công ty ${deleteComp}`}
         action={
           <LoadingButton loading={onLoad} onClick={handleDeleteComp} variant="contained" color="error">
             Hủy quyền truy cập
           </LoadingButton>
         }
-      />
+      /> */}
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           <Grid xs={10} md={2}>
@@ -346,25 +353,61 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
               >
                 <RHFTextField
                   sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentUser}
-                  name="userFullName"
-                  label="Họ Tên"
+                  disabled={!!isView}
+                  name="name"
+                  label="Tên doanh nghiệp"
                 />
                 <RHFTextField
                   sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentUser}
+                  disabled={!!isView}
                   name="email"
                   label="Email"
                 />
                 <RHFTextField
                   sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentUser}
-                  name="phoneNumber"
-                  label="Số điện thoại"
+                  disabled={!!isView}
+                  name="taxNumber"
+                  label="Mã số thuế"
                 />
-                <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" />
+                <RHFTextField
+                  sx={{ fontWeight: 'bold' }}
+                  disabled={!!isView}
+                  name="invoiceReceivedEmail"
+                  label="Email nhận hóa đơn"
+                />
+                <RHFTextField
+                  sx={{ fontWeight: 'bold' }}
+                  disabled={!!isView}
+                  name="representPersonName"
+                  label="Người dại diện"
+                />
+                <RHFAutocomplete
+                  sx={{ fontWeight: 'bold' }}
+                  name="needAuditor"
+                  disabled={!!isView}
+                  // defaultValue="Có"
+                  label="Cần người kiểm duyệt"
+                  options={OPTION_AUDIT}
+                  getOptionLabel={(option) => option.toString()}
+                  isOptionEqualToValue={(option, value) => option === value}
+                  renderOption={(props, option) => <li {...props}>{option}</li>}
+                />
+                {/*  <RHFTextField
+                  sx={{ fontWeight: 'bold' }}
+                  disabled={!!currentBiz}
+                  name="userFullName"
+                  label="Họ Tên"
+                />
+                <RHFTextField
+                  sx={{ fontWeight: 'bold' }}
+                  disabled={!!currentBiz}
+                  name="userFullName"
+                  label="Họ Tên"
+                />
+*/}
+                {/* <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" /> */}
 
-                {!isView && (
+                {/* {!isView && (
                   <RHFTextField
                     sx={{ fontWeight: 'bold' }}
                     name="password"
@@ -383,7 +426,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
                     }}
                   />
                 )}
-                {currentUser && !isView && (
+                {currentBiz && !isView && (
                   <>
                     <RHFAutocomplete
                       sx={{ fontWeight: 'bold' }}
@@ -406,20 +449,20 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
                     />
                   </>
                 )}
-                {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                  isView &&
+                */}
+                {isView &&
                   defaultBizAud.length >= 1 &&
                   defaultBizAud[0] !== defaultBizForAuditor[0] && (
                     <Stack sx={{ display: 'flex' }}>
                       <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Công ty đã đăng ký
+                        Kiểm duyệt viên đã được đăng ký
                       </Typography>
                       <List>
                         {defaultBizAud.map((item) => (
                           <ListItem disablePadding>
                             <Iconify width={33} icon="mdi:dot" />
-                            <ListItemText secondary={` ${item.name}`} />
-                            <ListItemButton
+                            <ListItemText secondary={` ${item.userFullName}`} />
+                            {/* <ListItemButton
                               sx={{ maxWidth: 50, maxHeight: 50 }}
                               onClick={() => handleConfirmDeleteComp(item.name)}
                             >
@@ -429,21 +472,19 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
                                 color="red"
                                 icon="solar:trash-bin-trash-bold"
                               />
-                            </ListItemButton>
+                            </ListItemButton> */}
                           </ListItem>
                         ))}
                       </List>
                     </Stack>
                   )}
-                {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                  isView &&
-                  defaultBizAud.length < 1 && (
-                    <Stack sx={{ display: 'flex' }}>
-                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Chưa đăng ký công ty
-                      </Typography>
-                    </Stack>
-                  )}
+                {isView && defaultBizAud.length < 1 && (
+                  <Stack sx={{ display: 'flex' }}>
+                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                      Chưa đăng ký công ty
+                    </Typography>
+                  </Stack>
+                )}
               </Box>
               <Stack
                 direction="row-reverse"
@@ -454,7 +495,7 @@ export default function BusinessNewEditForm({ currentUser, isView }: Props) {
               >
                 {!isView && (
                   <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                    {!currentUser ? 'Thêm' : 'Lưu'}
+                    {!currentBiz ? 'Thêm' : 'Lưu'}
                   </LoadingButton>
                 )}
                 <Button

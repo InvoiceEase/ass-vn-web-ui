@@ -154,7 +154,7 @@ export default function UserListView() {
           { headers: headersList }
         );
         if (response.status === 200) {
-          enqueueSnackbar("Đã cấm người dùng thành công")
+          enqueueSnackbar("Đã vô hiệu hóa người dùng thành công")
           router.replace(paths.dashboard.user.list);
         }
       } catch (e) {

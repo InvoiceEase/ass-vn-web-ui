@@ -10,9 +10,9 @@ import { useParams } from 'src/routes/hook';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import UserNewEditForm from '../business-new-edit-form';
 import { useSelector } from 'src/redux/store';
 import { useEffect } from 'react';
+import BusinessNewEditForm from '../business-new-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -22,15 +22,13 @@ export default function BusinessDetailView() {
   const params = useParams();
 
   const { id } = params;
+  const _businessList = useSelector((state) => state.business.businessAdmin);
+  // const _userList = useSelector((state) => state.auditor.auditors);
 
-  const _userList = useSelector((state) => state.auditor.auditors);
-
-  const currentUser = _userList.find((user) => user.id === id);
-  useEffect(()=>{console.log('use', currentUser)},[])
-
+  const currentBiz = _businessList.find((item) => item.id === id);
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
+      {/* <CustomBreadcrumbs
         heading="Edit"
         links={[
           {
@@ -46,9 +44,9 @@ export default function BusinessDetailView() {
         sx={{
           mb: { xs: 3, md: 5 },
         }}
-      />
+      /> */}
 
-      <UserNewEditForm currentUser={currentUser} isView/>
+      <BusinessNewEditForm currentBiz={currentBiz} isView/>
     </Container>
   );
 }

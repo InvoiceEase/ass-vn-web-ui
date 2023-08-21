@@ -37,6 +37,7 @@ const initialState: IBusinessState = {
     empty: false,
     error: null,
   },
+  businessAdmin:[]
 };
 
 const slice = createSlice({
@@ -86,7 +87,10 @@ const slice = createSlice({
       state.businesses.byId = keyBy(businesses.content, 'id');
       state.businesses.allIds = Object.keys(state.businesses.byId);
     },
-
+    getBusinessesAdminSuccess(state, action){
+      const businessAdmin = action.payload;
+      state.businessAdmin = businessAdmin;
+    },
     setSelectedBusinessSuccess(state, action) {
       const selectedBusiness = action.payload;
       state.selectedBusiness = selectedBusiness;
@@ -142,6 +146,34 @@ export function getBusinesses() {
         }
       );
       dispatch(slice.actions.getBusinessesSuccess(response.data));
+    } catch (error) {
+      console.log('error', error);
+      dispatch(slice.actions.getBusinessesFailure(error));
+    }
+  };
+}
+
+export function getBusinessesAdmin() {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getBusinessesStart());
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.list}`,
+        {
+          params: { page: 0, size: 999, sort: '' },
+          headers: headersList,
+        }
+      );
+      console.log('dâta', response.data.content)
+      dispatch(slice.actions.getBusinessesAdminSuccess(response.data.content));
     } catch (error) {
       console.log('error', error);
       dispatch(slice.actions.getBusinessesFailure(error));

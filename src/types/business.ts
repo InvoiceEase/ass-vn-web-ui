@@ -13,6 +13,14 @@ export type IBusiness = {
   logo: null;
   invoiceReceivedEmail: string;
   engName: null;
+  representPersonName: string;
+  needAudit: boolean;
+  digitalSignatureDueDate: string;
+  digitalSignaturePeriod: number;
+  digitalSignatureRegisDate: string;
+  declarationPeriod: number;
+  businessTypeId: number;
+  domainBusinessId:number;
 };
 
 export type IBusinessListState = {
@@ -28,6 +36,14 @@ export type IBusinessType = {
   name: string;
 };
 
+export type IBusinessTableFilterValue = string | string[];
+
+export type IBusinessTableFiltersAdmin = {
+  name: string;
+  email: string;
+  representPersonName: string;
+  // status: string;
+};
 export type IBusinessTypesState = {
   byId: Record<string, IBusinessType>;
   allIds: string[];
@@ -41,6 +57,7 @@ export type IBusinessState = {
     error: IErrorType;
   };
   businesses: IBusinessListState;
+  businessAdmin: IBusiness[];
   selectedBusiness: IBusiness;
   businessesStatus: {
     loading: boolean;

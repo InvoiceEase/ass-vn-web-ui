@@ -18,13 +18,14 @@ import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 //
 import { IAuditor } from 'src/types/auditor';
+import { IBusiness } from 'src/types/business';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   selected: boolean;
   onEditRow: VoidFunction;
-  row: IAuditor;
+  row: IBusiness;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
   onResetRow: VoidFunction;
@@ -38,7 +39,7 @@ export default function BusinessTableRow({
   onDeleteRow,
   onResetRow,
 }: Props) {
-  const { userFullName, phoneNumber, roleName, email, status } = row;
+  const { id, name, email, taxNumber, invoiceReceivedEmail, representPersonName, needAudit } = row;
 
   const confirm = useBoolean();
 
@@ -58,48 +59,34 @@ export default function BusinessTableRow({
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText
-            primary={userFullName}
+            primary={name}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
-            secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
           />
         </TableCell>
-
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell> */}
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell> */}
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{roleName}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{representPersonName}</TableCell>
+        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{email}</TableCell> */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{taxNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {!invoiceReceivedEmail ? email : invoiceReceivedEmail}
+        </TableCell>
         <TableCell>
           <Label
             variant="soft"
             color={
-              (status === 'Active' && 'success') ||
-              // (status === 'PENDING' && 'warning') ||
-              (status === 'Banned' && 'error') ||
-              'default'
+              (needAudit === true && 'error') || (needAudit === false && 'success') || 'default'
             }
           >
-            {status}
+            {needAudit === true ? 'Cần kiểm duyệt viên' : 'Không cần kiểm duyệt viên'}
           </Label>
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-          {/* <Tooltip title="Quick Edit" placement="top" arrow>
-            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" />
-            </IconButton>
-          </Tooltip> */}
-
-          {status !== 'Banned' && (
-            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-              <Iconify icon="eva:more-vertical-fill" />
-            </IconButton>
-          )}
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
         </TableCell>
       </TableRow>
-
-      {/* <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} /> */}
 
       <CustomPopover
         open={popover.open}
@@ -107,50 +94,44 @@ export default function BusinessTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        {status !== 'Banned' && (
-          <MenuItem
-            onClick={() => {
-              onSelectRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="mdi:eye" />
-            Xem chi tiết
-          </MenuItem>
-        )}
-        {roleName === 'Kiểm duyệt viên' && (
-          <MenuItem
-            onClick={() => {
-              onEditRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:pen-bold" />
-            Đăng ký
-          </MenuItem>
-        )}
-        {status !== 'Banned' && (
-          <MenuItem
-            onClick={() => {
-              confirm.onTrue();
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Cấm
-          </MenuItem>
-        )}
+        <MenuItem
+          onClick={() => {
+            onSelectRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="mdi:eye" />
+          Xem chi tiết
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          Chỉnh sửa
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            confirm.onTrue();
+            popover.onClose();
+          }}
+          sx={{ color: 'error.main' }}
+        >
+          <Iconify icon="solar:trash-bin-trash-bold" />
+          Vô hiệu hóa
+        </MenuItem>
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Bạn vẫn muốn cấm người này?"
+        title="Vô hiệu hóa"
+        content="Bạn vẫn muốn vô hiệu hóa doanh nghiệp này?"
         action={
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Cấm
+          <Button variant="contained" color="error" onClick={() => alert('cac, cho xin 50')}>
+            Vô hiệu hóa
           </Button>
         }
       />

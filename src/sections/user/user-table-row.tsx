@@ -139,7 +139,7 @@ export default function UserTableRow({
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Cấm
+            Vô hiệu hóa
           </MenuItem>
         )}
       </CustomPopover>
@@ -147,11 +147,11 @@ export default function UserTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Bạn vẫn muốn cấm người này?"
+        title="Vô hiệu hóa"
+        content="Bạn vẫn muốn vô hiệu hóa người này?"
         action={
           <Button variant="contained" color="error" onClick={handleDelete}>
-            Cấm
+            Vô hiệu hóa
           </Button>
         }
       />
