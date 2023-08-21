@@ -1,13 +1,10 @@
 // @mui
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
+import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import Tooltip from '@mui/material/Tooltip';
-import Avatar from '@mui/material/Avatar';
-import ListItemText from '@mui/material/ListItemText';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // types
@@ -18,7 +15,6 @@ import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 //
 import { IAuditor } from 'src/types/auditor';
-import UserQuickEditForm from './user-quick-edit-form';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +64,7 @@ export default function UserTableRow({
 
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell> */}
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell> */}
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell>
+        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell> */}
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{roleName}</TableCell>
         <TableCell>

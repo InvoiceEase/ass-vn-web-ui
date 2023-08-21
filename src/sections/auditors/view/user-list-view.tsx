@@ -17,7 +17,6 @@ import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 
 // routes
-import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // types
@@ -238,7 +237,7 @@ export default function AuditorsListView() {
           <Typography sx={{ mb: 5, flexGrow: 1 }} variant="h4">
             Quản lí nhân viên
           </Typography>
-          <Button
+          {/* <Button
             sx={{ mb: 5 }}
             component={RouterLink}
             href={paths.dashboard.user.new}
@@ -246,7 +245,7 @@ export default function AuditorsListView() {
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
             Thêm Kiểm Duyệt Viên
-          </Button>
+          </Button> */}
         </Stack>
         <Card>
           <Tabs
