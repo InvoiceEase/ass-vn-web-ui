@@ -603,7 +603,7 @@ export function useNavData(role: string | null = 'ADMIN') {
         subheader: t('Kết nối'),
         items: [
           { title: t('Nhà cung cấp'), path: paths.dashboard.provider.root, icon: ICONS.order },
-          { title: t('Nhân viên'), path: paths.dashboard.user.list, icon: ICONS.user },
+          { title: t('Nhân viên'), path: paths.dashboard.user.listAuditors, icon: ICONS.user },
         ],
       },
     ],
@@ -631,7 +631,6 @@ export function useNavData(role: string | null = 'ADMIN') {
             icon: ICONS.ecommerce,
 
           },
-
         ],
       },
     ],

@@ -114,7 +114,8 @@ export default function InvoiceTableRow({
                 InvoiceStatusConfig.unapproved.color) ||
               (status === InvoiceStatusConfig.unauthenticated.status &&
                 InvoiceStatusConfig.unauthenticated.color) ||
-              (status === InvoiceStatusConfig.wrong.status && InvoiceStatusConfig.wrong.color) ||
+              (status === InvoiceStatusConfig.notAuthenticated.status &&
+                InvoiceStatusConfig.notAuthenticated.color) ||
               'default'
             }
           >

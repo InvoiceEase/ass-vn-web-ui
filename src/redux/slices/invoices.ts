@@ -1,6 +1,7 @@
 import { Dispatch, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { IInvoiceState } from 'src/types/invoice';
+import { InvoiceStatusConfig } from 'src/sections/invoice/InvoiceStatusConfig';
+import { IInvoice, IInvoiceState } from 'src/types/invoice';
 import { API_ENDPOINTS } from 'src/utils/axios';
 
 const initialState: IInvoiceState = {
@@ -137,6 +138,39 @@ export function getInvoiceDetails(invoiceId: string) {
         }
       );
       dispatch(slice.actions.getInvoiceDetailsSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.getInvoiceDetailsFailure(error));
+    }
+  };
+}
+
+export function updateInvoiceStatus(invoice: IInvoice, status: string) {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getInvoiceDetailsStart());
+
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.invoice.details}${invoice.id}/status`,
+        {
+          version: invoice.version,
+          invoiceStatus: status === InvoiceStatusConfig.approved.status ? 4 : 5,
+        },
+        {
+          headers: headersList,
+        }
+      );
+      if (response.status === 200) {
+        dispatch(slice.actions.getInvoiceDetailsSuccess(response.data));
+      }
     } catch (error) {
       dispatch(slice.actions.getInvoiceDetailsFailure(error));
     }

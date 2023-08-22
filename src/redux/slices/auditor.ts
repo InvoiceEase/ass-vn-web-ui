@@ -71,3 +71,27 @@ export function getAuditors(status?: string | null, searchQuery?: string | null,
     }
   };
 }
+
+export function getAuditorsForBusiness(businessId: number) {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getAuditorsStart());
+    const token = sessionStorage.getItem('token');
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.users.listAuditors}/${businessId}`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getAuditorsSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.getAuditorsFailure(error));
+    }
+  };
+}

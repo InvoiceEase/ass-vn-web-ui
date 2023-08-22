@@ -1,22 +1,21 @@
 'use client';
 
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { useCallback, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 // routes
-import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import { useSearchParams } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // config
 // import { PATH_AFTER_LOGIN } from 'src/config-global';
 // hooks
@@ -24,14 +23,10 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
-import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { useRouter } from 'next/navigation';
-import { red } from '@mui/material/colors';
-import AuthClassicLayout from 'src/layouts/auth/classic';
-import axios from 'axios';
 import { GuestGuard } from 'src/auth/guard';
-import { FirebaseError } from 'firebase/app';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import Iconify from 'src/components/iconify';
+import AuthClassicLayout from 'src/layouts/auth/classic';
 
 // ----------------------------------------------------------------------
 
@@ -81,7 +76,11 @@ export default function FirebaseLoginView() {
         await login?.(data.email, data.password);
       } catch (error) {
         reset();
-        setErrorMsg('Bạn đã nhập sai tài khoản hoặc mật khẩu');
+        if (error.code === 'auth/user-disabled') {
+          setErrorMsg('Bạn đã bị khoá tài khoản, vui lòng liên hệ quản lý hệ thống!');
+        } else {
+          setErrorMsg('Bạn đã nhập sai tài khoản hoặc mật khẩu!');
+        }
       }
     },
     [login, reset, returnTo, user]

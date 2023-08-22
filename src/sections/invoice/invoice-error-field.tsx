@@ -23,7 +23,7 @@ const mapErrorFieldMessage = (type: string) => {
     case InvoiceErrorFieldEnum.Spare:
       return 'Hóa đơn không có trên cơ quan thuế';
     default:
-      return '';
+      return 'Hóa đơn sai thông tin';
   }
 };
 
