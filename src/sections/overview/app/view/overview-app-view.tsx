@@ -1,31 +1,23 @@
 'use client';
 
 // @mui
-import { useTheme } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/material/styles';
 // hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // _mock
-import { _appFeatured, _appAuthors, _appInstalled, _appRelated, _appInvoices } from 'src/_mock';
+import { _appFeatured } from 'src/_mock';
 // components
 import { useSettingsContext } from 'src/components/settings';
 // assets
 import { SeoIllustration } from 'src/assets/illustrations';
 //
-import AppWidget from '../app-widget';
-import AppWelcome from '../app-welcome';
-import AppFeatured from '../app-featured';
-import AppNewInvoice from '../app-new-invoice';
-import AppTopAuthors from '../app-top-authors';
-import AppTopRelated from '../app-top-related';
-import AppAreaInstalled from '../app-area-installed';
-import AppWidgetSummary from '../app-widget-summary';
-import AppCurrentDownload from '../app-current-download';
-import AppTopInstalledCountries from '../app-top-installed-countries';
 import { useAuthContext } from 'src/auth/hooks';
+import AppAreaInstalled from '../app-area-installed';
+import AppCurrentDownload from '../app-current-download';
+import AppFeatured from '../app-featured';
+import AppWelcome from '../app-welcome';
+import AppWidgetSummary from '../app-widget-summary';
 
 // ----------------------------------------------------------------------
 
@@ -41,14 +33,14 @@ export default function OverviewAppView() {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${user?.displayName}`}
-            description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+            title={`Xin chào 👋 \n ${user?.displayName}`}
+            description="Chào mừng bạn đến với hệ thống quản lý và lưu trữ hoá đơn. Chúc bạn có một trải nghiệm tuyệt vời!"
             img={<SeoIllustration />}
-            action={
-              <Button variant="contained" color="primary">
-                Go Now
-              </Button>
-            }
+            // action={
+            //   <Button variant="contained" color="primary">
+            //     Go Now
+            //   </Button>
+            // }
           />
         </Grid>
 
@@ -58,7 +50,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Invoices"
+            title="Tổng số lượng hoá đơn"
             percent={2.6}
             total={18765}
             chart={{
@@ -69,7 +61,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Value"
+            title="Tổng giá trị hoá đơn"
             percent={-0.2}
             total={4876}
             chart={{
@@ -81,7 +73,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Storage"
+            title="Kho lưu trữ"
             percent={29.4}
             total={678}
             chart={{
@@ -96,10 +88,10 @@ export default function OverviewAppView() {
             title="Tổng số lượng hóa đơn"
             chart={{
               series: [
-                { label: 'Provider A', value: 12244 },
-                { label: 'Provider B', value: 53345 },
-                { label: 'Provider C', value: 44313 },
-                { label: 'Provider D', value: 78343 },
+                { label: 'Nhà cung cấp A', value: 12244 },
+                { label: 'Nhà cung cấp B', value: 53345 },
+                { label: 'Nhà cung cấp C', value: 44313 },
+                { label: 'Nhà cung cấp D', value: 78343 },
               ],
             }}
           />
@@ -108,7 +100,7 @@ export default function OverviewAppView() {
         <Grid xs={12} md={6} lg={8}>
           <AppAreaInstalled
             title="Thống kê hóa đơn"
-            subheader="(+43%) than last year"
+            subheader="(+43%) so với năm rồi"
             chart={{
               categories: [
                 'Jan',
@@ -156,7 +148,7 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} lg={8}>
+        {/* <Grid xs={12} lg={8}>
           <AppNewInvoice
             title="New Invoice"
             tableData={_appInvoices}
@@ -168,9 +160,9 @@ export default function OverviewAppView() {
               { id: '' },
             ]}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppTopRelated title="Top Related Applications" list={_appRelated} />
         </Grid>
 
@@ -180,9 +172,9 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppTopAuthors title="Top Authors" list={_appAuthors} />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <Stack spacing={3}>
             <AppWidget
               title="Conversion"
@@ -203,7 +195,7 @@ export default function OverviewAppView() {
               }}
             />
           </Stack>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

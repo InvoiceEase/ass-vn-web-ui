@@ -1,7 +1,7 @@
-import merge from 'lodash/merge';
 import { ApexOptions } from 'apexcharts';
+import merge from 'lodash/merge';
 // @mui
-import { useTheme, alpha } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ export default function useChart(options?: ApexOptions) {
 
   const LABEL_TOTAL = {
     show: true,
-    label: 'Total',
+    label: 'Tổng cộng',
     color: theme.palette.text.secondary,
     fontSize: theme.typography.subtitle2.fontSize,
     fontWeight: theme.typography.subtitle2.fontWeight,

@@ -26,10 +26,10 @@ const OPTIONS = [
     label: 'Trang chủ',
     linkTo: '/',
   },
-  {
-    label: 'Cá nhân',
-    linkTo: paths.dashboard.user.profile,
-  },
+  // {
+  //   label: 'Cá nhân',
+  //   linkTo: paths.dashboard.user.profile,
+  // },
   {
     label: 'Cài đặt',
     linkTo: paths.dashboard.user.account,

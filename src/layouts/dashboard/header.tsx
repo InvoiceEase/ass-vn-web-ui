@@ -18,13 +18,7 @@ import { useEffect } from 'react';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
-import {
-  AccountPopover,
-  ContactsPopover,
-  NotificationsPopover,
-  Searchbar,
-  SettingsButton,
-} from '../_common';
+import { AccountPopover, SettingsButton } from '../_common';
 import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
 import { HEADER, NAV } from '../config-layout';
 
@@ -88,11 +82,11 @@ export default function Header({ onOpenNav }: Props) {
         </IconButton>
       )}
 
-      {!role?.includes(RoleCodeEnum.Auditor) ? (
+      {/* {!role?.includes(RoleCodeEnum.Auditor) ? (
         <Searchbar />
-      ) : (
-        businesses.allIds.length > 0 && <CompanySelectionDropdown />
-      )}
+      ) : ( */}
+      {businesses.allIds.length > 0 && <CompanySelectionDropdown />}
+      {/* )} */}
 
       <Stack
         flexGrow={1}
