@@ -3,21 +3,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
-import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Iconify from 'src/components/iconify/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import Iconify from 'src/components/iconify/iconify';
 
 // utils
 // routes
@@ -28,6 +23,7 @@ import { IUserItem } from 'src/types/profile';
 // assets
 // components
 import { Alert, InputAdornment } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
 import axios from 'axios';
 import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import { useSnackbar } from 'src/components/snackbar';
@@ -36,9 +32,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
-import { IBusiness } from 'src/types/business';
-import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
-import { Container } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -291,7 +284,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         confirm.onFalse();
       }
     } catch (e) {
-      setOnload(false)
+      setOnload(false);
       setError(true);
       setErrorMsg('Hủy thất bại');
       confirm.onFalse();
@@ -314,7 +307,12 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         title="Hủy quyền truy cập"
         content={`Hủy quyền truy cập của ${currentUser?.userFullName} vào công ty ${deleteComp}`}
         action={
-          <LoadingButton loading={onLoad} onClick={handleDeleteComp} variant="contained" color="error">
+          <LoadingButton
+            loading={onLoad}
+            onClick={handleDeleteComp}
+            variant="contained"
+            color="error"
+          >
             Hủy quyền truy cập
           </LoadingButton>
         }
@@ -406,7 +404,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                     />
                   </>
                 )}
-                {currentUser?.roleName === 'Kiểm duyệt viên' &&
+                {/* {currentUser?.roleName === 'Kiểm duyệt viên' &&
                   isView &&
                   defaultBizAud.length >= 1 &&
                   defaultBizAud[0] !== defaultBizForAuditor[0] && (
@@ -434,8 +432,8 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                         ))}
                       </List>
                     </Stack>
-                  )}
-                {currentUser?.roleName === 'Kiểm duyệt viên' &&
+                  )} */}
+                {/* {currentUser?.roleName === 'Kiểm duyệt viên' &&
                   isView &&
                   defaultBizAud.length < 1 && (
                     <Stack sx={{ display: 'flex' }}>
@@ -443,7 +441,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                         Chưa đăng ký công ty
                       </Typography>
                     </Stack>
-                  )}
+                  )} */}
               </Box>
               <Stack
                 direction="row-reverse"

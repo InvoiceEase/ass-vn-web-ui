@@ -64,7 +64,7 @@ export default function UserTableRow({
 
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell> */}
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{name}</TableCell> */}
-        {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell> */}
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{`0${phoneNumber.substring(3)}`}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{roleName}</TableCell>
         <TableCell>
@@ -115,7 +115,7 @@ export default function UserTableRow({
             Xem chi tiết
           </MenuItem>
         )}
-        {roleName === 'Kiểm duyệt viên' && (
+        {/* {roleName === 'Kiểm duyệt viên' && (
           <MenuItem
             onClick={() => {
               onEditRow();
@@ -137,7 +137,7 @@ export default function UserTableRow({
             <Iconify icon="solar:trash-bin-trash-bold" />
             Cấm
           </MenuItem>
-        )}
+        )} */}
       </CustomPopover>
 
       <ConfirmDialog
