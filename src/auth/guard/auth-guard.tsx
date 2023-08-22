@@ -44,8 +44,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       const token = sessionStorage.getItem('token');
       const JWT = parseJWT(token ?? '');
       const date = JWT.exp;
-      if (date > defaultDate) {
-        console.log('LOG OUT');
+      if (date > defaultDate || !token) {
         await logout();
         router.replace('');
         return;
