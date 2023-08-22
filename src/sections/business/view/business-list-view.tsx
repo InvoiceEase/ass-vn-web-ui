@@ -51,7 +51,7 @@ import { IAuditor } from 'src/types/auditor';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { getBusinesses, getBusinessesAdmin } from 'src/redux/slices/business';
-import { IBusiness, IBusinessTableFiltersAdmin } from 'src/types/business';
+import { IBusiness, IBusinessAdmin, IBusinessTableFiltersAdmin } from 'src/types/business';
 import BusinessTableToolbar from '../business-table-toolbar';
 import BusinessTableRow from '../business-table-row';
 import BusinessTableFiltersResult from '../business-table-filters-result';
@@ -61,7 +61,7 @@ const TABLE_HEAD = [
   { id: 'representPersonName', label: 'Người đại diện', width: 180 },
   { id: 'taxNumber', label: 'Mã số thuế', width: 180 },
   { id: 'invoiceReceivedEmail', label: 'Mail nhận hóa đơn', width: 100 },
-   { id: 'status', label: 'Cần kiểm duyệt viên', width: 100 },
+  //  { id: 'status', label: 'Cần kiểm duyệt viên', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -364,7 +364,7 @@ function applyFilter({
   comparator,
   filters,
 }: {
-  inputData: IBusiness[];
+  inputData: IBusinessAdmin[];
   comparator: (a: any, b: any) => number;
   filters: IBusinessTableFiltersAdmin;
 }) {

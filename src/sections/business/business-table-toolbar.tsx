@@ -58,12 +58,6 @@ export default function BusinessTableToolbar({
   );
 
 
-  const renderComp = (
-    <>
-      <InputLabel>Company</InputLabel>
-      <CompanySelectionDropdown />
-    </>
-  );
 
   return (
       <Stack

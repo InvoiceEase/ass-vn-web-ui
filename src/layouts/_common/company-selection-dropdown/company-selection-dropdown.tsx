@@ -10,7 +10,7 @@ import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IBusiness } from 'src/types/business';
 
-const defaultBusinessItem: IBusiness = {
+const defaultBusinessItem = {
   id: '0',
   createdAt: '',
   modifiedAt: '',

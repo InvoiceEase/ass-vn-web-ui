@@ -172,7 +172,6 @@ export function getBusinessesAdmin() {
           headers: headersList,
         }
       );
-      console.log('dâta', response.data.content)
       dispatch(slice.actions.getBusinessesAdminSuccess(response.data.content));
     } catch (error) {
       console.log('error', error);

@@ -18,14 +18,14 @@ import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 //
 import { IAuditor } from 'src/types/auditor';
-import { IBusiness } from 'src/types/business';
+import { IBusiness, IBusinessAdmin } from 'src/types/business';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   selected: boolean;
   onEditRow: VoidFunction;
-  row: IBusiness;
+  row: IBusinessAdmin;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
   onResetRow: VoidFunction;
@@ -70,7 +70,7 @@ export default function BusinessTableRow({
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
           {!invoiceReceivedEmail ? email : invoiceReceivedEmail}
         </TableCell>
-        <TableCell>
+        {/* <TableCell>
           <Label
             variant="soft"
             color={
@@ -79,7 +79,7 @@ export default function BusinessTableRow({
           >
             {needAudit === true ? 'Cần kiểm duyệt viên' : 'Không cần kiểm duyệt viên'}
           </Label>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

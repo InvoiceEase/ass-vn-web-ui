@@ -133,7 +133,7 @@ export default function UserListView() {
   );
 
   const handleDeleteRow = useCallback(
-    async (id: string) => {
+    async (id: string, isActive: boolean) => {
       const resetedUser = _userList.filter((item) => item.id === id);
       const token = sessionStorage.getItem('token');
       const accessToken: string = `Bearer ${token}`;
@@ -146,7 +146,7 @@ export default function UserListView() {
           version: 0,
           userId: Number(resetedUser[0].id),
           firebaseUserId: resetedUser[0].firebaseUserId,
-          status: 'BANNED',
+          status: isActive ? 'ACTIVE' : 'BANNED',
         };
         const response = await axios.put(
           `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status?version=${req.version}&userId=${req.userId}&firebaseUserId=${req.firebaseUserId}&status=${req.status}`,
@@ -154,8 +154,15 @@ export default function UserListView() {
           { headers: headersList }
         );
         if (response.status === 200) {
-          enqueueSnackbar("Đã vô hiệu hóa người dùng thành công")
-          router.replace(paths.dashboard.user.list);
+          const msgSts = isActive
+            ? 'Đã kích hoạt người dùng thành công'
+            : 'Đã vô hiệu hóa người dùng thành công';
+          enqueueSnackbar(msgSts);
+          // router.push(paths.dashboard.root);
+
+          dispatch(getAuditors());
+
+          // table.onUpdatePageDeleteRow(dataInPage.length);
         }
       } catch (e) {
         confirm.onFalse();
@@ -352,7 +359,8 @@ export default function UserListView() {
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => handleSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id, false)}
+                        onActiveRow={() => handleDeleteRow(row.id, true)}
                         onEditRow={() => handleEditRow(row.id)}
                         onResetRow={() => handeResetRow(row.id)}
                       />

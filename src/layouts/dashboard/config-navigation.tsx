@@ -616,7 +616,7 @@ export function useNavData(role: string | null = 'ADMIN') {
       // ----------------------------------------------------------------------
 
       {
-        // subheader: t('Kết nối'),
+        subheader: t('Quản lí'),
         items: [
           // USER
           {

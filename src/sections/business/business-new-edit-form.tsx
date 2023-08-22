@@ -36,7 +36,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
-import { IBusiness } from 'src/types/business';
+import { IBusiness, IBusinessAdmin } from 'src/types/business';
 import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
 import { Container } from '@mui/system';
 
@@ -48,10 +48,15 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   expiredDate: string;
   password: string;
   auditorBiz: string;
+  representPersonName: string;
+  invoiceReceivedEmail: string;
+  taxNumber: string;
+  email: string;
+  name: string;
 }
 
 type Props = {
-  currentBiz?: IBusiness;
+  currentBiz?: IBusinessAdmin;
   isView?: boolean;
 };
 
@@ -72,24 +77,21 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
       organizationId: '',
     },
   ];
-  const OPTION_AUDIT = [true, false];
   const [defaultBizAud, setDefaultBizAud] = useState(defaultBizForAuditor);
 
-  const businesses = useSelector((state) => state.business.businesses);
   const [error, setError] = useState(false);
-  const [deleteComp, setDeleteComp] = useState('');
   const [onLoad, setOnload] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [date, setDate] = useState(new Date());
   const [bizDelete, setBizDelete] = useState('');
   const { enqueueSnackbar } = useSnackbar();
-  const password = useBoolean();
   const resolver = {
     name: Yup.string().required('Vui lòng nhập tên doanh nghiệp'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
     taxNumber: Yup.string().required('Vui lòng nhập mã số thuế'),
-    invoiceReceivedEmail: Yup.string().required('Vui lòng nhập mail nhận hóa đơn'),
-    engName: Yup.string().required('Vui lòng nhập tên tiếng anh'),
+    invoiceReceivedEmail: Yup.string()
+      .required('Vui lòng nhập email nhận hóa đơn')
+      .email('Vui lòng nhập email hợp lệ'),
     representPersonName: Yup.string().required('Vui lòng nhập tên người đại diện'),
   };
   const defaultNoCurr = {
@@ -103,7 +105,7 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
     taxNumber: currentBiz?.taxNumber || '',
     email: currentBiz?.email || '',
     logo: currentBiz?.logo || '',
-    invoiceReceivedEmail: currentBiz?.invoiceReceivedEmail || '',
+    invoiceReceivedEmail: currentBiz?.invoiceReceivedEmail || currentBiz?.email,
     engName: currentBiz?.engName || '',
     representPersonName: currentBiz?.representPersonName || '',
     needAudit: currentBiz?.needAudit || true,
@@ -144,11 +146,13 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
     }
   }, []);
   const resolverCurren = {
-    userFullName: Yup.string().required('Vui lòng nhập họ tên'),
+    name: Yup.string().required('Vui lòng nhập tên doanh nghiệp'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
-    phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu'),
-    businessId: Yup.string().required('Company is required'),
+    taxNumber: Yup.string().required('Vui lòng nhập mã số thuế'),
+    invoiceReceivedEmail: Yup.string()
+      .required('Vui lòng nhập email nhận hóa đơn')
+      .email('Vui lòng nhập email hợp lệ'),
+    representPersonName: Yup.string().required('Vui lòng nhập tên người đại diện'),
   };
   const NewUserSchema = Yup.object().shape(currentBiz ? resolverCurren : resolver);
 
@@ -182,67 +186,48 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
         accept: '*/*',
         Authorization: accessToken,
       };
-      if (!currentBiz) {
-        try {
-          setError(false);
-          data.role = 'AUDITOR';
-          data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
-          console.log('Data', data);
-          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
-          const response = await axios.post(url, data, {
+      try {
+        setError(false);
+        const url = `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}/api/v1/businesses`;
+        const response = await axios.put(
+          url,
+          {
+            version: 0,
+            name: data.name,
+            address: data.address,
+            website: currentBiz?.website || '',
+            taxNumber: data.taxNumber,
+            email: data.email,
+            logo: currentBiz?.logo || '',
+            invoiceReceivedEmail: data.invoiceReceivedEmail,
+            engName: currentBiz?.engName || '',
+            digitalSignatureDueDate: currentBiz?.digitalSignatureDueDate || '',
+            digitalSignaturePeriod: currentBiz?.digitalSignaturePeriod || 0,
+            digitalSignatureRegisDate: currentBiz?.digitalSignatureRegisDate || '',
+            representPersonName: data.representPersonName || '',
+            declarationPeriod: currentBiz?.declarationPeriod || 0,
+            needAudit: true,
+            businessTypeId: currentBiz?.businessTypeId || 0,
+            domainBusinessId: currentBiz?.domainBusinessId || 0,
+          },
+          {
+            data: { data },
+            params: { id: data.id },
             headers: headersList,
-          });
-          if (response.status === 201) {
-            enqueueSnackbar('Thêm thành công');
-            router.push(paths.dashboard.user.list);
-          } else {
-            setErrorMsg('Thêm thất bại');
-            setError(true);
           }
-        } catch (e) {
+        );
+        if (response.status === 200) {
           reset();
-          setErrorMsg('Thêm thất bại');
-          setError(true);
-        }
-      } else {
-        try {
-          const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
-          if (
-            date?.getDate() === DEFAULT_DATE.getDate() &&
-            date?.getMonth() === DEFAULT_DATE.getMonth() &&
-            date?.getFullYear() === DEFAULT_DATE.getFullYear()
-          ) {
-            setErrorMsg('Vui lòng chọn ngày sau hôm nay');
-            setError(true);
-          } else {
-            setError(false);
-            const bizId = bizLst.filter((item) => item.name.localeCompare(data.businessId) === 0);
-            data.businessId = bizId[0].id;
-            const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
-            const param = {
-              version: 0,
-              businessId: data.businessId,
-              auditorId: currentBiz.id,
-              password: data.password,
-              expiredDate: date.toISOString(),
-            };
-            const response = await axios.post(url, param, {
-              headers: headersList,
-            });
-            if (response.status === 200) {
-              reset();
-              enqueueSnackbar('Cập nhật thành công');
-              router.push(paths.dashboard.user.list);
-            } else {
-              setErrorMsg('Cập nhật thất bại');
-              setError(true);
-            }
-          }
-        } catch (e) {
-          reset();
+          enqueueSnackbar('Cập nhật thành công');
+          router.push(paths.dashboard.user.list);
+        } else {
           setErrorMsg('Cập nhật thất bại');
           setError(true);
         }
+      } catch (e) {
+        reset();
+        setErrorMsg('Cập nhật thất bại');
+        setError(true);
       }
     },
     [currentBiz, enqueueSnackbar, reset, router, date]
@@ -381,88 +366,20 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
                   name="representPersonName"
                   label="Người dại diện"
                 />
-                <RHFAutocomplete
-                  sx={{ fontWeight: 'bold' }}
-                  name="needAuditor"
-                  disabled={!!isView}
-                  // defaultValue="Có"
-                  label="Cần người kiểm duyệt"
-                  options={OPTION_AUDIT}
-                  getOptionLabel={(option) => option.toString()}
-                  isOptionEqualToValue={(option, value) => option === value}
-                  renderOption={(props, option) => <li {...props}>{option}</li>}
-                />
-                {/*  <RHFTextField
-                  sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentBiz}
-                  name="userFullName"
-                  label="Họ Tên"
-                />
-                <RHFTextField
-                  sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentBiz}
-                  name="userFullName"
-                  label="Họ Tên"
-                />
-*/}
-                {/* <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" /> */}
-
-                {/* {!isView && (
-                  <RHFTextField
-                    sx={{ fontWeight: 'bold' }}
-                    name="password"
-                    label="Mật khẩu"
-                    type={password.value ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={password.onToggle} edge="end">
-                            <Iconify
-                              icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                            />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                )}
-                {currentBiz && !isView && (
-                  <>
-                    <RHFAutocomplete
-                      sx={{ fontWeight: 'bold' }}
-                      name="businessId"
-                      label="Công ty"
-                      options={businesses.allIds.map(
-                        (businessId) => businesses.byId[businessId].name
-                      )}
-                      getOptionLabel={(option) => option.toString()}
-                      isOptionEqualToValue={(option, value) => option === value}
-                      renderOption={(props, option) => <li {...props}>{option}</li>}
-                    />
-                    <DatePicker
-                      defaultValue={new Date()}
-                      value={date}
-                      onChange={(value) => setDate(value ?? new Date())}
-                      disablePast
-                      closeOnSelect
-                      label="Ngày kết thúc hợp đồng"
-                    />
-                  </>
-                )}
-                */}
-                {isView &&
-                  defaultBizAud.length >= 1 &&
-                  defaultBizAud[0] !== defaultBizForAuditor[0] && (
-                    <Stack sx={{ display: 'flex' }}>
-                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Kiểm duyệt viên đã được đăng ký
-                      </Typography>
-                      <List>
-                        {defaultBizAud.map((item) => (
-                          <ListItem disablePadding>
-                            <Iconify width={33} icon="mdi:dot" />
-                            <ListItemText secondary={` ${item.userFullName}`} />
-                            {/* <ListItemButton
+              </Box>
+              {isView &&
+                defaultBizAud.length >= 1 &&
+                defaultBizAud[0] !== defaultBizForAuditor[0] && (
+                  <Stack sx={{ display: 'flex' }}>
+                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                      Kiểm duyệt viên đã được đăng ký
+                    </Typography>
+                    <List>
+                      {defaultBizAud.map((item) => (
+                        <ListItem disablePadding>
+                          <Iconify width={33} icon="mdi:dot" />
+                          <ListItemText secondary={` ${item.userFullName}`} />
+                          {/* <ListItemButton
                               sx={{ maxWidth: 50, maxHeight: 50 }}
                               onClick={() => handleConfirmDeleteComp(item.name)}
                             >
@@ -473,19 +390,18 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
                                 icon="solar:trash-bin-trash-bold"
                               />
                             </ListItemButton> */}
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Stack>
-                  )}
-                {isView && defaultBizAud.length < 1 && (
-                  <Stack sx={{ display: 'flex' }}>
-                    <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                      Chưa đăng ký công ty
-                    </Typography>
+                        </ListItem>
+                      ))}
+                    </List>
                   </Stack>
                 )}
-              </Box>
+              {isView && defaultBizAud.length < 1 && (
+                <Stack sx={{ display: 'flex' }}>
+                  <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
+                    Chưa có kiểm duyệt viên
+                  </Typography>
+                </Stack>
+              )}
               <Stack
                 direction="row-reverse"
                 spacing={2}

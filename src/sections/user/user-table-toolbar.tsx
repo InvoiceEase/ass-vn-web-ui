@@ -75,12 +75,6 @@ export default function UserTableToolbar({
     />
   );
 
-  const renderComp = (
-    <>
-      <InputLabel>Company</InputLabel>
-      <CompanySelectionDropdown />
-    </>
-  );
 
   return (
     <>
