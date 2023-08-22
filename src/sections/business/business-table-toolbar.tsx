@@ -16,21 +16,20 @@ import { Autocomplete, OutlinedInput } from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
+import { IBusinessTableFiltersAdmin, IBusinessTableFilterValue } from 'src/types/business';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IUserTableFiltersAdmin;
-  onFilters: (name: string, value: IUserTableFilterValue) => void;
+  filters: IBusinessTableFiltersAdmin;
+  onFilters: (name: string, value: IBusinessTableFilterValue) => void;
   //
-  roleOptions: string[];
 };
 
-export default function UserTableToolbar({
+export default function BusinessTableToolbar({
   filters,
   onFilters,
   //
-  roleOptions,
 }: Props) {
   const popover = usePopover();
   const optionLst = [
@@ -40,18 +39,9 @@ export default function UserTableToolbar({
     'Quản lý doanh nghiệp',
   ];
   const [option, setOption] = useState(optionLst[0]);
-  const [role, setRole] = useState(filters.role);
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
-    },
-    [onFilters]
-  );
-
-  const handleFilterRole = useCallback(
-    (event: SelectChangeEvent<string>) => {
-      setRole(event.target.value);
-      onFilters('role', event.target.value);
     },
     [onFilters]
   );
@@ -66,18 +56,10 @@ export default function UserTableToolbar({
       renderInput={(params) => <TextField {...params} label="Option" />}
     />
   );
-  const renderUserRole = (
-    <Autocomplete
-      value={filters.role}
-      options={roleOptions}
-      onChange={() => handleFilterRole}
-      renderInput={(params) => <TextField {...params} label="Role" />}
-    />
-  );
+
 
 
   return (
-    <>
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
@@ -90,33 +72,6 @@ export default function UserTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Chức vụ</InputLabel>
-          <Select
-            value={filters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Chức vụ" />}
-            renderValue={(selected) => selected}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
-          >
-            {roleOptions.map((item) => (
-              <MenuItem key={item} value={item}>
-                {/* <Checkbox disableRipple size="small" checked={filters.role.includes(item)} /> */}
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
@@ -139,39 +94,6 @@ export default function UserTableToolbar({
         </Stack>
       </Stack>
 
-      {/* <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
-      >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
-      </CustomPopover> */}
-    </>
   );
 }

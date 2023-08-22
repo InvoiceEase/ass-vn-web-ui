@@ -616,13 +616,20 @@ export function useNavData(role: string | null = 'ADMIN') {
       // ----------------------------------------------------------------------
 
       {
-        subheader: t('Kết nối'),
+        subheader: t('Quản lí'),
         items: [
           // USER
           {
             title: t('Người dùng'),
             path: paths.dashboard.user.list,
             icon: ICONS.user,
+
+          },
+          {
+            title: t('Doanh nghiệp'),
+            path: paths.dashboard.business.list,
+            icon: ICONS.ecommerce,
+
           },
         ],
       },

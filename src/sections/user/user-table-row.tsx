@@ -29,6 +29,7 @@ type Props = {
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
   onResetRow: VoidFunction;
+  onActiveRow: VoidFunction;
 };
 
 export default function UserTableRow({
@@ -38,17 +39,24 @@ export default function UserTableRow({
   onSelectRow,
   onDeleteRow,
   onResetRow,
+  onActiveRow,
 }: Props) {
   const { userFullName, phoneNumber, roleName, email, status } = row;
 
   const confirm = useBoolean();
+  const confirmActive = useBoolean();
 
   const quickEdit = useBoolean();
 
   const popover = usePopover();
-  const handleDelete = () => {
-    confirm.onFalse();
-    onDeleteRow();
+  const handleDelete = (isActive: boolean) => {
+    if (isActive) {
+      confirmActive.onFalse();
+      onActiveRow();
+    } else {
+      confirm.onFalse();
+      onDeleteRow();
+    }
   };
   return (
     <>
@@ -92,11 +100,11 @@ export default function UserTableRow({
             </IconButton>
           </Tooltip> */}
 
-          {status !== 'Banned' && (
-            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-              <Iconify icon="eva:more-vertical-fill" />
-            </IconButton>
-          )}
+          {/* {status !== 'Banned' && ( */}
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+          {/* )} */}
         </TableCell>
       </TableRow>
 
@@ -119,7 +127,7 @@ export default function UserTableRow({
             Xem chi tiết
           </MenuItem>
         )}
-        {roleName === 'Kiểm duyệt viên' && (
+        {roleName === 'Kiểm duyệt viên' && status !== 'Banned' && (
           <MenuItem
             onClick={() => {
               onEditRow();
@@ -130,7 +138,7 @@ export default function UserTableRow({
             Đăng ký
           </MenuItem>
         )}
-        {status !== 'Banned' && (
+        {status !== 'Banned' ? (
           <MenuItem
             onClick={() => {
               confirm.onTrue();
@@ -139,7 +147,18 @@ export default function UserTableRow({
             sx={{ color: 'error.main' }}
           >
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Cấm
+            Vô hiệu hóa
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              confirmActive.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'success.main' }}
+          >
+            <Iconify icon="fontisto:checkbox-active" />
+            Kích hoạt
           </MenuItem>
         )}
       </CustomPopover>
@@ -147,11 +166,22 @@ export default function UserTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Bạn vẫn muốn cấm người này?"
+        title="Vô hiệu hóa"
+        content="Bạn vẫn muốn vô hiệu hóa người này?"
         action={
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Cấm
+          <Button variant="contained" color="error" onClick={() => handleDelete(false)}>
+            Vô hiệu hóa
+          </Button>
+        }
+      />
+      <ConfirmDialog
+        open={confirmActive.value}
+        onClose={confirmActive.onFalse}
+        title="Kích hoạt"
+        content="Bạn muốn kích hoạt người dùng này?"
+        action={
+          <Button variant="contained" color="success" onClick={() => handleDelete(true)}>
+            Kích hoạt
           </Button>
         }
       />

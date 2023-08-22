@@ -285,13 +285,15 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         }
       );
       if (response.status === 200) {
+        const newList = defaultBizAud.filter((item) => item.id !== bizDelete);
+        setDefaultBizAud(newList);
         enqueueSnackbar('Hủy quyền truy cập thành công');
         setOnload(false);
         router.refresh();
         confirm.onFalse();
       }
     } catch (e) {
-      setOnload(false)
+      setOnload(false);
       setError(true);
       setErrorMsg('Hủy thất bại');
       confirm.onFalse();
@@ -314,7 +316,12 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         title="Hủy quyền truy cập"
         content={`Hủy quyền truy cập của ${currentUser?.userFullName} vào công ty ${deleteComp}`}
         action={
-          <LoadingButton loading={onLoad} onClick={handleDeleteComp} variant="contained" color="error">
+          <LoadingButton
+            loading={onLoad}
+            onClick={handleDeleteComp}
+            variant="contained"
+            color="error"
+          >
             Hủy quyền truy cập
           </LoadingButton>
         }

@@ -48,31 +48,33 @@ import Typography from '@mui/material/Typography';
 import { getAuditors } from 'src/redux/slices/auditor';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
-import UserTableFiltersResult from '../user-table-filters-result';
-import UserTableRow from '../user-table-row';
-import UserTableToolbar from '../user-table-toolbar';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
+import { getBusinesses, getBusinessesAdmin } from 'src/redux/slices/business';
+import { IBusiness, IBusinessAdmin, IBusinessTableFiltersAdmin } from 'src/types/business';
+import BusinessTableToolbar from '../business-table-toolbar';
+import BusinessTableRow from '../business-table-row';
+import BusinessTableFiltersResult from '../business-table-filters-result';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', width: 300 },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  // { id: 'email', label: 'Email', width: 300 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'name', label: 'Tên doanh nghiệp', width: 300 },
+  { id: 'representPersonName', label: 'Người đại diện', width: 180 },
+  { id: 'taxNumber', label: 'Mã số thuế', width: 180 },
+  { id: 'invoiceReceivedEmail', label: 'Mail nhận hóa đơn', width: 100 },
+  //  { id: 'status', label: 'Cần kiểm duyệt viên', width: 100 },
   { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   name: '',
-  role: '',
-  status: 'All',
+  email: '',
+  representPersonName: '',
 };
 
-export default function UserListView() {
+export default function BusinessListView() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAuditors());
+    dispatch(getBusinessesAdmin());
   }, []);
   const table = useTable();
 
@@ -81,29 +83,14 @@ export default function UserListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
-
-  const _userList = useSelector((state) => state.auditor.auditors);
+  const _businessList = useSelector((state) => state.business.businessAdmin);
   const { enqueueSnackbar } = useSnackbar();
 
   const [filters, setFilters] = useState(defaultFilters);
-  const [tableData, setTableData] = useState(_userList);
-  const [role, setRole] = useState(['']);
-  const [userStatus, setUserStatus] = useState(['']);
+  const [tableData, setTableData] = useState(_businessList);
   useEffect(() => {
-    setTableData(_userList);
-    const userRole: string[] = [];
-    const userSts: string[] = ['All'];
-    _userList.forEach((item) => {
-      if (!userRole.includes(item.roleName)) {
-        userRole.push(item.roleName);
-      }
-      if (!userSts.includes(item.status)) {
-        userSts.push(item.status);
-      }
-    });
-    setRole(userRole);
-    setUserStatus(userSts);
-  }, [_userList]);
+    setTableData(_businessList);
+  }, [_businessList]);
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
@@ -133,47 +120,40 @@ export default function UserListView() {
   );
 
   const handleDeleteRow = useCallback(
-    async (id: string, isActive: boolean) => {
-      const resetedUser = _userList.filter((item) => item.id === id);
-      const token = sessionStorage.getItem('token');
-      const accessToken: string = `Bearer ${token}`;
-      const headersList = {
-        accept: '*/*',
-        Authorization: accessToken,
-      };
-      try {
-        const req = {
-          version: 0,
-          userId: Number(resetedUser[0].id),
-          firebaseUserId: resetedUser[0].firebaseUserId,
-          status: isActive ? 'ACTIVE' : 'BANNED',
-        };
-        const response = await axios.put(
-          `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status?version=${req.version}&userId=${req.userId}&firebaseUserId=${req.firebaseUserId}&status=${req.status}`,
-          {},
-          { headers: headersList }
-        );
-        if (response.status === 200) {
-          const msgSts = isActive
-            ? 'Đã kích hoạt người dùng thành công'
-            : 'Đã vô hiệu hóa người dùng thành công';
-          enqueueSnackbar(msgSts);
-          // router.push(paths.dashboard.root);
-
-          dispatch(getAuditors());
-
-          // table.onUpdatePageDeleteRow(dataInPage.length);
-        }
-      } catch (e) {
-        confirm.onFalse();
-      }
+    async (id: string) => {
+      // const resetedUser = _userList.filter((item) => item.id === id);
+      // const token = sessionStorage.getItem('token');
+      // const accessToken: string = `Bearer ${token}`;
+      // const headersList = {
+      //   accept: '*/*',
+      //   Authorization: accessToken,
+      // };
+      // try {
+      //   const req = {
+      //     version: 0,
+      //     // userId: Number(resetedUser[0].id),
+      //     // firebaseUserId: resetedUser[0].firebaseUserId,
+      //     status: 'BANNED',
+      //   };
+      //   const response = await axios.put(
+      //     `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status?version=${req.version}&userId=${req.userId}&firebaseUserId=${req.firebaseUserId}&status=${req.status}`,
+      //     {},
+      //     { headers: headersList }
+      //   );
+      //   if (response.status === 200) {
+      //     enqueueSnackbar('Đã vô hiệu hóa người dùng thành công');
+      //     router.replace(paths.dashboard.user.list);
+      //   }
+      // } catch (e) {
+      //   confirm.onFalse();
+      // }
     },
     [dataInPage.length, table, tableData]
   );
 
   const handeResetRow = useCallback(
     async (id: string) => {
-      const resetedUser = _userList.filter((item) => item.id === id);
+      // const resetedUser = _userList.filter((item) => item.id === id);
       const token = sessionStorage.getItem('token');
       const accessToken: string = `Bearer ${token}`;
       const headersList = {
@@ -183,8 +163,8 @@ export default function UserListView() {
       try {
         const req = {
           version: 0,
-          userId: Number(resetedUser[0].id),
-          firebaseUserId: Number(resetedUser[0].firebaseUserId),
+          // userId: Number(resetedUser[0].id),
+          // firebaseUserId: Number(resetedUser[0].firebaseUserId),
           status: 'BANNED',
         };
         const response = await axios.put(
@@ -216,14 +196,14 @@ export default function UserListView() {
 
   const handleEditRow = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.user.edit(id));
+      router.push(paths.dashboard.business.edit(id));
     },
     [router]
   );
 
   const handleSelectRow = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.user.detail(id));
+      router.push(paths.dashboard.business.detail(id));
     },
     [router]
   );
@@ -244,62 +224,27 @@ export default function UserListView() {
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
           <Typography sx={{ mb: 5, flexGrow: 1 }} variant="h4">
-            Quản lí người dùng
+            Quản lí doanh nghiệp
           </Typography>
-          <Button
+          {/* <Button
             sx={{ mb: 5 }}
             component={RouterLink}
             href={paths.dashboard.user.new}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            Thêm Kiểm Duyệt Viên
-          </Button>
+            Thêm Doanh Nghiệp
+          </Button> */}
         </Stack>
         <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-              display: 'flex',
-              position: 'static',
-            }}
-          >
-            {userStatus.map((tab) => (
-              <Tab
-                key={tab}
-                iconPosition="end"
-                value={tab}
-                label={tab}
-                icon={
-                  <Label
-                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
-                    color={
-                      (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
-                    }
-                  >
-                    {tab === 'All' && _userList.length}
-                    {tab === 'Active' &&
-                      _userList.filter((user) => user.status === 'Active').length}
-
-                    {tab === 'Banned' &&
-                      _userList.filter((user) => user.status === 'Banned').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
-          <UserTableToolbar
+          <BusinessTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
-            roleOptions={role}
           />
 
-          {canReset && (
-            <UserTableFiltersResult
+          {/* {canReset && (
+            <BusinessTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               //
@@ -308,7 +253,7 @@ export default function UserListView() {
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -354,13 +299,12 @@ export default function UserListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <UserTableRow
+                      <BusinessTableRow
                         key={row.id}
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => handleSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id, false)}
-                        onActiveRow={() => handleDeleteRow(row.id, true)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
                         onResetRow={() => handeResetRow(row.id)}
                       />
@@ -420,11 +364,11 @@ function applyFilter({
   comparator,
   filters,
 }: {
-  inputData: IAuditor[];
+  inputData: IBusinessAdmin[];
   comparator: (a: any, b: any) => number;
-  filters: IUserTableFiltersAdmin;
+  filters: IBusinessTableFiltersAdmin;
 }) {
-  const { name, status, role } = filters;
+  const { name } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -438,18 +382,10 @@ function applyFilter({
 
   if (name) {
     inputData = inputData.filter(
-      (user) =>
-        user.userFullName.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        user.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (biz) =>
+        biz.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        biz.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
-  }
-
-  if (status !== 'All') {
-    inputData = inputData.filter((user) => user.status === status);
-  }
-
-  if (role.length) {
-    inputData = inputData.filter((user) => role.includes(user.roleName));
   }
 
   return inputData;
