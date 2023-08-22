@@ -645,10 +645,10 @@ export function useNavData(role: string | null = 'ADMIN') {
         subheader: t('Hồ sơ'),
         items: [
           // USER
-          {
-            title: t('admin'),
-            path: paths.dashboard.user.list,
-            icon: ICONS.user,
+          // {
+          //   title: t('admin'),
+          //   path: paths.dashboard.user.list,
+          //   icon: ICONS.user,
             // children: [
             // { title: t('profile'), path: paths.dashboard.user.root },
             // { title: t('cards'), path: paths.dashboard.user.cards },
@@ -657,7 +657,7 @@ export function useNavData(role: string | null = 'ADMIN') {
             // { title: t('edit'), path: paths.dashboard.user.demo.edit },
             // { title: t('account'), path: paths.dashboard.user.account },
             // ],
-          },
+          // },
 
           // PRODUCT
           // {
