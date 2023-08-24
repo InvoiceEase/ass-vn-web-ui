@@ -77,7 +77,7 @@ export function getProfileData() {
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.profile.business}/${businessId}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.profile.business}/${businessId}`,
         {
           headers: headersList,
         }

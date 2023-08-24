@@ -188,7 +188,7 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
       };
       try {
         setError(false);
-        const url = `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}/api/v1/businesses`;
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/businesses`;
         const response = await axios.put(
           url,
           {

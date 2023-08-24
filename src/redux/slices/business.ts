@@ -114,7 +114,7 @@ export function getBusinessTypes() {
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.types}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.types}`,
         {
           headers: headersList,
         }
@@ -139,7 +139,7 @@ export function getBusinesses() {
     };
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.list}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.list}`,
         {
           params: { page: 0, size: 999, sort: '' },
           headers: headersList,
@@ -166,7 +166,7 @@ export function getBusinessesAdmin() {
     };
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_BUSINESS_API}${API_ENDPOINTS.business.list}`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.list}`,
         {
           params: { page: 0, size: 999, sort: '' },
           headers: headersList,

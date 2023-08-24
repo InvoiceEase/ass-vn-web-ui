@@ -45,7 +45,6 @@ jobs:
       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
       NEXT_PUBLIC_BE_ADMIN_API: ${{ secrets.ADMIN_API }}
       NEXT_PUBLIC_BE_ACCOUNTANT_API: ${{ secrets.ACCOUNTANT_API }}
-      NEXT_PUBLIC_BE_BUSINESS_API: ${{ secrets.BUSINESS_API }}
     steps:
       - uses: actions/checkout@v3
 
