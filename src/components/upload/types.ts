@@ -1,6 +1,6 @@
 import { DropzoneOptions } from 'react-dropzone';
 // @mui
-import { Theme, SxProps } from '@mui/material/styles';
+import { SxProps, Theme } from '@mui/material/styles';
 import { IMail } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
@@ -24,6 +24,7 @@ export interface UploadProps extends DropzoneOptions {
   //
   text?: string;
   mail?: IMail;
+  isUploadInvoice?: boolean;
   files?: (File | string)[];
   onUpload?: VoidFunction;
   onRemove?: (file: CustomFile | string) => void;

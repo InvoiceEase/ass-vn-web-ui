@@ -93,7 +93,7 @@ export default function InvoiceTableRow({
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(invoiceCreatedDate), 'dd MMM yyyy')}
+            primary={format(new Date(invoiceCreatedDate), 'dd/MM/yyyy')}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           />
         </TableCell>

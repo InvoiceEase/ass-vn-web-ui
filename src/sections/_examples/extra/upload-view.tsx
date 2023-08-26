@@ -2,22 +2,21 @@
 
 import { useCallback, useState } from 'react';
 // @mui
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import { getMails } from 'src/redux/slices/mail';
 import Timeline from '@mui/lab/Timeline';
-import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
+import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Container from '@mui/material/Container';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Stack from '@mui/material/Stack';
+import { getMails } from 'src/redux/slices/mail';
 // routes
 import { paths } from 'src/routes/paths';
 // utils
@@ -25,31 +24,36 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import axios from 'axios';
+import Iconify from 'src/components/iconify/iconify';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { useSnackbar } from 'src/components/snackbar';
 import { Upload } from 'src/components/upload';
+import { MessageType } from 'src/enums/MessageType';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
-import { useDispatch } from 'src/redux/store';
+import { getInvoices } from 'src/redux/slices/invoices';
+import { useDispatch, useSelector } from 'src/redux/store';
 import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
-import Typography from 'src/theme/overrides/components/typography';
-import Iconify from 'src/components/iconify/iconify';
-import { MessageType } from 'src/enums/MessageType';
+import { setTimeout } from 'timers';
 // ----------------------------------------------------------------------
 type Props = {
   mail?: IMail;
+  isUploadInvoice?: boolean;
   onClickCancel: () => void;
 };
 
-export default function UploadView({ mail, onClickCancel }: Props) {
+export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Props) {
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const preview = useBoolean();
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
-  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID');
-  const roleCode = sessionStorage.getItem('roleCode');
+  const roleCode = sessionStorage.getItem('roleCode') ?? '';
   const orgId = sessionStorage.getItem('orgId');
+  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID') ?? '0';
   const businessSearchQuery = sessionStorage.getItem('businessSearchQuery');
+  const emailAddress = useSelector((state) => state.profile.profileData.invoiceReceivedEmail);
   const statusFiles = {
     numberOfInvoices: 0,
     numberOfCompareSuccess: 0,
@@ -131,16 +135,33 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       }}
     />
   );
+  const uploadErrorMsg = (errorType: string) => {
+    switch (errorType) {
+      case 'NOT_FOUND_XML_FILE':
+        return 'Cần bổ sung file XML của hoá đơn!';
+      case 'XML_FILE_INCOMPATIBLE':
+        return 'Hệ thống không hỗ trợ đọc định dạng XML của hoá đơn này!';
+      default:
+        return '';
+    }
+  };
   const handleUpload = () => {
     const data = new FormData();
-    files.forEach((f, index) => {
-      data.append(`file${index + 1}`, f);
-    });
-    if (mail) {
+    if (isUploadInvoice) {
+      console.log('NghiaLog: files - ', files);
+      data.append('emailAddress', emailAddress);
+      data.append('messageType', 'UPLOAD_INVOICE');
+      files.forEach((f) => {
+        data.append('files', f);
+      });
+    } else if (mail) {
+      files.forEach((f, index) => {
+        data.append(`file${index + 1}`, f);
+      });
       data.append('mailId', mail?.id ?? '');
       data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
       data.append('emailAddress', mail?.mailFrom ?? '');
-      data.append('messageType ', MessageType.MAIL);
+      data.append('messageType', MessageType.MAIL);
     }
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
@@ -158,52 +179,129 @@ export default function UploadView({ mail, onClickCancel }: Props) {
         Authorization: accessToken,
       },
     };
-    axios
-      .post(!mail ? urlComp : urlUp, data, config)
-      .then((response) => {
-        setTimeout(() => {
+    const configUploadInvoices = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      headers: {
+        // 'Access-Control-Allow-Origin': '*',
+        // 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        'content-type': 'multipart/form-data',
+      },
+    };
+    if (!isUploadInvoice) {
+      axios
+        .post(!mail ? urlComp : urlUp, data, config)
+        .then((response) => {
+          setTimeout(() => {
+            if (response.status === 200) {
+              if (mail) {
+                dispatch(
+                  getMails(
+                    roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
+                    businessSearchQuery ?? ''
+                  )
+                );
+                onClickCancel();
+                router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
+              } else {
+                setLoading(false);
+                const numberofErrorInvSpare = response.data.errorInvoices.filter(
+                  (item: { errorList: string | string[] }) => item.errorList.includes('spare')
+                );
+                const numberofErrorInvNotFound = response.data.errorInvoices.filter(
+                  (item: { errorList: string | string[] }) => item.errorList.includes('not_found')
+                );
+                const numberofErrorInvOther = response.data.errorInvoices.filter(
+                  (item: { errorList: string | string[] }) =>
+                    !item.errorList.includes('not_found') && !item.errorList.includes('spare')
+                );
+                setLstErrorInvSpare(numberofErrorInvSpare);
+                setLstErrorInvNotFound(numberofErrorInvNotFound);
+                setLstErrorOther(numberofErrorInvOther);
+                setStsFiles({
+                  ...stsFiles,
+                  numberOfInvoices: response.data.numberOfInvoices,
+                  numberOfCompareSuccess: response.data.numberOfCompareSuccess,
+                  errorInvoicesSpare: numberofErrorInvSpare.length,
+                  errorInvoicesNotFound: numberofErrorInvNotFound.length,
+                  errorInvoicesOther: numberofErrorInvOther.length,
+                });
+                setComp(true);
+              }
+            }
+          }, 10000);
+        })
+        .catch((error) => {
+          console.log(error);
+          onClickCancel();
+        });
+    } else {
+      axios
+        .post(
+          'https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles',
+          data,
+          configUploadInvoices
+        )
+        .then((response) => {
+          // setTimeout(() => {
+          //   if (response.status === 200) {
+          //     if (mail) {
+          //       dispatch(
+          //         getMails(
+          //           roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
+          //           businessSearchQuery ?? ''
+          //         )
+          //       );
+          //       onClickCancel();
+          //       router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
+          //     } else {
+          //       setLoading(false);
+          //       const numberofErrorInvSpare = response.data.errorInvoices.filter(
+          //         (item: { errorList: string | string[] }) => item.errorList.includes('spare')
+          //       );
+          //       const numberofErrorInvNotFound = response.data.errorInvoices.filter(
+          //         (item: { errorList: string | string[] }) => item.errorList.includes('not_found')
+          //       );
+          //       const numberofErrorInvOther = response.data.errorInvoices.filter(
+          //         (item: { errorList: string | string[] }) =>
+          //           !item.errorList.includes('not_found') && !item.errorList.includes('spare')
+          //       );
+          //       setLstErrorInvSpare(numberofErrorInvSpare);
+          //       setLstErrorInvNotFound(numberofErrorInvNotFound);
+          //       setLstErrorOther(numberofErrorInvOther);
+          //       setStsFiles({
+          //         ...stsFiles,
+          //         numberOfInvoices: response.data.numberOfInvoices,
+          //         numberOfCompareSuccess: response.data.numberOfCompareSuccess,
+          //         errorInvoicesSpare: numberofErrorInvSpare.length,
+          //         errorInvoicesNotFound: numberofErrorInvNotFound.length,
+          //         errorInvoicesOther: numberofErrorInvOther.length,
+          //       });
+          //       setComp(true);
+          //     }
+          //   }
+          // }, 10000);
           if (response.status === 200) {
-            if (mail) {
+            setTimeout(() => {
+              onClickCancel();
+              enqueueSnackbar('Tải lên thành công!');
               dispatch(
-                getMails(
-                  roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId,
-                  businessSearchQuery ?? ''
+                getInvoices(
+                  roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '',
+                  true
                 )
               );
-              onClickCancel();
-              router.replace(`${paths.dashboard.mail}/?id=${mail?.id}`);
-            } else {
-              setLoading(false);
-              const numberofErrorInvSpare = response.data.errorInvoices.filter(
-                (item: { errorList: string | string[] }) => item.errorList.includes('spare')
-              );
-              const numberofErrorInvNotFound = response.data.errorInvoices.filter(
-                (item: { errorList: string | string[] }) => item.errorList.includes('not_found')
-              );
-              const numberofErrorInvOther = response.data.errorInvoices.filter(
-                (item: { errorList: string | string[] }) =>
-                  !item.errorList.includes('not_found') && !item.errorList.includes('spare')
-              );
-              setLstErrorInvSpare(numberofErrorInvSpare);
-              setLstErrorInvNotFound(numberofErrorInvNotFound);
-              setLstErrorOther(numberofErrorInvOther);
-              setStsFiles({
-                ...stsFiles,
-                numberOfInvoices: response.data.numberOfInvoices,
-                numberOfCompareSuccess: response.data.numberOfCompareSuccess,
-                errorInvoicesSpare: numberofErrorInvSpare.length,
-                errorInvoicesNotFound: numberofErrorInvNotFound.length,
-                errorInvoicesOther: numberofErrorInvOther.length,
-              });
-              setComp(true);
-            }
+            }, 10000);
+          } else if (response.status === 400) {
+            // onClickCancel();
           }
-        }, 10000);
-      })
-      .catch((error) => {
-        console.log(error);
-        onClickCancel();
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+          enqueueSnackbar(uploadErrorMsg(error.response.data.error), { variant: 'error' });
+          setLoading(false);
+        });
+    }
   };
   const handleOnclickInvoice = (id: string) => {
     router.push(paths.dashboard.invoice.details(id));
@@ -261,6 +359,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                       onRemoveAll={handleRemoveAllFiles}
                       onUpload={() => handleUpload()}
                       mail={mail}
+                      isUploadInvoice
                     />
                   ) : (
                     <Timeline
@@ -302,7 +401,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           hóa đơn không xác thực gồm
                         </TimelineContent>
                       </TimelineItem>
-                      {lstErrorInvSpare.length>0 && (
+                      {lstErrorInvSpare.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />
@@ -327,7 +426,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           </TimelineContent>
                         </TimelineItem>
                       )}
-                      {lstErrorOther.length>0 && (
+                      {lstErrorOther.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />
@@ -351,7 +450,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           </TimelineContent>
                         </TimelineItem>
                       )}
-                      {lstErrorInvNotFound.length>0 && (
+                      {lstErrorInvNotFound.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />

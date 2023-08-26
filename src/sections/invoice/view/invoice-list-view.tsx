@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from 'react';
 // @mui
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import { alpha, useTheme } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
@@ -13,7 +12,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import Tabs from '@mui/material/Tabs';
-import Tooltip from '@mui/material/Tooltip';
 // routes
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
@@ -43,10 +41,12 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import axios from 'axios';
 import FileUpload from 'src/components/file-uploader/file-uploader';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { getInvoices } from 'src/redux/slices/invoices';
 import { useDispatch, useSelector } from 'src/redux/store';
+import { API_ENDPOINTS } from 'src/utils/axios';
 import InvoiceTableFiltersResult from '../invoice-table-filters-result';
 import InvoiceTableRow from '../invoice-table-row';
 import InvoiceTableToolbar from '../invoice-table-toolbar';
@@ -269,6 +269,36 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
     setOpenUpload(false);
   }, []);
 
+  const onExportInvoice = async (listInvoiceId: string[]) => {
+    const listInvoiceIdNumber: number[] = [];
+    listInvoiceId.forEach((id) => listInvoiceIdNumber.push(+id));
+
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.invoice.export}`,
+        {
+          version: 0,
+          invoiceIdList: listInvoiceIdNumber,
+        },
+        {
+          headers: headersList,
+        }
+      );
+      // if (response.status === 200) {
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} />}
@@ -334,13 +364,19 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
             }
             action={
               <Stack direction="row">
-                <Tooltip title="Sent">
-                  <IconButton color="primary">
-                    <Iconify icon="iconamoon:send-fill" />
-                  </IconButton>
-                </Tooltip>
+                {/* <Tooltip title="Sent"> */}
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    onExportInvoice(table.selected);
+                  }}
+                >
+                  <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} />
+                  Xuất tài liệu
+                </Button>
+                {/* </Tooltip> */}
 
-                <Tooltip title="Download">
+                {/* <Tooltip title="Download">
                   <IconButton color="primary">
                     <Iconify icon="eva:download-outline" />
                   </IconButton>
@@ -356,7 +392,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
                   <IconButton color="primary" onClick={confirm.onTrue}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                   </IconButton>
-                </Tooltip>
+                </Tooltip> */}
               </Stack>
             }
           />
@@ -419,7 +455,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
           onChangeDense={table.onChangeDense}
         />
       </Card>
-      {renderEditor}
+      {/* {renderEditor} */}
       {/* </Container> */}
 
       <ConfirmDialog

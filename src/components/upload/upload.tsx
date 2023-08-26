@@ -35,13 +35,16 @@ export default function Upload({
   onRemove,
   onRemoveAll,
   mail,
+  isUploadInvoice,
   sx,
   ...other
 }: UploadProps) {
   const [text, setText] = useState('');
   const getFileType = () => {
     let result = {};
-    if (!mail) {
+    if (isUploadInvoice) {
+      result = { 'text/xml': [], 'application/pdf': [] };
+    } else if (!mail) {
       result = { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [] };
     } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       // setText("Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.");
@@ -57,8 +60,10 @@ export default function Upload({
   };
   const getFileMissingMessage = () => {
     let result = '';
-    if (!mail) {
-      result = 'Vui lòng chọn file excel còn thiếu của hóa đơn trong mail này.';
+    if (isUploadInvoice) {
+      result = 'Vui lòng chọn các hoá đơn cần tải lên.';
+    } else if (!mail) {
+      result = 'Vui lòng chọn file còn thiếu.';
     } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
@@ -144,11 +149,12 @@ export default function Upload({
     </>
   );
   useEffect(() => {
-    if (files?.length) {
+    if (isUploadInvoice) {
+      setErrorPopEx(false);
+    } else if (files?.length) {
       if (!mail && files?.length !== 2) {
         setErrorPopEx(true);
-      }
-      else{
+      } else {
         setErrorPopEx(false);
       }
       if (files?.length > 2) {
