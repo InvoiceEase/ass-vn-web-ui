@@ -5,7 +5,11 @@ import { useCallback, useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 // routes
+import Label from 'src/components/label';
+
 import { useSearchParams } from 'src/routes/hook';
+import { alpha } from '@mui/material/styles';
+
 // redux
 import { getMail, getMails } from 'src/redux/slices/mail';
 import { useDispatch } from 'src/redux/store';
@@ -27,12 +31,14 @@ import MailDetails from '../mail-details';
 import MailHeader from '../mail-header';
 import MailList from '../mail-list';
 import MailNav from '../mail-nav';
+import { IMail } from 'src/types/mail';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 // ----------------------------------------------------------------------
 
 function useInitial() {
   const dispatch = useDispatch();
-
   const searchParams = useSearchParams();
 
   const labelParam = searchParams.get('label');
@@ -97,6 +103,7 @@ export default function MailView() {
     labelParam,
     labelsStatus,
   } = useMail();
+  const TAB_STATUS =['hasFile','noFile'];
 
   const upMd = useResponsive('up', 'md');
 
@@ -107,6 +114,8 @@ export default function MailView() {
   const openMail = useBoolean();
 
   const openCompose = useBoolean();
+  const [mailFull, setMailFull]: IMail = useState({});
+  const [mailMiss, setMailMiss]: IMail = useState({});
 
   const handleOpenCompose = useCallback(() => {
     if (openCompose.value) {
@@ -127,7 +136,14 @@ export default function MailView() {
   useEffect(() => {
     const getData = setTimeout(() => {
       sessionStorage.setItem('businessSearchQuery', searchQuery);
-      if (businessId && businessId !== '0') dispatch(getMails(businessId, searchQuery));
+      const mailList = mails.allIds.map((mailId) => mails.byId[mailId]);
+      if (businessId && businessId !== '0') {
+        dispatch(getMails(businessId, searchQuery));
+        const mailF = mailList.filter((item) => item.isIncludedPdf || item.isIncludedXml);
+        const mailL = mailList.filter((item) => !item.isIncludedPdf && !item.isIncludedXml);
+        setMailFull(mailF[0]);
+        setMailMiss(mailL[0]);
+      }
     }, 800);
     return () => clearTimeout(getData);
   }, [searchQuery]);
@@ -267,6 +283,45 @@ export default function MailView() {
                     ),
                   }}
                 />
+                <Tabs
+                  value={TAB_STATUS}
+                  // onChange={handleFilterStatus}
+                  sx={{
+                    px: 2.5,
+                    boxShadow: (theme) =>
+                      `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+                    display: 'flex',
+                    position: 'static',
+                  }}
+                >
+                  {TAB_STATUS.map((tab) => (
+                    <Tab
+                      key={tab}
+                      iconPosition="end"
+                      value={tab}
+                      label={tab}
+                      icon={
+                        <Label
+                          variant={
+                            ((tab === 'All' || tab === '') && 'filled') || 'soft'
+                          }
+                          color={
+                            (tab === 'Active' && 'success') ||
+                            (tab === 'Banned' && 'error') ||
+                            'default'
+                          }
+                        >
+                          {/* {tab === 'All' && _userList.length}
+                          {tab === 'Active' &&
+                            _userList.filter((user) => user.status === 'Active').length}
+
+                          {tab === 'Banned' &&
+                            _userList.filter((user) => user.status === 'Banned').length} */}
+                        </Label>
+                      }
+                    />
+                  ))}
+                </Tabs>
               </Stack>
 
               {mailsStatus.empty ? renderEmpty : renderMailList}
