@@ -1,18 +1,21 @@
 import { useCallback } from 'react';
 // @mui
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
-import { SelectChangeEvent } from '@mui/material/Select';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 type Props = {
   filters: IInvoiceTableFilters;
@@ -37,11 +40,8 @@ export default function InvoiceTableToolbar({
   );
 
   const handleFilterService = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'service',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+    (event: SelectChangeEvent<string>) => {
+      onFilters('attribute', event.target.value);
     },
     [onFilters]
   );
@@ -74,7 +74,7 @@ export default function InvoiceTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <FormControl
+        <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 180 },
@@ -83,49 +83,31 @@ export default function InvoiceTableToolbar({
           <InputLabel>Tính chất hóa đơn</InputLabel>
 
           <Select
-            multiple
-            value={filters.service}
             onChange={handleFilterService}
+            value={filters.attribute}
             input={<OutlinedInput label="Tính chất hóa đơn" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
-
+            renderValue={(selected) => selected}
+            MenuProps={{
+              PaperProps: {
+                sx: { maxHeight: 240 },
+              },
+            }}
           >
             {serviceOptions.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.service.includes(option)} />
+                {/* <Checkbox disableRipple size="small" checked={filters.service.includes(option)} /> */}
                 {option}
               </MenuItem>
             ))}
           </Select>
-        </FormControl> */}
-
-        {/* <DatePicker
-          label="Start date"
-          value={filters.startDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={filters.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        /> */}
+        </FormControl>
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search customer or invoice number..."
+            placeholder="Search customer or invoice number...123"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

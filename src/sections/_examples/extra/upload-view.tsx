@@ -29,11 +29,11 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { Upload } from 'src/components/upload';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { useDispatch } from 'src/redux/store';
-import { useRouter } from 'src/routes/hook';
 import { IMail } from 'src/types/mail';
 import Typography from 'src/theme/overrides/components/typography';
 import Iconify from 'src/components/iconify/iconify';
 import { MessageType } from 'src/enums/MessageType';
+import { useRouter } from 'next/navigation';
 // ----------------------------------------------------------------------
 type Props = {
   mail?: IMail;
@@ -206,7 +206,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       });
   };
   const handleOnclickInvoice = (id: string) => {
-    router.push(paths.dashboard.invoice.details(id));
+    window.open(paths.dashboard.invoice.details(id), '_blank');
   };
   return (
     <>
@@ -302,7 +302,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           hóa đơn không xác thực gồm
                         </TimelineContent>
                       </TimelineItem>
-                      {lstErrorInvSpare.length>0 && (
+                      {lstErrorInvSpare.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />
@@ -327,7 +327,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           </TimelineContent>
                         </TimelineItem>
                       )}
-                      {lstErrorOther.length>0 && (
+                      {lstErrorOther.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />
@@ -351,7 +351,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
                           </TimelineContent>
                         </TimelineItem>
                       )}
-                      {lstErrorInvNotFound.length>0 && (
+                      {lstErrorInvNotFound.length > 0 && (
                         <TimelineItem>
                           <TimelineSeparator>
                             <TimelineDot />
