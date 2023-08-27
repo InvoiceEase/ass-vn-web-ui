@@ -66,12 +66,22 @@ export default function AuthGuard({ children }: AuthGuardProps) {
             if (resp.data.role.includes(RoleCodeEnum.Auditor)) {
               // if user is accountant navigate to mail as default screen
               // router.prefetch(paths.dashboard.mail);
-              router.push(paths.dashboard.mail);
+              if (!sessionStorage.getItem('idInvoice')) {
+                router.push(paths.dashboard.mail);
+              } else {
+                sessionStorage.removeItem('idInvoice');
+                paths.dashboard.invoice.details(sessionStorage.getItem('idInvoice') ?? '');
+              }
             } else if (
               resp.data.role.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`)
             ) {
+              if (!sessionStorage.getItem('idInvoice')) {
+                router.push(paths.dashboard.root);
+              } else {
+                sessionStorage.removeItem('idInvoice');
+                paths.dashboard.invoice.details(sessionStorage.getItem('idInvoice') ?? '');
+              }
               // router.prefetch(paths.dashboard.root);
-              router.push(paths.dashboard.root);
             } else if (resp.data.role.includes(RoleCodeEnum.Admin)) {
               // router.prefetch(paths.dashboard.user.list);
               router.push(paths.dashboard.user.list);

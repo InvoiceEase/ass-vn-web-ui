@@ -206,6 +206,7 @@ export default function UploadView({ mail, onClickCancel }: Props) {
       });
   };
   const handleOnclickInvoice = (id: string) => {
+    sessionStorage.setItem('idInvoice', id)
     window.open(paths.dashboard.invoice.details(id), '_blank');
   };
   return (

@@ -24,12 +24,16 @@ type Props = {
   serviceOptions: string[];
 };
 
+
+
 export default function InvoiceTableToolbar({
   filters,
   onFilters,
   //
   serviceOptions,
 }: Props) {
+  const characterRole =['Hóa đơn mới', 'Hóa đơn bị điều chỉnh', 'Hóa đơn điều chỉnh', 'Hóa đơn bị thay thế', 'Hóa đơn thay thế']
+
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -93,7 +97,7 @@ export default function InvoiceTableToolbar({
               },
             }}
           >
-            {serviceOptions.map((option) => (
+            {characterRole.map((option) => (
               <MenuItem key={option} value={option}>
                 {/* <Checkbox disableRipple size="small" checked={filters.service.includes(option)} /> */}
                 {option}
