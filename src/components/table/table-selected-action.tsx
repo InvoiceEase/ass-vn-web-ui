@@ -1,7 +1,7 @@
 // @mui
 import Checkbox from '@mui/material/Checkbox';
-import Typography from '@mui/material/Typography';
 import Stack, { StackProps } from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default function TableSelectedAction({
         zIndex: 9,
         height: 58,
         position: 'absolute',
-        bgcolor: 'primary.lighter',
+        bgcolor: 'secondary.lighter',
         ...(dense && {
           height: 38,
         }),
@@ -66,7 +66,7 @@ export default function TableSelectedAction({
           }),
         }}
       >
-        {numSelected} selected
+        {numSelected} đã chọn
       </Typography>
 
       {action && action}

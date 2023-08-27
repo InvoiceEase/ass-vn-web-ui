@@ -1,21 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
 import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Button } from '@mui/material';
+import { usePopover } from 'src/components/custom-popover';
+import FileUpload from 'src/components/file-uploader/file-uploader';
 
 type Props = {
   filters: IInvoiceTableFilters;
@@ -36,6 +37,8 @@ export default function InvoiceTableToolbar({
 
   const popover = usePopover();
 
+  const [openUpload, setOpenUpload] = useState(false);
+
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFilters('name', event.target.value);
@@ -50,19 +53,31 @@ export default function InvoiceTableToolbar({
     [onFilters]
   );
 
-  const handleFilterStartDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('startDate', newValue);
-    },
-    [onFilters]
-  );
+  // const handleFilterStartDate = useCallback(
+  //   (newValue: Date | null) => {
+  //     onFilters('startDate', newValue);
+  //   },
+  //   [onFilters]
+  // );
 
-  const handleFilterEndDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('endDate', newValue);
-    },
-    [onFilters]
-  );
+  // const handleFilterEndDate = useCallback(
+  //   (newValue: Date | null) => {
+  //     onFilters('endDate', newValue);
+  //   },
+  //   [onFilters]
+  // );
+
+  // const onClickUpload = () => {
+  //   setOpenUpload(true);
+  // };
+
+  const handleUpload = () => {
+    setOpenUpload(true);
+  };
+
+  const resetUpload = () => {
+    setOpenUpload(false);
+  };
 
   return (
     <>
@@ -108,10 +123,10 @@ export default function InvoiceTableToolbar({
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
-            fullWidth
+            sx={{ width: '68vw' }}
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search customer or invoice number...123"
+            placeholder="Tìm hoá đơn theo tên..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -121,13 +136,30 @@ export default function InvoiceTableToolbar({
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
+          <Button
+            onClick={() => {
+              popover.onClose();
+              setOpenUpload(true);
+            }}
+          >
+            <Iconify icon="solar:export-bold" />
+            Tải lên
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            endIcon={<Iconify icon="iconamoon:send-fill" />}
+            onClick={() => handleUpload()}
+          >
+            Xác thực
+          </Button>
         </Stack>
       </Stack>
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -145,10 +177,11 @@ export default function InvoiceTableToolbar({
         <MenuItem
           onClick={() => {
             popover.onClose();
+            setOpenUpload(true);
           }}
         >
-          <Iconify icon="solar:import-bold" />
-          Import
+          <Iconify icon="solar:export-bold" />
+          Tải lên
         </MenuItem>
 
         <MenuItem
@@ -156,10 +189,11 @@ export default function InvoiceTableToolbar({
             popover.onClose();
           }}
         >
-          <Iconify icon="solar:export-bold" />
-          Export
+          <Iconify icon="solar:import-bold" />
+          Xuất tài liệu
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} isUploadInvoice />}
     </>
   );
 }

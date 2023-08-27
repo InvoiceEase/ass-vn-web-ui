@@ -119,7 +119,7 @@ export type IAuditorItem = {
   role: string;
   email: string;
   phoneNumber: string;
-  password:string;
+  password: string;
 };
 
 // export type IUserAccount = {
@@ -174,6 +174,9 @@ export type IUserAccountChangePassword = {
 
 export type IProfileState = {
   profileData: IUserAccount;
+  newProfileData: IUserAccount;
+  isUpdateSuccess: boolean;
+  profileFormStep: number;
   profileStatus: {
     loading: boolean;
     empty: boolean;

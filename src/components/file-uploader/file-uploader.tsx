@@ -7,11 +7,12 @@ import Iconify from '../iconify/iconify';
 
 type Props = {
   mail?: IMail;
+  isUploadInvoice?: boolean;
   onCanCel: () => void;
   isOpen: boolean;
 };
 
-export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
+export default function FileUpload({ isOpen, onCanCel, mail, isUploadInvoice }: Props) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [scroll, setScroll] = useState<DialogProps['scroll']>('paper');
@@ -41,7 +42,7 @@ export default function FileUpload({ isOpen, onCanCel, mail }: Props) {
         <Iconify icon="material-symbols:close" />
       </DialogTitle>
       <DialogContent sx={{ alignItems: 'end' }}>
-        <UploadView mail={mail} onClickCancel={onClickCancel} />
+        <UploadView mail={mail} onClickCancel={onClickCancel} isUploadInvoice />
       </DialogContent>
     </Dialog>
   );
