@@ -88,7 +88,7 @@ export default function PaymentCardListDialog({ open, list, onClose, selected, o
         <TextField
           value={searchCard}
           onChange={handleSearchAddress}
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

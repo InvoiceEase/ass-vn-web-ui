@@ -56,7 +56,7 @@ export default function KanbanContactsDialog({ assignee = [], open, onClose }: P
           fullWidth
           value={searchContact}
           onChange={handleSearchContacts}
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

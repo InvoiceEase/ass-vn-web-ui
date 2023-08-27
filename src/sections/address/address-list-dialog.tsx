@@ -132,7 +132,7 @@ export default function AddressListDialog({
         <TextField
           value={searchAddress}
           onChange={handleSearchAddress}
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

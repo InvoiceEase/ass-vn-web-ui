@@ -310,7 +310,7 @@ export default function MailView() {
               <Stack sx={{ p: 2 }}>
                 <TextField
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search..."
+                  placeholder="Tìm kiếm..."
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">

@@ -36,8 +36,8 @@ export default function MailDetails({ mail, renderLabel }: Props) {
   if (!mail) {
     return (
       <EmptyContent
-        title="No Conversation Selected"
-        description="Select a conversation to read"
+        title="Không có mail đang được chọn"
+        description="Chọn một mail để xem"
         imgUrl="/assets/icons/empty/ic_email_selected.svg"
         sx={{
           borderRadius: 1.5,
@@ -100,7 +100,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
       </TextMaxLine>
 
       <Stack spacing={0.5}>
-        <Stack direction="row" alignItems="center" justifyContent="flex-end">
+        {/* <Stack direction="row" alignItems="center" justifyContent="flex-end">
           <IconButton size="small">
             <Iconify width={18} icon="solar:reply-bold" />
           </IconButton>
@@ -116,7 +116,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
 
         <Typography variant="caption" noWrap sx={{ color: 'text.disabled' }}>
           {fDateTime(mail.createdAt)}
-        </Typography>
+        </Typography> */}
       </Stack>
     </Stack>
   );

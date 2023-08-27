@@ -88,7 +88,7 @@ export default function FileManagerFilters({
     <TextField
       value={filters.name}
       onChange={handleFilterName}
-      placeholder="Search..."
+      placeholder="Tìm kiếm..."
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
