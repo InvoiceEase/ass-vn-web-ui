@@ -26,6 +26,9 @@ import { useDispatch, useSelector } from 'src/redux/store';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 import InvoiceErrorField from './invoice-error-field';
 import InvoiceInfoField from './invoice-info-field';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import { useRouter } from 'next/navigation';
+import { paths } from 'src/routes/paths';
 
 // @mui
 
@@ -58,7 +61,7 @@ type Props = {
 
 export default function InvoiceDetails({ invoice }: Props) {
   const [currentStatus, setCurrentStatus] = useState(invoice?.status);
-
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const invoicePdfFilePathList = useSelector(
@@ -68,6 +71,7 @@ export default function InvoiceDetails({ invoice }: Props) {
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
   }, []);
+
 
   useEffect(() => {
     setCurrentStatus(invoice?.status);

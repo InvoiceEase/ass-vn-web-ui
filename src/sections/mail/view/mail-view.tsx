@@ -5,7 +5,13 @@ import { useCallback, useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 // routes
+
 import { useSearchParams } from 'src/routes/hook';
+import { alpha } from '@mui/material/styles';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Label from 'src/components/label';
+
 // redux
 import { getMail, getMails } from 'src/redux/slices/mail';
 import { useDispatch } from 'src/redux/store';
@@ -27,12 +33,13 @@ import MailDetails from '../mail-details';
 import MailHeader from '../mail-header';
 import MailList from '../mail-list';
 import MailNav from '../mail-nav';
+import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
 function useInitial() {
+  const router = useRouter();
   const dispatch = useDispatch();
-
   const searchParams = useSearchParams();
 
   const labelParam = searchParams.get('label');
@@ -70,6 +77,7 @@ function useInitial() {
   // }, [getLabelsCallback]);
 
   useEffect(() => {
+    router.refresh();
     getMailsCallback();
   }, [getMailsCallback]);
 
@@ -107,7 +115,11 @@ export default function MailView() {
   const openMail = useBoolean();
 
   const openCompose = useBoolean();
-
+  const [mailFull, setMailFull]: any = useState([]);
+  const [mailMiss, setMailMiss]: any = useState([]);
+  const [mailSelect, setMailSelect]: any = useState([]);
+  const [isFull, setIsFull] = useState(true);
+  const [stsFile, setStsFile] = useState('Đủ File');
   const handleOpenCompose = useCallback(() => {
     if (openCompose.value) {
       document.body.style.overflow = 'hidden';
@@ -115,6 +127,8 @@ export default function MailView() {
       document.body.style.overflow = '';
     }
   }, [openCompose.value]);
+
+  const FILE_STS_MAIL = ['Đủ File', 'Thiếu File'];
 
   const dispatch = useDispatch();
 
@@ -127,11 +141,20 @@ export default function MailView() {
   useEffect(() => {
     const getData = setTimeout(() => {
       sessionStorage.setItem('businessSearchQuery', searchQuery);
-      if (businessId && businessId !== '0') dispatch(getMails(businessId, searchQuery));
+      if (businessId && businessId !== '0') {
+        dispatch(getMails(businessId, searchQuery));
+      }
     }, 800);
     return () => clearTimeout(getData);
-  }, [searchQuery]);
+  }, [searchQuery, businessId]);
 
+  useEffect(() => {
+    const mailLst = mails.allIds.map((item) => mails.byId[item]);
+    const mailF = mailLst.filter((item) => item.isIncludedPdf && item.isIncludedXml);
+    const mailM = mailLst.filter((item) => !item.isIncludedPdf || !item.isIncludedXml);
+    setMailFull(mailF);
+    setMailMiss(mailM);
+  }, [mails]);
   useEffect(() => {
     handleOpenCompose();
   }, [handleOpenCompose]);
@@ -179,9 +202,23 @@ export default function MailView() {
     />
   );
 
-  const renderMailList = (
+  const renderMailListFull = (
     <MailList
-      mails={mails}
+      mails={mailFull}
+      loading={mailsStatus.loading}
+      //
+      openMail={openMail.value}
+      onCloseMail={openMail.onFalse}
+      onClickMail={onClickMail}
+      //
+      currentLabel={labelParam}
+      selectedMail={(id: string) => mailParam === id}
+    />
+  );
+
+  const renderMailListMiss = (
+    <MailList
+      mails={mailMiss}
       loading={mailsStatus.loading}
       //
       openMail={openMail.value}
@@ -213,6 +250,20 @@ export default function MailView() {
         />
       )}
     </>
+  );
+
+  const handleSelectMail = useCallback(
+    (event: React.SyntheticEvent, newValue: string) => {
+      setStsFile(newValue);
+      if (newValue === 'Đủ File') {
+        setIsFull(true);
+        setMailSelect(mailFull);
+      } else {
+        setIsFull(false);
+        setMailSelect(mailMiss);
+      }
+    },
+    [mailSelect]
   );
 
   return (
@@ -267,9 +318,45 @@ export default function MailView() {
                     ),
                   }}
                 />
+                <Tabs
+                  value={stsFile}
+                  onChange={handleSelectMail}
+                  sx={{
+                    px: 2.5,
+                    boxShadow: (theme) =>
+                      `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+                    display: 'flex',
+                    position: 'static',
+                  }}
+                >
+                  {FILE_STS_MAIL.map((tab) => (
+                    <Tab
+                      key={tab}
+                      iconPosition="end"
+                      value={tab}
+                      label={tab}
+                      icon={
+                        <Label
+                          variant={
+                            ((tab === 'Đủ File' || tab === 'Thiếu File') && 'filled') || 'soft'
+                          }
+                          color={
+                            (tab === 'Đủ File' && 'success') ||
+                            (tab === 'Thiếu File' && 'error') ||
+                            'default'
+                          }
+                        >
+                          {tab === 'Đủ File' && mailFull.length}
+
+                          {tab === 'Thiếu File' && mailMiss.length}
+                        </Label>
+                      }
+                    />
+                  ))}
+                </Tabs>
               </Stack>
 
-              {mailsStatus.empty ? renderEmpty : renderMailList}
+              {isFull ? renderMailListFull : renderMailListMiss}
             </Stack>
 
             {mailsStatus.loading ? renderLoading : renderMailDetails}

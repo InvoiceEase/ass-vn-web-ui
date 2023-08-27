@@ -50,6 +50,8 @@ import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
+import { RouterLink } from 'src/routes/components';
+
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 300 },
@@ -237,15 +239,15 @@ export default function AuditorsListView() {
           <Typography sx={{ mb: 5, flexGrow: 1 }} variant="h4">
             Quản lí nhân viên
           </Typography>
-          {/* <Button
+          <Button
             sx={{ mb: 5 }}
             component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={paths.dashboard.user.newAuditor}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            Thêm Kiểm Duyệt Viên
-          </Button> */}
+            Thêm Nhân Viên
+          </Button>
         </Stack>
         <Card>
           <Tabs

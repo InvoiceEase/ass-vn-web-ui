@@ -109,8 +109,12 @@ export default function InvoiceTableToolbar({
             value={filters.service}
             onChange={handleFilterService}
             input={<OutlinedInput label="Tính chất hóa đơn" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
+            renderValue={(selected) => selected}
+            MenuProps={{
+              PaperProps: {
+                sx: { maxHeight: 240 },
+              },
+            }}
           >
             {serviceOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -121,29 +125,9 @@ export default function InvoiceTableToolbar({
           </Select>
         </FormControl>
 
-        {/* <DatePicker
-          label="Start date"
-          value={filters.startDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={filters.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        /> */}
-
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
-            sx={{ width: '57vw' }}
+            sx={{ width: '68vw' }}
             value={filters.name}
             onChange={handleFilterName}
             placeholder="Tìm hoá đơn theo tên..."
@@ -170,7 +154,7 @@ export default function InvoiceTableToolbar({
           </Button>
           <Button
             variant="outlined"
-            color="inherit"
+            color="primary"
             endIcon={<Iconify icon="iconamoon:send-fill" />}
             onClick={() => handleUpload()}
           >

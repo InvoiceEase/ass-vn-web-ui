@@ -72,6 +72,7 @@ const defaultFilters = {
   status: 'all',
   startDate: null,
   endDate: null,
+  attribute: '',
 };
 
 function useInitial() {
@@ -132,9 +133,17 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const loading = useSelector((state) => state.invoice.invoicesStatus.loading);
 
   const [tableData, setTableData] = useState(_invoices);
+  const [invoiceCharacter, setInvoiceCharacter] = useState(['']);
 
   useEffect(() => {
     setTableData(_invoices);
+    const invoiceCharacterLst : string[] = [];
+    _invoices.forEach((item)=>{
+      if (!invoiceCharacterLst.includes(item.invoiceCharacter)) {
+        invoiceCharacterLst.push(item.invoiceCharacter);
+      }
+      setInvoiceCharacter(invoiceCharacterLst);
+    })
   }, [_invoices]);
 
   const [openUpload, setOpenUpload] = useState(false);
@@ -469,7 +478,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
           filters={filters}
           onFilters={handleFilters}
           //
-          serviceOptions={INVOICE_SERVICE_OPTIONS.map((option) => option.name)}
+          serviceOptions={invoiceCharacter}
         />
 
         {canReset && (
@@ -644,7 +653,7 @@ function applyFilter({
   filters: IInvoiceTableFilters;
   dateError: boolean;
 }) {
-  const { name, status, service, startDate, endDate } = filters;
+  const { name, status, service, startDate, endDate, attribute } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -662,6 +671,10 @@ function applyFilter({
         invoice.invoiceNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         invoice.senderName.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+
+  if(attribute && attribute!==''){
+    inputData = inputData.filter((invoice) => invoice.invoiceCharacter === attribute);
   }
 
   if (status !== 'all') {
