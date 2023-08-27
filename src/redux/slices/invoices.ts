@@ -106,7 +106,7 @@ export function getInvoices(businessId: string, isInputInvoice?: boolean, page?:
             invoiceStatus: '',
             incomeInvoice: isInputInvoice ?? true,
             page: page ?? 0,
-            size: 10,
+            size: 9999,
             sort: '',
           },
         }

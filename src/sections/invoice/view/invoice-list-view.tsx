@@ -20,7 +20,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fTimestamp } from 'src/utils/format-time';
 // _mock
-import { INVOICE_SERVICE_OPTIONS } from 'src/_mock';
 // types
 import { IInvoice, IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
@@ -137,13 +136,13 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   useEffect(() => {
     setTableData(_invoices);
-    const invoiceCharacterLst : string[] = [];
-    _invoices.forEach((item)=>{
+    const invoiceCharacterLst: string[] = [];
+    _invoices.forEach((item) => {
       if (!invoiceCharacterLst.includes(item.invoiceCharacter)) {
         invoiceCharacterLst.push(item.invoiceCharacter);
       }
       setInvoiceCharacter(invoiceCharacterLst);
-    })
+    });
   }, [_invoices]);
 
   const [openUpload, setOpenUpload] = useState(false);
@@ -517,19 +516,20 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
                   <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} />
                   Xuất hoá đơn
                 </Button>
-                {filters.status === 'Đã xác thực' ||
-                  (filters.status === 'Chưa xác thực' && table.selected && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        onApproveInvoice(table.selected);
-                      }}
-                    >
-                      {/* <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} /> */}
-                      Duyệt hoá đơn
-                    </Button>
-                  ))}
+                {(filters.status === 'Đã xác thực' ||
+                  (filters.status === 'Chưa xác thực' &&
+                    !['Hóa đơn mới', 'Hóa đơn bị thay thế', ''].includes(filters.attribute))) && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      onApproveInvoice(table.selected);
+                    }}
+                  >
+                    {/* <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} /> */}
+                    Duyệt hoá đơn
+                  </Button>
+                )}
                 {/* </Tooltip> */}
 
                 {/* <Tooltip title="Download">
@@ -673,7 +673,7 @@ function applyFilter({
     );
   }
 
-  if(attribute && attribute!==''){
+  if (attribute && attribute !== '') {
     inputData = inputData.filter((invoice) => invoice.invoiceCharacter === attribute);
   }
 

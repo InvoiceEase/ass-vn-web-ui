@@ -42,7 +42,7 @@ export default function FileUpload({ isOpen, onCanCel, mail, isUploadInvoice }: 
         <Iconify icon="material-symbols:close" />
       </DialogTitle>
       <DialogContent sx={{ alignItems: 'end' }}>
-        <UploadView mail={mail} onClickCancel={onClickCancel} isUploadInvoice />
+        <UploadView mail={mail} onClickCancel={onClickCancel} isUploadInvoice={isUploadInvoice} />
       </DialogContent>
     </Dialog>
   );

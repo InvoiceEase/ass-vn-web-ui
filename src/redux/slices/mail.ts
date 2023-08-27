@@ -146,7 +146,7 @@ export function getMails(businessId: string | null, searchQuery?: string | null,
             businessId,
             search: searchQuery ?? '',
             page: page ?? 0,
-            size: 10,
+            size: 9999,
             sort: [],
           },
         }

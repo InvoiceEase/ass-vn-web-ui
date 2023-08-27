@@ -7,15 +7,7 @@ import TextField from '@mui/material/TextField';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Select,
-} from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import FileUpload from 'src/components/file-uploader/file-uploader';
 import Iconify from 'src/components/iconify';
@@ -35,6 +27,14 @@ export default function InvoiceTableToolbar({
   //
   serviceOptions,
 }: Props) {
+  const characterRole = [
+    'Hóa đơn mới',
+    'Hóa đơn bị điều chỉnh',
+    'Hóa đơn điều chỉnh',
+    'Hóa đơn bị thay thế',
+    'Hóa đơn thay thế',
+  ];
+
   const popover = usePopover();
 
   const [openUpload, setOpenUpload] = useState(false);
@@ -47,11 +47,8 @@ export default function InvoiceTableToolbar({
   );
 
   const handleFilterService = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'service',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+    (event: SelectChangeEvent<string>) => {
+      onFilters('attribute', event.target.value);
     },
     [onFilters]
   );
@@ -105,9 +102,8 @@ export default function InvoiceTableToolbar({
           <InputLabel>Tính chất hóa đơn</InputLabel>
 
           <Select
-            multiple
-            value={filters.service}
             onChange={handleFilterService}
+            value={filters.attribute}
             input={<OutlinedInput label="Tính chất hóa đơn" />}
             renderValue={(selected) => selected}
             MenuProps={{
@@ -116,9 +112,9 @@ export default function InvoiceTableToolbar({
               },
             }}
           >
-            {serviceOptions.map((option) => (
+            {characterRole.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.service.includes(option)} />
+                {/* <Checkbox disableRipple size="small" checked={filters.service.includes(option)} /> */}
                 {option}
               </MenuItem>
             ))}
@@ -127,7 +123,7 @@ export default function InvoiceTableToolbar({
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
-            sx={{ width: '68vw' }}
+            sx={{ width: '53vw' }}
             value={filters.name}
             onChange={handleFilterName}
             placeholder="Tìm hoá đơn theo tên..."
@@ -153,9 +149,9 @@ export default function InvoiceTableToolbar({
             Tải lên
           </Button>
           <Button
-            variant="outlined"
-            color="primary"
-            endIcon={<Iconify icon="iconamoon:send-fill" />}
+            variant="text"
+            color="inherit"
+            endIcon={<Iconify icon="eva:done-all-outline" />}
             onClick={() => handleUpload()}
           >
             Xác thực

@@ -34,7 +34,7 @@ const OPTIONS = [
   {
     label: 'Thông tin cá nhân',
     linkTo: paths.dashboard.user.account,
-  }
+  },
 ];
 
 const OPTIONS_MANAGER = [
@@ -48,11 +48,11 @@ const OPTIONS_MANAGER = [
   // },
   {
     label: 'Thông tin cá nhân',
-    linkTo: paths.dashboard.user.account,
+    linkTo: paths.dashboard.business.account,
   },
   {
     label: 'Thông tin doanh nghiệp',
-    linkTo: paths.dashboard.business.account,
+    linkTo: paths.dashboard.user.account,
   },
 ];
 
@@ -126,15 +126,19 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
-          {sessionStorage.getItem('roleCode')?.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`) ? (OPTIONS_MANAGER.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
-              {option.label}
-            </MenuItem>
-          ))) : (OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
-              {option.label}
-            </MenuItem>
-          )))}
+          {sessionStorage
+            .getItem('roleCode')
+            ?.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`)
+            ? OPTIONS_MANAGER.map((option) => (
+                <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
+                  {option.label}
+                </MenuItem>
+              ))
+            : OPTIONS.map((option) => (
+                <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
+                  {option.label}
+                </MenuItem>
+              ))}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
