@@ -26,7 +26,7 @@ const initialState: IBusinessState = {
     name: '',
     address: '',
     website: null,
-    taxNumber: null,
+    taxNumber: '',
     email: '',
     logo: null,
     invoiceReceivedEmail: '',
