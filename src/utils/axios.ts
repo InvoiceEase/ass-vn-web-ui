@@ -65,4 +65,7 @@ export const API_ENDPOINTS = {
   tax: {
     files: '/api/v1/files/reports/storage/tax',
   },
+  dashboard: {
+    businesses: '/api/v1/dashboard/businesses/',
+  },
 };

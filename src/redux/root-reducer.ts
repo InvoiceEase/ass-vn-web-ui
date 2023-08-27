@@ -6,6 +6,7 @@ import auditorReducer from './slices/auditor';
 import businessReducer from './slices/business';
 import calendarReducer from './slices/calendar';
 import chatReducer from './slices/chat';
+import dashboardReducer from './slices/dashboard';
 import financialReducer from './slices/financial';
 import invoiceReducer from './slices/invoices';
 import kanbanReducer from './slices/kanban';
@@ -59,4 +60,5 @@ export const rootReducer = combineReducers({
   auditor: auditorReducer,
   financial: financialReducer,
   tax: taxReducer,
+  dashboard: dashboardReducer,
 });

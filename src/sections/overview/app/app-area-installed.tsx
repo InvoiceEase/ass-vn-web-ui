@@ -1,16 +1,15 @@
 import { ApexOptions } from 'apexcharts';
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import CardHeader from '@mui/material/CardHeader';
 import ButtonBase from '@mui/material/ButtonBase';
 import Card, { CardProps } from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import { useTheme } from '@mui/material/styles';
 // components
-import Iconify from 'src/components/iconify';
 import Chart, { useChart } from 'src/components/chart';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -111,7 +110,7 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }: 
         ))}
       </Card>
 
-      <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
+      {/* <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
         {series.map((option) => (
           <MenuItem
             key={option.year}
@@ -121,7 +120,7 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }: 
             {option.year}
           </MenuItem>
         ))}
-      </CustomPopover>
+      </CustomPopover> */}
     </>
   );
 }

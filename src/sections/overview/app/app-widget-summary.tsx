@@ -1,14 +1,13 @@
 import { ApexOptions } from 'apexcharts';
 // @mui
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Card, { CardProps } from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 // utils
-import { fNumber, fPercent } from 'src/utils/format-number';
+import { fNumber } from 'src/utils/format-number';
 // components
-import Iconify from 'src/components/iconify';
 import Chart from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -16,7 +15,8 @@ import Chart from 'src/components/chart';
 interface Props extends CardProps {
   title: string;
   total: number;
-  percent: number;
+  percent?: number;
+  isShowChart?: boolean;
   chart: {
     colors?: string[];
     series: number[];
@@ -24,7 +24,15 @@ interface Props extends CardProps {
   };
 }
 
-export default function AppWidgetSummary({ title, percent, total, chart, sx, ...other }: Props) {
+export default function AppWidgetSummary({
+  title,
+  percent,
+  total,
+  chart,
+  sx,
+  isShowChart,
+  ...other
+}: Props) {
   const theme = useTheme();
 
   const {
@@ -74,33 +82,41 @@ export default function AppWidgetSummary({ title, percent, total, chart, sx, ...
         <Typography variant="subtitle2">{title}</Typography>
 
         <Stack direction="row" alignItems="center" sx={{ mt: 2, mb: 1 }}>
-          <Iconify
-            width={24}
-            icon={
-              percent < 0
-                ? 'solar:double-alt-arrow-down-bold-duotone'
-                : 'solar:double-alt-arrow-up-bold-duotone'
-            }
-            sx={{
-              mr: 1,
-              color: 'success.main',
-              ...(percent < 0 && {
-                color: 'error.main',
-              }),
-            }}
-          />
+          {/* <Iconify
+              width={24}
+              icon={
+                percent < 0
+                  ? 'solar:double-alt-arrow-down-bold-duotone'
+                  : 'solar:double-alt-arrow-up-bold-duotone'
+              }
+              sx={{
+                mr: 1,
+                color: 'success.main',
+                ...(percent < 0 && {
+                  color: 'error.main',
+                }),
+              }}
+            /> */}
 
           <Typography component="div" variant="subtitle2">
-            {percent > 0 && '+'}
-
-            {fPercent(percent)}
+            {/* {percent > 0 && '+'} */}
+            {!percent && percent}
+            {/* {fPercent(percent)} */}
           </Typography>
         </Stack>
 
         <Typography variant="h3">{fNumber(total)}</Typography>
       </Box>
 
-      <Chart type="bar" series={[{ data: series }]} options={chartOptions} width={60} height={36} />
+      {isShowChart && (
+        <Chart
+          type="bar"
+          series={[{ data: series }]}
+          options={chartOptions}
+          width={60}
+          height={36}
+        />
+      )}
     </Card>
   );
 }
