@@ -41,14 +41,10 @@ export default function UserNewEditForm({ currentProvider }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    engName: Yup.string().required('English name is required'),
-    shortName: Yup.string().required('Short name is required'),
-    address: Yup.string().required('Address is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    website: Yup.string().required('Website is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    taxNumber: Yup.string().required('Tax number is required'),
+    name: Yup.string().required('Tên nhà cung cấp là bắt buộc'),
+    address: Yup.string().required('Địa chỉ là bắt buộc'),
+    email: Yup.string().email('Vui lòng nhập đúng định dạng mail'),
+    taxNumber: Yup.string().required('Mã số thuế là bắt buộc'),
   });
 
   const defaultValues = useMemo(
@@ -88,7 +84,7 @@ export default function UserNewEditForm({ currentProvider }: Props) {
         await dispatch(addProvider(data));
         await dispatch(getProviders());
         reset();
-        enqueueSnackbar(currentProvider ? 'Update success!' : 'Create success!');
+        enqueueSnackbar(currentProvider ? 'Cập nhật thành công!' : 'Tạo mới thành công!');
         router.push(paths.dashboard.provider.root);
         console.info('DATA', data);
       } catch (error) {
@@ -219,19 +215,19 @@ export default function UserNewEditForm({ currentProvider }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="name" label="Provider Name" />
-              <RHFTextField name="engName" label="Provider's English Name" />
-              <RHFTextField name="shortName" label="Provider's Short Name" />
-              <RHFTextField name="address" label="Address" />
-              <RHFTextField name="email" label="Email Address" />
+              <RHFTextField name="name" label="Tên nhà cung cấp" />
+              <RHFTextField name="engName" label="Tên tiếng Anh" />
+              <RHFTextField name="shortName" label="Tên viết tắt" />
+              <RHFTextField name="address" label="Địa chỉ" />
+              <RHFTextField name="email" label="Email" />
               <RHFTextField name="website" label="Website" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
-              <RHFTextField name="taxNumber" label="Tax Number" />
+              <RHFTextField name="phoneNumber" label="Số điện thoại" />
+              <RHFTextField name="taxNumber" label="Mã số thuế" />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentProvider ? 'Create User' : 'Save Changes'}
+                {!currentProvider ? 'Tạo mới' : 'Lưu thay đổi'}
               </LoadingButton>
             </Stack>
           </Card>

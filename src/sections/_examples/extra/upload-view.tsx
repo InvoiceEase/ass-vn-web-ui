@@ -162,6 +162,10 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
       data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
       data.append('emailAddress', mail?.mailFrom ?? '');
       data.append('messageType', MessageType.MAIL);
+    } else {
+      files.forEach((f, index) => {
+        data.append(`file${index + 1}`, f);
+      });
     }
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;

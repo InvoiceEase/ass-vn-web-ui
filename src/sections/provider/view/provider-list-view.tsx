@@ -49,10 +49,10 @@ import ProviderTableToolbar from '../provider-table-toolbar';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'taxCode', label: 'Tax Code', width: 220 },
-  { id: 'address', label: 'Address', width: 100 },
+  { id: 'name', label: 'Nhà cung cấp' },
+  { id: 'phoneNumber', label: 'Số điện thoại', width: 180 },
+  { id: 'taxCode', label: 'MST', width: 220 },
+  { id: 'address', label: 'Địa chỉ', width: 100 },
   { id: '' },
 ];
 

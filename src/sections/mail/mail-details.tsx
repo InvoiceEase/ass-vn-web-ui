@@ -16,9 +16,11 @@ import Markdown from 'src/components/markdown';
 import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
 // types
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FileUpload from 'src/components/file-uploader/file-uploader';
 import { IMail, IMailLabel } from 'src/types/mail';
+import { paths } from 'src/routes/paths';
+import { useParams, useRouter } from 'src/routes/hook';
 
 // ----------------------------------------------------------------------
 
@@ -29,12 +31,13 @@ type Props = {
 
 export default function MailDetails({ mail, renderLabel }: Props) {
   const showAttachments = useBoolean(true);
+  const router = useRouter();
   const [openUpload, setOpenUpload] = useState(false);
   if (!mail) {
     return (
       <EmptyContent
-        title="No Conversation Selected"
-        description="Select a conversation to read"
+        title="Không có mail đang được chọn"
+        description="Chọn một mail để xem"
         imgUrl="/assets/icons/empty/ic_email_selected.svg"
         sx={{
           borderRadius: 1.5,
@@ -97,7 +100,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
       </TextMaxLine>
 
       <Stack spacing={0.5}>
-        <Stack direction="row" alignItems="center" justifyContent="flex-end">
+        {/* <Stack direction="row" alignItems="center" justifyContent="flex-end">
           <IconButton size="small">
             <Iconify width={18} icon="solar:reply-bold" />
           </IconButton>
@@ -113,7 +116,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
 
         <Typography variant="caption" noWrap sx={{ color: 'text.disabled' }}>
           {fDateTime(mail.createdAt)}
-        </Typography>
+        </Typography> */}
       </Stack>
     </Stack>
   );
@@ -237,6 +240,11 @@ export default function MailDetails({ mail, renderLabel }: Props) {
   const onClickUpload = () => {
     setOpenUpload(true);
   };
+  const onClickViewInvoice = () => {
+    sessionStorage.setItem('idInvoice', mail.invoiceId);
+    router.push(paths.dashboard.invoice.details(mail.invoiceId));
+    // window.open(paths.dashboard.invoice.details(mail.invoiceId), '_blank');
+  }
   const renderEditor = (
     <Stack
       spacing={2}
@@ -246,15 +254,25 @@ export default function MailDetails({ mail, renderLabel }: Props) {
     >
       <Stack direction="row" alignItems="center">
         <Stack direction="row" alignItems="center" flexGrow={1} />
-
-        <Button
+        {(!mail.isIncludedPdf || !mail.isIncludedXml) ? <Button
           variant="contained"
           color="primary"
-          endIcon={<Iconify icon="iconamoon:send-fill" />}
+          endIcon={<Iconify icon="solar:export-bold" />}
           onClick={() => onClickUpload()}
         >
           Bổ sung
-        </Button>
+        </Button> :
+          <Button
+            variant="outlined"
+            color="primary"
+            endIcon={<Iconify icon="ph:eye" />}
+            onClick={onClickViewInvoice}
+          >
+            Xem hoá đơn
+          </Button>
+        }
+
+
       </Stack>
     </Stack>
   );
@@ -287,7 +305,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
 
         {renderContent}
 
-        {(!mail.isIncludedPdf || !mail.isIncludedXml) && renderEditor}
+        {renderEditor}
       </Stack>
     </>
   );

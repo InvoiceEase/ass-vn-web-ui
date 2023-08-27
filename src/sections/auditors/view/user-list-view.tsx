@@ -88,21 +88,16 @@ export default function AuditorsListView() {
   const [filters, setFilters] = useState(defaultFilters);
   const [tableData, setTableData] = useState(_userList);
   const [role, setRole] = useState(['']);
-  const [userStatus, setUserStatus] = useState(['']);
+  const userStatus = ['All', 'Active', 'Banned'];
   useEffect(() => {
     setTableData(_userList);
     const userRole: string[] = [];
-    const userSts: string[] = ['All'];
     _userList.forEach((item) => {
       if (!userRole.includes(item.roleName)) {
         userRole.push(item.roleName);
       }
-      if (!userSts.includes(item.status)) {
-        userSts.push(item.status);
-      }
     });
     setRole(userRole);
-    setUserStatus(userSts);
   }, [_userList]);
   const dataFiltered = applyFilter({
     inputData: tableData,

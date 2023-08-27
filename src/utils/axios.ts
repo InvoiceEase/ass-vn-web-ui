@@ -24,7 +24,7 @@ export const API_ENDPOINTS = {
   },
   mail: {
     list: '/api/v1/mails',
-    details: '/api/mail/details',
+    details: '/api/v1/mails',
     labels: '/api/mail/labels',
   },
   post: {

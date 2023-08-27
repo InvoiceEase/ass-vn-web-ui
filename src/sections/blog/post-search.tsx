@@ -68,7 +68,7 @@ export default function PostSearch({ search, onSearch, hrefItem }: Props) {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search..."
+          placeholder="Tìm kiếm..."
           onKeyUp={handleKeyUp}
           InputProps={{
             ...params.InputProps,
