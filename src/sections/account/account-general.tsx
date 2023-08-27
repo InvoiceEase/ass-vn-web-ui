@@ -142,6 +142,7 @@ export default function AccountGeneral() {
             <Box rowGap={3} columnGap={2} display="grid">
               {/* <RHFTextField name="name" label="Tên công ty" /> */}
               <TextField
+                disabled={formStep === 2 && isUpdateSuccess}
                 id="name"
                 label="Tên công ty"
                 variant="outlined"
@@ -151,6 +152,7 @@ export default function AccountGeneral() {
               />
               {/* <RHFTextField name="address" label="Địa chỉ" /> */}
               <TextField
+                disabled={formStep === 2 && isUpdateSuccess}
                 id="address"
                 label="Địa chỉ"
                 variant="outlined"
@@ -160,6 +162,7 @@ export default function AccountGeneral() {
               />
               {/* <RHFTextField name="taxNumber" label="Mã số thuế" /> */}
               <TextField
+                disabled={formStep === 2 && isUpdateSuccess}
                 id="taxNumber"
                 label="Mã số thuế"
                 variant="outlined"
@@ -187,6 +190,7 @@ export default function AccountGeneral() {
                 }}
               /> */}
               <Autocomplete
+                disabled={formStep === 2 && isUpdateSuccess}
                 disablePortal
                 id="businessTypeId"
                 defaultValue={businessTypes.byId[user?.businessTypeId ?? '']?.name}
@@ -217,6 +221,7 @@ export default function AccountGeneral() {
 
               {/* <RHFTextField name="representPersonName" label="Tên người đại diện" /> */}
               <TextField
+                disabled={formStep === 2 && isUpdateSuccess}
                 id="representPersonName"
                 label="Tên người đại diện"
                 variant="outlined"
@@ -226,6 +231,7 @@ export default function AccountGeneral() {
               />
               {/* <RHFTextField name="invoiceReceivedEmail" label="Mail nhận hoá đơn" /> */}
               <TextField
+                disabled={formStep === 2 && isUpdateSuccess}
                 id="invoiceReceivedEmail"
                 label="Mail nhận hoá đơn"
                 variant="outlined"
@@ -251,6 +257,7 @@ export default function AccountGeneral() {
                 }}
               /> */}
               <Autocomplete
+                disabled={formStep === 2 && isUpdateSuccess}
                 disablePortal
                 id="declarationPeriod"
                 defaultValue={user?.declarationPeriod}

@@ -1,3 +1,4 @@
+import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
@@ -9,7 +10,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback } from 'react';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSnackbar } from 'src/components/snackbar';
+import { useBoolean } from 'src/hooks/use-boolean';
 import { resetFormStep, setFormStep, updateProfileData } from 'src/redux/slices/profile';
 import { useDispatch, useSelector } from 'src/redux/store';
 
@@ -31,6 +34,7 @@ const steps = [
 function AccountStepper() {
   // const [activeStep, setActiveStep] = React.useState(0);
   const { enqueueSnackbar } = useSnackbar();
+  const isShowDialog = useBoolean();
   const dispatch = useDispatch();
 
   const formStep = useSelector((state) => state.profile.profileFormStep);
@@ -52,6 +56,7 @@ function AccountStepper() {
     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (index === steps.length - 1) {
       await dispatch(updateProfileData(newUserData));
+      isShowDialog.onToggle();
       dispatch(setFormStep(true));
     } else {
       dispatch(setFormStep(true));
@@ -69,6 +74,27 @@ function AccountStepper() {
 
   return (
     <Box sx={{ maxWidth: 400 }}>
+      {isShowDialog && (
+        <ConfirmDialog
+          title="ASS VN muốn được cấp quyền truy cập"
+          content="Trang web của bạn sẽ chuyển trang sang trang mới để xác thực email người nhận hoá đơn."
+          open={isShowDialog.value}
+          action={
+            <LoadingButton
+              // loading={onLoad}
+              onClick={() => {
+                window.location.href =
+                  'https://us-central1-accountant-support-system.cloudfunctions.net/oauth2init';
+              }}
+              variant="contained"
+              color="primary"
+            >
+              Chuyển trang
+            </LoadingButton>
+          }
+          onClose={() => isShowDialog.setValue(false)}
+        />
+      )}
       <Stepper activeStep={formStep} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={step.label}>

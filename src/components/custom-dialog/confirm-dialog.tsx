@@ -1,9 +1,9 @@
 // @mui
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 //
 import { ConfirmDialogProps } from './types';
 
@@ -27,7 +27,7 @@ export default function ConfirmDialog({
         {action}
 
         <Button variant="outlined" color="inherit" onClick={onClose}>
-          Cancel
+          Huỷ
         </Button>
       </DialogActions>
     </Dialog>
