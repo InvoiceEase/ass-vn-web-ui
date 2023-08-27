@@ -18,6 +18,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useSnackbar } from 'src/components/snackbar';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 
 // ----------------------------------------------------------------------
 
@@ -31,8 +32,27 @@ const OPTIONS = [
   //   linkTo: paths.dashboard.user.profile,
   // },
   {
-    label: 'Cài đặt',
+    label: 'Thông tin cá nhân',
     linkTo: paths.dashboard.user.account,
+  }
+];
+
+const OPTIONS_MANAGER = [
+  {
+    label: 'Trang chủ',
+    linkTo: '/',
+  },
+  // {
+  //   label: 'Cá nhân',
+  //   linkTo: paths.dashboard.user.profile,
+  // },
+  {
+    label: 'Thông tin cá nhân',
+    linkTo: paths.dashboard.user.account,
+  },
+  {
+    label: 'Thông tin doanh nghiệp',
+    linkTo: paths.dashboard.business.account,
   },
 ];
 
@@ -106,11 +126,15 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
-          {OPTIONS.map((option) => (
+          {sessionStorage.getItem('roleCode')?.includes(`${RoleCodeEnum.BusinessPrefix}${RoleCodeEnum.Manager}`) ? (OPTIONS_MANAGER.map((option) => (
             <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
               {option.label}
             </MenuItem>
-          ))}
+          ))) : (OPTIONS.map((option) => (
+            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
+              {option.label}
+            </MenuItem>
+          )))}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

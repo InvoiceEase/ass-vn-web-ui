@@ -24,12 +24,13 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import axios from 'axios';
-import Iconify from 'src/components/iconify/iconify';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSnackbar } from 'src/components/snackbar';
 import { Upload } from 'src/components/upload';
-import { MessageType } from 'src/enums/MessageType';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
+import Typography from 'src/theme/overrides/components/typography';
+import Iconify from 'src/components/iconify/iconify';
+import { MessageType } from 'src/enums/MessageType';
 import { getInvoices } from 'src/redux/slices/invoices';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { useRouter } from 'src/routes/hook';
@@ -304,7 +305,8 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
     }
   };
   const handleOnclickInvoice = (id: string) => {
-    router.push(paths.dashboard.invoice.details(id));
+    sessionStorage.setItem('idInvoice', id)
+    window.open(paths.dashboard.invoice.details(id), '_blank');
   };
   return (
     <>

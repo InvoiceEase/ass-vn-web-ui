@@ -10,15 +10,15 @@ import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IBusiness } from 'src/types/business';
 
-const defaultBusinessItem = {
-  id: '0',
+const defaultBusinessItem: IBusiness = {
+  id: '',
   createdAt: '',
   modifiedAt: '',
   version: null,
   name: '',
   address: '',
   website: null,
-  taxNumber: null,
+  taxNumber: '',
   email: '',
   logo: null,
   invoiceReceivedEmail: '',
@@ -27,7 +27,7 @@ const defaultBusinessItem = {
 
 function CompanySelectionDropdown() {
   const dispatch = useDispatch();
-  const [selectedCompany, setSelectedCompany] = useState(defaultBusinessItem);
+  const [selectedCompany, setSelectedCompany] = useState<IBusiness>(defaultBusinessItem);
   const [businessesName, setBusinessesName] = useState(['']);
   const selectedBusinessID = sessionStorage.getItem('selectedBusinessID');
 

@@ -1,18 +1,22 @@
 import { useCallback, useState } from 'react';
 // @mui
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
-import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
+import Iconify from 'src/components/iconify';
 import { Button } from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import FileUpload from 'src/components/file-uploader/file-uploader';
-import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
 
 type Props = {
   filters: IInvoiceTableFilters;
@@ -21,12 +25,16 @@ type Props = {
   serviceOptions: string[];
 };
 
+
+
 export default function InvoiceTableToolbar({
   filters,
   onFilters,
   //
   serviceOptions,
 }: Props) {
+  const characterRole =['Hóa đơn mới', 'Hóa đơn bị điều chỉnh', 'Hóa đơn điều chỉnh', 'Hóa đơn bị thay thế', 'Hóa đơn thay thế']
+
   const popover = usePopover();
 
   const [openUpload, setOpenUpload] = useState(false);
@@ -39,11 +47,8 @@ export default function InvoiceTableToolbar({
   );
 
   const handleFilterService = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'service',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+    (event: SelectChangeEvent<string>) => {
+      onFilters('attribute', event.target.value);
     },
     [onFilters]
   );
@@ -88,7 +93,7 @@ export default function InvoiceTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <FormControl
+        <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 180 },
@@ -97,42 +102,24 @@ export default function InvoiceTableToolbar({
           <InputLabel>Tính chất hóa đơn</InputLabel>
 
           <Select
-            multiple
-            value={filters.service}
             onChange={handleFilterService}
+            value={filters.attribute}
             input={<OutlinedInput label="Tính chất hóa đơn" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
-
+            renderValue={(selected) => selected}
+            MenuProps={{
+              PaperProps: {
+                sx: { maxHeight: 240 },
+              },
+            }}
           >
-            {serviceOptions.map((option) => (
+            {characterRole.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.service.includes(option)} />
+                {/* <Checkbox disableRipple size="small" checked={filters.service.includes(option)} /> */}
                 {option}
               </MenuItem>
             ))}
           </Select>
-        </FormControl> */}
-
-        {/* <DatePicker
-          label="Start date"
-          value={filters.startDate}
-          onChange={handleFilterStartDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        />
-
-        <DatePicker
-          label="End date"
-          value={filters.endDate}
-          onChange={handleFilterEndDate}
-          slotProps={{ textField: { fullWidth: true } }}
-          sx={{
-            maxWidth: { md: 180 },
-          }}
-        /> */}
+        </FormControl>
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField

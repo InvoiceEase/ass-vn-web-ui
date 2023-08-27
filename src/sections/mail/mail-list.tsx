@@ -3,7 +3,7 @@ import Drawer from '@mui/material/Drawer';
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';
 // types
-import { IMailListState } from 'src/types/mail';
+import { IMail, IMailListState } from 'src/types/mail';
 // components
 //
 import { useState } from 'react';
@@ -19,7 +19,7 @@ import { MailItemSkeleton } from './mail-skeleton';
 
 type Props = {
   loading: boolean;
-  mails: IMailListState;
+  mails: IMail[];
   //
   openMail: boolean;
   onCloseMail: VoidFunction;
@@ -60,19 +60,19 @@ export default function MailList({
   const renderContent = (
     <>
       <Scrollbar sx={{ px: 2 }}>
-        {(loading ? [...Array(8)] : mails.allIds).map((mailId, index) =>
-          mailId ? (
+        {mails.map((item) =>
+          item.id ? (
             <MailItem
-              key={mailId}
-              mail={mails.byId[mailId]}
-              selected={selectedMail(mailId)}
+              key={item.id}
+              mail={item}
+              selected={selectedMail(item.id)}
               onClickMail={() => {
                 onCloseMail();
-                onClickMail(mailId);
+                onClickMail(item.id);
               }}
             />
           ) : (
-            <MailItemSkeleton key={index} />
+            <MailItemSkeleton key={item.id} />
           )
         )}
       </Scrollbar>

@@ -41,6 +41,12 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   expiredDate: string;
   password: string;
   auditorBiz: string;
+  organization: {
+     name: string;
+     email: string;
+     address: string;
+     taxNumber: string;
+  }
 }
 
 type Props = {
@@ -53,25 +59,13 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const confirm = useBoolean();
   const dispatch = useDispatch();
   const DEFAULT_DATE = new Date();
-  const defaultBizForAuditor = [
-    {
-      id: '',
-      createdAt: '',
-      modifiedAt: '',
-      version: 0,
-      name: '',
-      address: '',
-      website: null,
-      taxNumber: null,
-      email: '',
-      logo: null,
-      invoiceReceivedEmail: '',
-      engName: null,
-    },
-  ];
-  const [defaultBizAud, setDefaultBizAud] = useState(defaultBizForAuditor);
-
+  
   const businesses = useSelector((state) => state.business.businesses);
+  const [defaultBiz, setDefaultBiz]= useState(businesses);
+  useEffect(() => {
+    dispatch(getBusinesses());
+    setDefaultBiz(businesses);
+  }, [businesses]);
   const [error, setError] = useState(false);
   const [deleteComp, setDeleteComp] = useState('');
   const [onLoad, setOnload] = useState(false);
@@ -86,34 +80,8 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
     password: Yup.string().required('Vui lòng nhập mật khẩu'),
   };
-  const loadBizForAuditor = async () => {
-    try {
-      const token = sessionStorage.getItem('token');
-      const accessToken: string = `Bearer ${token}`;
-      const headersList = {
-        accept: '*/*',
-        Authorization: accessToken,
-      };
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/businesses/${currentUser?.id}`,
-        {
-          headers: headersList,
-        }
-      );
-      if (response.status === 200) {
-        setDefaultBizAud(response.data);
-      }
-    } catch (e) {
-      console.log('error', e);
-      router.push(paths.dashboard.user.list);
-    }
-  };
-  useEffect(() => {
-    dispatch(getBusinesses());
-    if (currentUser?.roleName === 'Kiểm duyệt viên') {
-      loadBizForAuditor();
-    }
-  }, []);
+  
+  
   const resolverCurren = {
     userFullName: Yup.string().required('Vui lòng nhập họ tên'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
@@ -128,14 +96,14 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     email: '',
     phoneNumber: '',
     password: '',
-    role: 'Kiểm duyệt viên',
+    role: 'Nhân viên doanh nghiệp',
   };
   const defaultVlCurr = {
     userFullName: currentUser?.userFullName || '',
     email: currentUser?.email || '',
     phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
     password: '',
-    role: currentUser?.roleName || 'Kiểm duyệt viên',
+    role: 'Nhân viên doanh nghiệp',
     businessId: '',
   };
   const defaultValues = useMemo(
@@ -168,11 +136,17 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         accept: '*/*',
         Authorization: accessToken,
       };
-      if (!currentUser) {
         try {
+          const orgId = sessionStorage.getItem("orgId") ?? "";
+          const bizLst = defaultBiz.allIds.map((businessId) => defaultBiz.byId[businessId]);
+          const biz = bizLst.filter((item) => item.id.localeCompare(orgId) === 0);
+          console.log('Organization', biz);
+
+          const organization = {name: biz[0].name, email: biz[0].email, address: biz[0].address, taxNumber: biz[0].taxNumber}
           setError(false);
-          data.role = 'AUDITOR';
+          data.role = 'BUSINESS_STAFF';
           data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
+          data.organization = organization;
           console.log('Data', data);
           const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
           const response = await axios.post(url, data, {
@@ -180,7 +154,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
           });
           if (response.status === 201) {
             enqueueSnackbar('Thêm thành công');
-            router.push(paths.dashboard.user.list);
+            router.push(paths.dashboard.user.listAuditors);
           } else {
             setErrorMsg('Thêm thất bại');
             setError(true);
@@ -190,46 +164,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
           setErrorMsg('Thêm thất bại');
           setError(true);
         }
-      } else {
-        try {
-          const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
-          if (
-            date?.getDate() === DEFAULT_DATE.getDate() &&
-            date?.getMonth() === DEFAULT_DATE.getMonth() &&
-            date?.getFullYear() === DEFAULT_DATE.getFullYear()
-          ) {
-            setErrorMsg('Vui lòng chọn ngày sau hôm nay');
-            setError(true);
-          } else {
-            setError(false);
-            const bizId = bizLst.filter((item) => item.name.localeCompare(data.businessId) === 0);
-            data.businessId = bizId[0].id;
-            const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/audits/auditors`;
-            const param = {
-              version: 0,
-              businessId: data.businessId,
-              auditorId: currentUser.id,
-              password: data.password,
-              expiredDate: date.toISOString(),
-            };
-            const response = await axios.post(url, param, {
-              headers: headersList,
-            });
-            if (response.status === 200) {
-              reset();
-              enqueueSnackbar('Cập nhật thành công');
-              router.push(paths.dashboard.user.list);
-            } else {
-              setErrorMsg('Cập nhật thất bại');
-              setError(true);
-            }
-          }
-        } catch (e) {
-          reset();
-          setErrorMsg('Cập nhật thất bại');
-          setError(true);
-        }
-      }
+      
     },
     [currentUser, enqueueSnackbar, reset, router, date]
   );
@@ -248,12 +183,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     },
     [setValue]
   );
-  const handleConfirmDeleteComp = (name: string | null) => {
-    const bizLst = defaultBizAud.filter((item) => item.name === name);
-    setBizDelete(bizLst[0].id);
-    setDeleteComp(name ?? '');
-    confirm.onTrue();
-  };
+  
   const handleDeleteComp = async () => {
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
@@ -295,7 +225,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       return `Thông tin ${currentUser?.roleName}`;
     }
     if (!currentUser) {
-      return 'Thêm kiểm duyệt viên';
+      return 'Thêm nhân viên';
     }
     return 'Đăng ký kiểm duyệt viên';
   };
