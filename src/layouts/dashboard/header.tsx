@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
-import { AccountPopover, SettingsButton } from '../_common';
+import { AccountPopover } from '../_common';
 import CompanySelectionDropdown from '../_common/company-selection-dropdown/company-selection-dropdown';
 import { HEADER, NAV } from '../config-layout';
 
@@ -101,7 +101,7 @@ export default function Header({ onOpenNav }: Props) {
 
         <ContactsPopover /> */}
 
-        <SettingsButton />
+        {/* <SettingsButton /> */}
 
         <AccountPopover />
       </Stack>

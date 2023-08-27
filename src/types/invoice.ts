@@ -57,7 +57,7 @@ export type IInvoice = {
   taxDeclarationId: number | null;
   invoiceName: string;
   errorFieldList: string | null;
-  pdfFilePath?: string;
+  pdfFilePathList?: string[];
   xmlFilePathList: string[];
 };
 

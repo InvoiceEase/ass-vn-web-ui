@@ -61,7 +61,9 @@ export default function InvoiceDetails({ invoice }: Props) {
 
   const dispatch = useDispatch();
 
-  const invoicePdfFilePath = useSelector((state) => state.invoice.invoiceDetails?.pdfFilePath);
+  const invoicePdfFilePathList = useSelector(
+    (state) => state.invoice.invoiceDetails?.pdfFilePathList
+  );
 
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
@@ -183,9 +185,9 @@ export default function InvoiceDetails({ invoice }: Props) {
     </TableContainer>
   );
 
-  const [invoicePDFUrl, setInvoicePDFUrl] = useState('');
+  const [invoicePDFUrl, setInvoicePDFUrl] = useState<string[]>([]);
 
-  const getInvoicePDF = () => {
+  const getInvoicePDF = (invoicePdfFilePath: string) => {
     // Create a reference to the file we want to download
     const storage = getStorage();
     const starsRef = ref(storage, invoicePdfFilePath);
@@ -194,7 +196,7 @@ export default function InvoiceDetails({ invoice }: Props) {
     getDownloadURL(starsRef)
       .then((url) => {
         // Insert url into an <img> tag to "download"
-        setInvoicePDFUrl(url);
+        setInvoicePDFUrl((prevState) => [...prevState, url]);
       })
       .catch((error) => {
         // A full list of error codes is available at
@@ -223,10 +225,10 @@ export default function InvoiceDetails({ invoice }: Props) {
   };
 
   useEffect(() => {
-    if (invoicePdfFilePath) {
-      getInvoicePDF();
+    if (invoicePdfFilePathList) {
+      invoicePdfFilePathList.forEach((item) => getInvoicePDF(item));
     }
-  }, [invoicePdfFilePath]);
+  }, [invoicePdfFilePathList]);
 
   const formatDate = (date: string) => new Date(date).toLocaleDateString();
 
@@ -247,7 +249,20 @@ export default function InvoiceDetails({ invoice }: Props) {
         <h1>Chi tiết hoá đơn</h1>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 2, md: 4 }}>
           <Box component="div">
-            <iframe title="pdf-viewer" src={invoicePDFUrl} width="400px" height="620px" />
+            {invoicePDFUrl.length > 0 ? (
+              invoicePDFUrl.map((_url) => (
+                <iframe title="pdf-viewer" src={_url} width="400px" height="620px" />
+              ))
+            ) : (
+              <>
+                <Typography variant="h4" sx={{ mt: 14 }}>
+                  Hoá đơn đang thiếu file PDF
+                </Typography>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Vui lòng bổ sung ở phần hộp thư
+                </Typography>
+              </>
+            )}
           </Box>
           <Stack spacing={{ xs: 1, sm: 2 }} direction="row">
             <Stack width="320px" sx={{ mr: 4 }}>
@@ -277,7 +292,7 @@ export default function InvoiceDetails({ invoice }: Props) {
               <Stack
                 width="185%"
                 style={{ backgroundColor: '#00B8D91A' }}
-                sx={{ mt: 5, p: 2, borderRadius: 1 }}
+                sx={{ mt: 5, mb: 10, p: 2, borderRadius: 1 }}
               >
                 <Typography variant="h5" sx={{ mb: 1 }} color="#006C9C">
                   KẾT QUẢ KIỂM TRA HOÁ ĐƠN
@@ -300,33 +315,35 @@ export default function InvoiceDetails({ invoice }: Props) {
                   </Box>
                 </Stack>
               </Stack>
-              {currentStatus === InvoiceStatusConfig.authenticated.status && (
-                <Stack
-                  sx={{
-                    position: 'absolute',
-                    flexDirection: 'row',
-                    bottom: 20,
-                    right: 20,
-                  }}
-                >
-                  <Button
-                    sx={{ mr: 2 }}
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
-                  >
-                    Không duyệt
-                  </Button>
-                  <Button
-                    sx={{ mr: 2 }}
-                    variant="contained"
-                    color="success"
-                    onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
-                  >
-                    Duyệt
-                  </Button>
-                </Stack>
-              )}
+              {currentStatus === InvoiceStatusConfig.authenticated.status ||
+                (currentStatus === InvoiceStatusConfig.unauthenticated.status &&
+                  ['Hóa đơn bị thay thế', 'Hóa đơn mới'].includes(invoice?.invoiceCharacter) && (
+                    <Stack
+                      sx={{
+                        position: 'absolute',
+                        flexDirection: 'row',
+                        bottom: 20,
+                        right: 20,
+                      }}
+                    >
+                      <Button
+                        sx={{ mr: 2 }}
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
+                      >
+                        Không duyệt
+                      </Button>
+                      <Button
+                        sx={{ mr: 2 }}
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
+                      >
+                        Duyệt
+                      </Button>
+                    </Stack>
+                  ))}
             </Stack>
             <Stack spacing={1} direction="column">
               <Label

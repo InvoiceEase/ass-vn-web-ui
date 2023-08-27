@@ -7,7 +7,15 @@ import TextField from '@mui/material/TextField';
 // types
 import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 // components
-import { Button } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
+} from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import FileUpload from 'src/components/file-uploader/file-uploader';
 import Iconify from 'src/components/iconify';
@@ -88,7 +96,7 @@ export default function InvoiceTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <FormControl
+        <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 180 },
@@ -103,7 +111,6 @@ export default function InvoiceTableToolbar({
             input={<OutlinedInput label="Tính chất hóa đơn" />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
             sx={{ textTransform: 'capitalize' }}
-
           >
             {serviceOptions.map((option) => (
               <MenuItem key={option} value={option}>
@@ -112,7 +119,7 @@ export default function InvoiceTableToolbar({
               </MenuItem>
             ))}
           </Select>
-        </FormControl> */}
+        </FormControl>
 
         {/* <DatePicker
           label="Start date"
@@ -136,7 +143,7 @@ export default function InvoiceTableToolbar({
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
-            sx={{ width: '68vw' }}
+            sx={{ width: '57vw' }}
             value={filters.name}
             onChange={handleFilterName}
             placeholder="Tìm hoá đơn theo tên..."
@@ -163,7 +170,7 @@ export default function InvoiceTableToolbar({
           </Button>
           <Button
             variant="outlined"
-            color="primary"
+            color="inherit"
             endIcon={<Iconify icon="iconamoon:send-fill" />}
             onClick={() => handleUpload()}
           >

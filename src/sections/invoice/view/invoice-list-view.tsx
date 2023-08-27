@@ -296,6 +296,9 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   }, []);
 
   const onDownloadFiles = (cloudFilePath: string, fileName: string) => {
+    if (!cloudFilePath) {
+      return;
+    }
     // Create a reference to the file we want to download
     const storage = getStorage();
     // selected.map((fileId) => {
@@ -346,7 +349,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const onExportInvoice = async (listInvoiceId: string[]) => {
     const invoicesById = keyBy(dataFiltered, 'id');
     listInvoiceId.map((id) => {
-      onDownloadFiles(invoicesById[+id].xmlFilePathList[0], invoicesById[+id].invoiceName)
+      onDownloadFiles(invoicesById[+id].xmlFilePathList[0], invoicesById[+id].invoiceName);
       // setXmlDownloadInvoices((prevState) => [
       //   ...prevState,
       //   {
@@ -505,18 +508,19 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
                   <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} />
                   Xuất hoá đơn
                 </Button>
-                {filters.status === 'Đã xác thực' && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      onApproveInvoice(table.selected);
-                    }}
-                  >
-                    {/* <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} /> */}
-                    Duyệt hoá đơn
-                  </Button>
-                )}
+                {filters.status === 'Đã xác thực' ||
+                  (filters.status === 'Chưa xác thực' && table.selected && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        onApproveInvoice(table.selected);
+                      }}
+                    >
+                      {/* <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} /> */}
+                      Duyệt hoá đơn
+                    </Button>
+                  ))}
                 {/* </Tooltip> */}
 
                 {/* <Tooltip title="Download">
