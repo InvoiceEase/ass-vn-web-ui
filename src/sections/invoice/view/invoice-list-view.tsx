@@ -197,18 +197,6 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const TABS = [
     { value: 'all', label: 'Tất cả', color: 'default', count: tableData.length },
     {
-      value: InvoiceStatusConfig.notAuthenticated.status,
-      label: InvoiceStatusConfig.notAuthenticated.status,
-      color: InvoiceStatusConfig.notAuthenticated.color,
-      count: getInvoiceLength(InvoiceStatusConfig.notAuthenticated.status),
-    },
-    {
-      value: InvoiceStatusConfig.unauthenticated.status,
-      label: InvoiceStatusConfig.unauthenticated.status,
-      color: InvoiceStatusConfig.unauthenticated.color,
-      count: getInvoiceLength(InvoiceStatusConfig.unauthenticated.status),
-    },
-    {
       value: InvoiceStatusConfig.authenticated.status,
       label: InvoiceStatusConfig.authenticated.status,
       color: InvoiceStatusConfig.authenticated.color,
@@ -220,6 +208,19 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
       color: InvoiceStatusConfig.approved.color,
       count: getInvoiceLength(InvoiceStatusConfig.approved.status),
     },
+    {
+      value: InvoiceStatusConfig.notAuthenticated.status,
+      label: InvoiceStatusConfig.notAuthenticated.status,
+      color: InvoiceStatusConfig.notAuthenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.notAuthenticated.status),
+    },
+    {
+      value: InvoiceStatusConfig.unauthenticated.status,
+      label: InvoiceStatusConfig.unauthenticated.status,
+      color: InvoiceStatusConfig.unauthenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.unauthenticated.status),
+    },
+
     {
       value: InvoiceStatusConfig.unapproved.status,
       label: InvoiceStatusConfig.unapproved.status,

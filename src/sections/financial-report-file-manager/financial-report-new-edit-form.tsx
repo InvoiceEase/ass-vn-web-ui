@@ -663,6 +663,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_BCDPSTK"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_BCDPSTK}
                 //   onDelete={handleRemoveFile}
               />

@@ -63,7 +63,7 @@ export default function Upload({
     if (isUploadInvoice) {
       result = 'Vui lòng chọn các hoá đơn cần tải lên.';
     } else if (!mail) {
-      result = 'Vui lòng chọn file còn thiếu.';
+      result = 'Vui lòng tải lên 2 file excel từ cơ quan thuế để so sánh.';
     } else if (!mail?.isIncludedPdf && !mail?.isIncludedXml) {
       result = 'Vui lòng chọn file pdf và xml còn thiếu của hóa đơn trong mail này.';
     } else if (mail?.isIncludedPdf && !mail?.isIncludedXml) {
@@ -128,24 +128,26 @@ export default function Upload({
         <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} />
       </Box>
 
-      <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
-        {onRemoveAll && (
-          <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-            Hủy
-          </Button>
-        )}
+      {!errorPop && !errorPopEx && (
+        <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+          {onRemoveAll && (
+            <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
+              Hủy
+            </Button>
+          )}
 
-        {onUpload && (
-          <Button
-            size="small"
-            variant="contained"
-            onClick={onUpload}
-            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-          >
-            Tải lên
-          </Button>
-        )}
-      </Stack>
+          {onUpload && (
+            <Button
+              size="small"
+              variant="contained"
+              onClick={onUpload}
+              startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            >
+              Tải lên
+            </Button>
+          )}
+        </Stack>
+      )}
     </>
   );
   useEffect(() => {
@@ -212,12 +214,12 @@ export default function Upload({
       {helperText && helperText}
       {!!errorPop && (
         <Alert sx={{ mt: 5 }} severity="error">
-          CHỈ ĐƯỢC UPLOAD TỐI ĐA 2 FILE
+          CHỈ ĐƯỢC TẢI LÊN TỐI ĐA 2 FILE
         </Alert>
       )}
       {!!errorPopEx && (
         <Alert sx={{ mt: 5 }} severity="error">
-          Upload 2 file
+          TẢI LÊN ĐỦ 2 FILE
         </Alert>
       )}
       <RejectionFiles fileRejections={fileRejections} />

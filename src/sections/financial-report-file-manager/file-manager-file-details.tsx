@@ -425,7 +425,6 @@ export default function FileManagerFileDetails({
               <Stack
                 sx={{
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
                   alignItems: 'center',
                 }}
               >
@@ -435,13 +434,13 @@ export default function FileManagerFileDetails({
                   // selected={selected.includes(file.id)}
                   // onSelect={() => onSelectItem(file.id)}
                   // onDelete={() => onDeleteItem(file.id)}
-                  sx={{ width: 360 }}
+                  sx={{ width: 360, mr: 2 }}
                 />
                 <IconButton
                   size="small"
                   onClick={() => onDownloadFiles(renderFile.cloudFilePath, renderFile.fileName)}
                 >
-                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
+                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26, mr: 2 }} />
                 </IconButton>
               </Stack>
             </>
@@ -542,7 +541,7 @@ export default function FileManagerFileDetails({
           backdrop: { invisible: true },
         }}
         PaperProps={{
-          sx: { width: '35vw' },
+          sx: { width: '30vw' },
         }}
         {...other}
       >

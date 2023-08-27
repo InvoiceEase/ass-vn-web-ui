@@ -51,7 +51,7 @@ export const API_ENDPOINTS = {
     details: '/api/v1/invoices/',
   },
   provider: {
-    list: '/api/v1/providers',
+    list: '/api/v1/providers/business',
   },
   users: {
     list: '/api/v1/users/filter',
