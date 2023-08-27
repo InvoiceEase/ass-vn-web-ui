@@ -169,11 +169,18 @@ export function getMails(businessId: string | null, searchQuery?: string | null,
 export function getMail(mailId: string) {
   return async (dispatch: Dispatch) => {
     try {
-      const response = await axios.get(API_ENDPOINTS.mail.details, {
-        params: {
-          mailId,
-        },
-      });
+      const token = sessionStorage.getItem('token');
+
+      const accessToken: string = `Bearer ${token}`;
+
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.details}/${mailId}`,
+        {
+          headers: headersList
+        });
       dispatch(slice.actions.getMailSuccess(response.data.mail));
     } catch (error) {
       console.error(error);
@@ -197,7 +204,6 @@ export function readMail(mailId: string) {
         {},
         { headers: headersList }
       );
-
       dispatch(slice.actions.readMail(response.data));
     } catch (error) {
       console.error(error);

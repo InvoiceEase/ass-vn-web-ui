@@ -4,6 +4,7 @@ import ListItemButton, { ListItemButtonProps } from '@mui/material/ListItemButto
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useEffect, useState } from 'react';
 // types
 import { IMail } from 'src/types/mail';
 
@@ -26,11 +27,11 @@ export default function MailItem({ mail, selected, onClickMail, sx, ...other }: 
         // eslint-disable-next-line no-nested-ternary
         ...(selected
           ? {
-              bgcolor: 'action.selected',
-            }
+            bgcolor: 'action.selected',
+          }
           : !mail.isIncludedPdf || !mail.isIncludedXml
-          ? { bgcolor: '#FCF7E5' }
-          : { bgcolor: 'white' }),
+            ? { bgcolor: '#FCF7E5' }
+            : { bgcolor: 'white' }),
         ...sx,
       }}
       {...other}
@@ -41,12 +42,12 @@ export default function MailItem({ mail, selected, onClickMail, sx, ...other }: 
 
       <>
         <ListItemText
-          primary={mail.mailFrom}
+          primary={mail.subject}
           primaryTypographyProps={{
             noWrap: true,
             variant: 'subtitle2',
           }}
-          secondary={mail.body}
+          secondary={`${mail.receivedDate.substring(0,17)}`}
           secondaryTypographyProps={{
             noWrap: true,
             component: 'span',

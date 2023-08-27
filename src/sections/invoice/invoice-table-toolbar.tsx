@@ -38,6 +38,7 @@ export default function InvoiceTableToolbar({
   const popover = usePopover();
 
   const [openUpload, setOpenUpload] = useState(false);
+  const [isUploadInvoice, setIsUploadInvoice] = useState(false)
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +73,7 @@ export default function InvoiceTableToolbar({
   // };
 
   const handleUpload = () => {
+    setIsUploadInvoice(false);
     setOpenUpload(true);
   };
 
@@ -142,6 +144,7 @@ export default function InvoiceTableToolbar({
           <Button
             onClick={() => {
               popover.onClose();
+              setIsUploadInvoice(true);
               setOpenUpload(true);
             }}
           >
@@ -193,7 +196,7 @@ export default function InvoiceTableToolbar({
           Xuất tài liệu
         </MenuItem>
       </CustomPopover> */}
-      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} isUploadInvoice />}
+      {openUpload && <FileUpload isOpen={openUpload} onCanCel={resetUpload} isUploadInvoice={isUploadInvoice} />}
     </>
   );
 }

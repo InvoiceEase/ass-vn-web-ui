@@ -159,6 +159,7 @@ export default function MailView() {
     handleOpenCompose();
   }, [handleOpenCompose]);
 
+
   const handleToggleCompose = useCallback(() => {
     if (openNav.value) {
       openNav.onFalse();

@@ -1,4 +1,5 @@
 import { IErrorType } from './error';
+import { IInvoice } from './invoice';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +41,7 @@ export type IMail = {
   isIncludedPdf: boolean;
   isRead: boolean;
   attachmentFolderPath: string;
+  invoiceId: string;
 };
 
 // export type IMail = {
