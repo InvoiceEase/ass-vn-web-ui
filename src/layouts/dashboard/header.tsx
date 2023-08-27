@@ -85,7 +85,10 @@ export default function Header({ onOpenNav }: Props) {
       {/* {!role?.includes(RoleCodeEnum.Auditor) ? (
         <Searchbar />
       ) : ( */}
-      {businesses.allIds.length > 0 && <CompanySelectionDropdown />}
+      {businesses.allIds.length > 0 &&
+        !sessionStorage.getItem('roleCode')?.includes(RoleCodeEnum.Admin) && (
+          <CompanySelectionDropdown />
+        )}
       {/* )} */}
 
       <Stack

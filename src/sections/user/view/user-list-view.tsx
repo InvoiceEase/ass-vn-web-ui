@@ -55,11 +55,11 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', width: 300 },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
+  { id: 'name', label: 'Họ tên', width: 300 },
+  { id: 'phoneNumber', label: 'Số điện thoại', width: 180 },
   // { id: 'email', label: 'Email', width: 300 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'role', label: 'Chức vụ', width: 180 },
+  { id: 'status', label: 'Trạng thái', width: 100 },
   { id: '', width: 88 },
 ];
 

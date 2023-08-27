@@ -125,7 +125,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     userFullName: Yup.string().required('Vui lòng nhập họ tên'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
     phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu'),
     businessId: Yup.string().required('Company is required'),
   };
   const NewUserSchema = Yup.object().shape(currentUser ? resolverCurren : resolver);
@@ -141,7 +140,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     userFullName: currentUser?.userFullName || '',
     email: currentUser?.email || '',
     phoneNumber: `0${currentUser?.phoneNumber.substring(3)}` || '',
-    password: '',
     role: currentUser?.roleName || 'Kiểm duyệt viên',
     businessId: '',
   };
@@ -216,7 +214,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
               version: 0,
               businessId: data.businessId,
               auditorId: currentUser.id,
-              password: data.password,
               expiredDate: date.toISOString(),
             };
             const response = await axios.post(url, param, {
@@ -371,7 +368,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                 />
                 <RHFTextField sx={{ fontWeight: 'bold' }} disabled name="role" label="Chức vụ" />
 
-                {!isView && (
+                {!isView && !currentUser && (
                   <RHFTextField
                     sx={{ fontWeight: 'bold' }}
                     name="password"
@@ -444,7 +441,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                   )}
                 {currentUser?.roleName === 'Kiểm duyệt viên' &&
                   isView &&
-                  defaultBizAud.length < 1 && (
+                  (defaultBizAud.length < 1 || defaultBizAud[0] === defaultBizForAuditor[0]) && (
                     <Stack sx={{ display: 'flex' }}>
                       <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
                         Chưa đăng ký công ty

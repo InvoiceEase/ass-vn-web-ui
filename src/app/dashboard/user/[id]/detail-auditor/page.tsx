@@ -1,5 +1,5 @@
 // sections
-import UserDetailView from 'src/sections/user/view/user-detail-view';
+import UserDetailView from 'src/sections/auditors/view/user-detail-view';
 
 // ----------------------------------------------------------------------
 

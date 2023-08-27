@@ -59,7 +59,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const confirm = useBoolean();
   const dispatch = useDispatch();
   const DEFAULT_DATE = new Date();
-  
+
   const businesses = useSelector((state) => state.business.businesses);
   const [defaultBiz, setDefaultBiz]= useState(businesses);
   useEffect(() => {
@@ -80,8 +80,8 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
     password: Yup.string().required('Vui lòng nhập mật khẩu'),
   };
-  
-  
+
+
   const resolverCurren = {
     userFullName: Yup.string().required('Vui lòng nhập họ tên'),
     email: Yup.string().required('Vui lòng nhập email').email('Vui lòng nhập email hợp lệ'),
@@ -164,7 +164,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
           setErrorMsg('Thêm thất bại');
           setError(true);
         }
-      
+
     },
     [currentUser, enqueueSnackbar, reset, router, date]
   );
@@ -183,7 +183,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     },
     [setValue]
   );
-  
+
   const handleDeleteComp = async () => {
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
