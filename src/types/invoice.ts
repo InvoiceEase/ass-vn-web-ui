@@ -58,6 +58,7 @@ export type IInvoice = {
   invoiceName: string;
   errorFieldList: string | null;
   pdfFilePath?: string;
+  xmlFilePathList: string[];
 };
 
 export type IInvoicePage = {

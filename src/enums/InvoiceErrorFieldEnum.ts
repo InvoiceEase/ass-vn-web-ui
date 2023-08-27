@@ -7,4 +7,5 @@ export enum InvoiceErrorFieldEnum {
   ReceiverAddress = 'receiver_address',
   Spare = 'spare',
   TotalPrice = 'total_price',
+  TaxCodeVerified = 'tax_code_verified',
 }

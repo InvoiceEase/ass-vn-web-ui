@@ -179,7 +179,7 @@ export default function FileManagerFileDetails({
     </Stack>
   );
 
-  const onDownloadFiles = (cloudFilePath: string) => {
+  const onDownloadFiles = (cloudFilePath: string, fileName: string) => {
     // Create a reference to the file we want to download
     const storage = getStorage();
     // selected.map((fileId) => {
@@ -191,14 +191,14 @@ export default function FileManagerFileDetails({
       .then((url) => {
         // Insert url into an <img> tag to "download"
         // This can be downloaded directly:
-        // const xhr = new XMLHttpRequest();
-        // xhr.responseType = 'blob';
-        // xhr.onload = (event) => {
-        //   const blob = xhr.response;
-        // };
-        // xhr.open('GET', url);
-        // xhr.send();
-        saveAs(url);
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+          const blob = xhr.response;
+          saveAs(blob, fileName);
+        };
+        xhr.open('GET', url);
+        xhr.send();
       })
       .catch((error) => {
         // A full list of error codes is available at
@@ -333,7 +333,10 @@ export default function FileManagerFileDetails({
                   // onDelete={() => onDeleteItem(file.id)}
                   sx={{ width: 360 }}
                 />
-                <IconButton size="small" onClick={() => onDownloadFiles(renderFile.cloudFilePath)}>
+                <IconButton
+                  size="small"
+                  onClick={() => onDownloadFiles(renderFile.cloudFilePath, renderFile.fileName)}
+                >
                   <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
                 </IconButton>
               </Stack>
@@ -434,7 +437,10 @@ export default function FileManagerFileDetails({
                   // onDelete={() => onDeleteItem(file.id)}
                   sx={{ width: 360 }}
                 />
-                <IconButton size="small" onClick={() => onDownloadFiles(renderFile.cloudFilePath)}>
+                <IconButton
+                  size="small"
+                  onClick={() => onDownloadFiles(renderFile.cloudFilePath, renderFile.fileName)}
+                >
                   <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
                 </IconButton>
               </Stack>

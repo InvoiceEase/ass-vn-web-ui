@@ -42,7 +42,11 @@ import {
 } from 'src/components/table';
 //
 import axios from 'axios';
+import { saveAs } from 'file-saver';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { keyBy } from 'lodash';
 import FileUpload from 'src/components/file-uploader/file-uploader';
+import { useSnackbar } from 'src/components/snackbar';
 import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { getInvoices } from 'src/redux/slices/invoices';
 import { useDispatch, useSelector } from 'src/redux/store';
@@ -93,7 +97,26 @@ function useInitial() {
 // ----------------------------------------------------------------------
 
 export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: boolean }) {
-  useInitial();
+  // useInitial();
+  const dispatch = useDispatch();
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const orgId = sessionStorage.getItem('orgId');
+  const selectedBusinessID = sessionStorage.getItem('selectedBusinessID') ?? '0';
+  const roleCode = sessionStorage.getItem('roleCode') ?? '';
+
+  const getInvoicessCallback = useCallback(async () => {
+    await dispatch(
+      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', true)
+    );
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', true)
+    );
+  }, [getInvoicessCallback, orgId, selectedBusinessID]);
   const theme = useTheme();
 
   const settings = useSettingsContext();
@@ -116,6 +139,9 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   const [openUpload, setOpenUpload] = useState(false);
   const [filters, setFilters] = useState(defaultFilters);
+  const [xmlDownloadInvoices, setXmlDownloadInvoices] = useState<
+    { invoiceName: string; xmlFilePathList: string[] }[]
+  >([]);
   const handleUpload = () => {
     setOpenUpload(true);
   };
@@ -163,16 +189,10 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
   const TABS = [
     { value: 'all', label: 'Tất cả', color: 'default', count: tableData.length },
     {
-      value: InvoiceStatusConfig.approved.status,
-      label: InvoiceStatusConfig.approved.status,
-      color: InvoiceStatusConfig.approved.color,
-      count: getInvoiceLength(InvoiceStatusConfig.approved.status),
-    },
-    {
-      value: InvoiceStatusConfig.authenticated.status,
-      label: InvoiceStatusConfig.authenticated.status,
-      color: InvoiceStatusConfig.authenticated.color,
-      count: getInvoiceLength(InvoiceStatusConfig.authenticated.status),
+      value: InvoiceStatusConfig.notAuthenticated.status,
+      label: InvoiceStatusConfig.notAuthenticated.status,
+      color: InvoiceStatusConfig.notAuthenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.notAuthenticated.status),
     },
     {
       value: InvoiceStatusConfig.unauthenticated.status,
@@ -181,16 +201,22 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
       count: getInvoiceLength(InvoiceStatusConfig.unauthenticated.status),
     },
     {
+      value: InvoiceStatusConfig.authenticated.status,
+      label: InvoiceStatusConfig.authenticated.status,
+      color: InvoiceStatusConfig.authenticated.color,
+      count: getInvoiceLength(InvoiceStatusConfig.authenticated.status),
+    },
+    {
+      value: InvoiceStatusConfig.approved.status,
+      label: InvoiceStatusConfig.approved.status,
+      color: InvoiceStatusConfig.approved.color,
+      count: getInvoiceLength(InvoiceStatusConfig.approved.status),
+    },
+    {
       value: InvoiceStatusConfig.unapproved.status,
       label: InvoiceStatusConfig.unapproved.status,
       color: InvoiceStatusConfig.unapproved.color,
       count: getInvoiceLength(InvoiceStatusConfig.unapproved.status),
-    },
-    {
-      value: InvoiceStatusConfig.notAuthenticated.status,
-      label: InvoiceStatusConfig.notAuthenticated.status,
-      color: InvoiceStatusConfig.notAuthenticated.color,
-      count: getInvoiceLength(InvoiceStatusConfig.notAuthenticated.status),
     },
   ] as const;
 
@@ -269,10 +295,101 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
     setOpenUpload(false);
   }, []);
 
-  const onExportInvoice = async (listInvoiceId: string[]) => {
-    const listInvoiceIdNumber: number[] = [];
-    listInvoiceId.forEach((id) => listInvoiceIdNumber.push(+id));
+  const onDownloadFiles = (cloudFilePath: string, fileName: string) => {
+    // Create a reference to the file we want to download
+    const storage = getStorage();
+    // selected.map((fileId) => {
+    //   const file = files.filter((fileInState) => fileInState.id === fileId)[0];
+    const starsRef = ref(storage, cloudFilePath);
 
+    // Get the download URL
+    getDownloadURL(starsRef)
+      .then((url) => {
+        // Insert url into an <img> tag to "download"
+        // This can be downloaded directly:
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+          const blob = xhr.response;
+          saveAs(blob, fileName);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            break;
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            break;
+
+          // ...
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
+
+          default:
+            break;
+        }
+      });
+    // });
+  };
+
+  const onExportInvoice = async (listInvoiceId: string[]) => {
+    const invoicesById = keyBy(dataFiltered, 'id');
+    listInvoiceId.map((id) => {
+      onDownloadFiles(invoicesById[+id].xmlFilePathList[0], invoicesById[+id].invoiceName)
+      // setXmlDownloadInvoices((prevState) => [
+      //   ...prevState,
+      //   {
+      //     invoiceName: invoicesById[+id].invoiceName,
+      //     xmlFilePathList: invoicesById[+id].xmlFilePathList,
+      //   },
+      // ]);
+    });
+    // xmlDownloadInvoices.forEach((item) =>
+    //   onDownloadFiles(item.xmlFilePathList[0], item.invoiceName)
+    // );
+    // console.log('NghiaLog: xmlDownloadPath - ', xmlDownloadPaths);
+    // const listInvoiceIdNumber: number[] = [];
+    // listInvoiceId.forEach((id) => listInvoiceIdNumber.push(+id));
+
+    // const token = sessionStorage.getItem('token');
+
+    // const accessToken: string = `Bearer ${token}`;
+
+    // const headersList = {
+    //   accept: '*/*',
+    //   Authorization: accessToken,
+    // };
+    // try {
+    //   const response = await axios.post(
+    //     `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.invoice.export}`,
+    //     {
+    //       version: 0,
+    //       invoiceIdList: listInvoiceIdNumber,
+    //     },
+    //     {
+    //       headers: headersList,
+    //     }
+    //   );
+    //   // if (response.status === 200) {
+    //   // }
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  };
+
+  const onApproveInvoice = async (listInvoiceId: string[]) => {
+    console.log('NghiaLog: listInvoiceId - ', listInvoiceId);
     const token = sessionStorage.getItem('token');
 
     const accessToken: string = `Bearer ${token}`;
@@ -281,21 +398,34 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
       accept: '*/*',
       Authorization: accessToken,
     };
+
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.invoice.export}`,
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.invoice.details}status`,
         {
           version: 0,
-          invoiceIdList: listInvoiceIdNumber,
+          invoiceIds: listInvoiceId,
+          invoiceStatus: 'DA_DUYET',
         },
         {
           headers: headersList,
         }
       );
-      // if (response.status === 200) {
-      // }
+      if (response.status === 200) {
+        enqueueSnackbar('Duyệt hoá đơn thành công!');
+        handleResetFilters();
+        dispatch(
+          getInvoices(
+            roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '',
+            true
+          )
+        );
+      } else {
+        enqueueSnackbar('Duyệt hoá đơn thất bại!', { variant: 'error' });
+      }
     } catch (error) {
-      console.error(error);
+      // dispatch(slice.actions.getInvoiceDetailsFailure(error));
+      console.log(error);
     }
   };
 
@@ -370,10 +500,23 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
                   onClick={() => {
                     onExportInvoice(table.selected);
                   }}
+                  sx={{ mr: 1 }}
                 >
                   <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} />
-                  Xuất tài liệu
+                  Xuất hoá đơn
                 </Button>
+                {filters.status === 'Đã xác thực' && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      onApproveInvoice(table.selected);
+                    }}
+                  >
+                    {/* <Iconify icon="solar:import-bold" sx={{ mr: 0.5 }} /> */}
+                    Duyệt hoá đơn
+                  </Button>
+                )}
                 {/* </Tooltip> */}
 
                 {/* <Tooltip title="Download">
