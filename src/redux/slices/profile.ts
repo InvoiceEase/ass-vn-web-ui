@@ -79,7 +79,7 @@ const slice = createSlice({
       state.profileStatus.empty = !profileData.length;
       state.profileStatus.error = null;
       state.profileData = profileData;
-      state.newProfileData = profileData;
+      state.newProfileData = { ...profileData, status: profileData.status.toUpperCase() };
     },
 
     setNextFormStep(state) {
