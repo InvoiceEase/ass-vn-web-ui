@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
   business: {
     list: '/api/v1/businesses',
     types: '/api/v1/businessTypes',
+    auditor: '/api/v1/audits/businesses'
   },
   profile: {
     business: '/api/v1/businesses',

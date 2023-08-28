@@ -37,7 +37,7 @@ const initialState: IBusinessState = {
     empty: false,
     error: null,
   },
-  businessAdmin:[]
+  businessAdmin: [],
 };
 
 const slice = createSlice({
@@ -87,7 +87,16 @@ const slice = createSlice({
       state.businesses.byId = keyBy(businesses.content, 'id');
       state.businesses.allIds = Object.keys(state.businesses.byId);
     },
-    getBusinessesAdminSuccess(state, action){
+    getBusinessesSuccessAuditor(state, action) {
+      const businesses = action.payload;
+      state.businessesStatus.loading = false;
+      state.businessesStatus.empty = !businesses.length;
+      state.businessesStatus.error = null;
+
+      state.businesses.byId = keyBy(businesses, 'id');
+      state.businesses.allIds = Object.keys(state.businesses.byId);
+    },
+    getBusinessesAdminSuccess(state, action) {
       const businessAdmin = action.payload;
       state.businessAdmin = businessAdmin;
     },
@@ -146,6 +155,33 @@ export function getBusinesses() {
         }
       );
       dispatch(slice.actions.getBusinessesSuccess(response.data));
+    } catch (error) {
+      console.log('error', error);
+      dispatch(slice.actions.getBusinessesFailure(error));
+    }
+  };
+}
+
+export function getBusinessesAuditor() {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getBusinessesStart());
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+    const userId = sessionStorage.getItem('userId');
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.auditor}`,
+        {
+          params: { auditorId: userId},
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getBusinessesSuccessAuditor(response.data));
     } catch (error) {
       console.log('error', error);
       dispatch(slice.actions.getBusinessesFailure(error));

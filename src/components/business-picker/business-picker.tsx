@@ -7,7 +7,7 @@ import {
   List,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getBusinesses, setSelectedBusiness } from 'src/redux/slices/business';
+import { getBusinessesAuditor, setSelectedBusiness } from 'src/redux/slices/business';
 import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
 import BusinessItem from './business-item';
@@ -29,7 +29,7 @@ export default function BusinessPicker() {
   };
 
   useEffect(() => {
-    dispatch(getBusinesses());
+    dispatch(getBusinessesAuditor());
     setOpen(true);
   }, []);
 
