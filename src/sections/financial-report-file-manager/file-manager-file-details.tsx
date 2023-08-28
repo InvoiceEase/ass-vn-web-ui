@@ -593,7 +593,7 @@ export default function FileManagerFileDetails({
               fullWidth
               size="large"
               component={RouterLink}
-              href={paths.dashboard.file.financial.update(year ?? '', quarter.split(' ')[1])}
+              href={paths.dashboard.file.financial.update(year ?? '')}
               variant="contained"
               startIcon={<Iconify icon="eva:cloud-upload-fill" />}
             >

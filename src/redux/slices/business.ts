@@ -177,7 +177,7 @@ export function getBusinessesAuditor() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.business.auditor}`,
         {
-          params: { auditorId: userId},
+          params: { auditorId: userId },
           headers: headersList,
         }
       );

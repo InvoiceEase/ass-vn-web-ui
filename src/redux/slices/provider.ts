@@ -79,19 +79,18 @@ export function updateProvider(providerId: string, version: number, data: any) {
     };
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.provider.list}/${providerId}`,
-        {},
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.provider.update}/${providerId}`,
+        {
+          version,
+          businessId,
+          name: data?.name,
+          address: data?.address,
+          email: data?.email,
+          phoneNumber: data?.phoneNumber,
+          taxNumber: data?.taxNumber,
+        },
         {
           headers: headersList,
-          params: {
-            version,
-            businessId,
-            name: data?.name,
-            address: data?.address,
-            email: data?.email,
-            phoneNumber: data?.phoneNumber,
-            taxNumber: data?.taxNumber,
-          },
         }
       );
     } catch (error) {

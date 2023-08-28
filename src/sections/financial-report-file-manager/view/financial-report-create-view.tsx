@@ -28,9 +28,7 @@ export default function FinancialReportCreateView() {
 
   useEffect(() => {
     if (params) {
-      const updateFiles = filesInRedux.filter(
-        (item) => item.year === year && item.quarter === quarter
-      );
+      const updateFiles = filesInRedux.filter((item) => item.year === year);
       setFiles(updateFiles);
     }
   }, []);
@@ -55,7 +53,7 @@ export default function FinancialReportCreateView() {
         }}
       /> */}
 
-      <FinancialReportNewEditForm year={year} quarter={quarter} files={files} />
+      <FinancialReportNewEditForm year={year} files={files} />
     </Container>
   );
 }

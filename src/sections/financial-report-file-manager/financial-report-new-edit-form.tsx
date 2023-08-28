@@ -137,25 +137,19 @@ export default function FinancialReportNewEditForm(props?: Props) {
   const emailAddress = useSelector((state) => state.profile.profileData.email);
   const businessId = sessionStorage.getItem('orgId') ?? '0';
 
-  const getReportsByYearAndQuarter = (
-    year: string | number | undefined,
-    quarter: string | undefined
-  ) => {
-    const result = financialReportFilesInRedux.filter(
-      (file) => file.year === year && file.quarter === quarter
-    );
+  const getReportsByYear = (year: string | number | undefined) => {
+    const result = financialReportFilesInRedux.filter((file) => file.year === year);
     return result;
   };
 
   const getReportFileIdInRedux = (reportType: string) => {
-    const reports = getReportsByYearAndQuarter(props?.year, props?.quarter);
+    const reports = getReportsByYear(props?.year);
     const report = reports.filter((item) => item.reportType === reportType)[0];
     return report.id;
   };
 
   const mapDataReportFilesInfo = (dataForm: FormValuesProps) => {
     const year = dataForm.year ? +dataForm.year : 0;
-    const quarter = dataForm.quarter ? +dataForm.quarter : 0;
     const result: ReportFilesInfo = {
       emailAddress,
       businessId: +businessId,
@@ -166,7 +160,6 @@ export default function FinancialReportNewEditForm(props?: Props) {
     financialReportFiles.map((file: any) => {
       result.financialFileInfoList.push({
         year,
-        quarter,
         reportType: file.reportType,
         fileName: file.file.name,
         currentReportFileId: props?.year ? getReportFileIdInRedux(file.reportType) : '',
@@ -698,6 +691,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_BCDKT"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_BCDKT}
                 // onDelete={handleRemoveFile}
               />
@@ -729,6 +726,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_BKQKD"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_BKQKD}
                 //   onDelete={handleRemoveFile}
               />
@@ -760,6 +761,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_BLCTT"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_BLCTT}
                 //   onDelete={handleRemoveFile}
               />
@@ -791,6 +796,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_SCT"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_SCT}
                 //   onDelete={handleRemoveFile}
               />
@@ -825,6 +834,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_STATEMENT_FOOTNOTES"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_STATEMENT_FOOTNOTES}
                 //   onDelete={handleRemoveFile}
               />
@@ -859,6 +872,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_TAX_FINALIZATION_TNCN"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNCN}
                 //   onDelete={handleRemoveFile}
               />
@@ -893,6 +910,10 @@ export default function FinancialReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="FINANCIAL_TAX_FINALIZATION_TNDN"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropFINANCIAL_TAX_FINALIZATION_TNDN}
                 //   onDelete={handleRemoveFile}
               />

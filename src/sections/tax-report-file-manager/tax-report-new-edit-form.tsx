@@ -502,6 +502,10 @@ export default function TaxReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="TAX_RETURN_TNCN"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropTAX_RETURN_TNCN}
                 //   onDelete={handleRemoveFile}
               />
@@ -533,6 +537,10 @@ export default function TaxReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="TAX_RETURN_GTGT"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropTAX_RETURN_GTGT}
                 //   onDelete={handleRemoveFile}
               />
@@ -563,6 +571,10 @@ export default function TaxReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="TAX_OUTCOME"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropTAX_OUTCOME}
                 //   onDelete={handleRemoveFile}
               />
@@ -593,6 +605,10 @@ export default function TaxReportNewEditForm(props?: Props) {
               <RHFUploadBox
                 name="TAX_INCOME"
                 maxSize={3145728}
+                accept={{
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                  'application/pdf': [],
+                }}
                 onDrop={handleDropTAX_INCOME}
                 //   onDelete={handleRemoveFile}
               />

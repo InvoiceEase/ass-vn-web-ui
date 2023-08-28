@@ -195,8 +195,7 @@ export const paths = {
       financial: {
         root: `${ROOTS.DASHBOARD}/financial-report-file-manager`,
         upload: `${ROOTS.DASHBOARD}/financial-report-file-manager/upload`,
-        update: (year: string, quarter: string) =>
-          `${ROOTS.DASHBOARD}/financial-report-file-manager/upload/${year}/${quarter}`,
+        update: (year: string) => `${ROOTS.DASHBOARD}/financial-report-file-manager/upload/${year}`,
       },
       tax: {
         root: `${ROOTS.DASHBOARD}/tax-report-file-manager`,

@@ -42,11 +42,11 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   password: string;
   auditorBiz: string;
   organization: {
-     name: string;
-     email: string;
-     address: string;
-     taxNumber: string;
-  }
+    name: string;
+    email: string;
+    address: string;
+    taxNumber: string;
+  };
 }
 
 type Props = {
@@ -61,11 +61,11 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const DEFAULT_DATE = new Date();
 
   const businesses = useSelector((state) => state.business.businesses);
-  const [defaultBiz, setDefaultBiz]= useState(businesses);
+  const [defaultBiz, setDefaultBiz] = useState(businesses);
   useEffect(() => {
     dispatch(getBusinesses());
     setDefaultBiz(businesses);
-  }, [businesses]);
+  }, []);
   const [error, setError] = useState(false);
   const [deleteComp, setDeleteComp] = useState('');
   const [onLoad, setOnload] = useState(false);
@@ -80,7 +80,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     phoneNumber: Yup.string().required('Vui lòng nhập số điện thoại'),
     password: Yup.string().required('Vui lòng nhập mật khẩu'),
   };
-
 
   const resolverCurren = {
     userFullName: Yup.string().required('Vui lòng nhập họ tên'),
@@ -136,35 +135,39 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         accept: '*/*',
         Authorization: accessToken,
       };
-        try {
-          const orgId = sessionStorage.getItem("orgId") ?? "";
-          const bizLst = defaultBiz.allIds.map((businessId) => defaultBiz.byId[businessId]);
-          const biz = bizLst.filter((item) => item.id.localeCompare(orgId) === 0);
-          console.log('Organization', biz);
+      try {
+        const orgId = sessionStorage.getItem('orgId') ?? '';
+        const bizLst = defaultBiz.allIds.map((businessId) => defaultBiz.byId[businessId]);
+        const biz = bizLst.filter((item) => item.id.localeCompare(orgId) === 0);
+        console.log('Organization', biz);
 
-          const organization = {name: biz[0].name, email: biz[0].email, address: biz[0].address, taxNumber: biz[0].taxNumber}
-          setError(false);
-          data.role = 'BUSINESS_STAFF';
-          data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
-          data.organization = organization;
-          console.log('Data', data);
-          const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
-          const response = await axios.post(url, data, {
-            headers: headersList,
-          });
-          if (response.status === 201) {
-            enqueueSnackbar('Thêm thành công');
-            router.push(paths.dashboard.user.listAuditors);
-          } else {
-            setErrorMsg('Thêm thất bại');
-            setError(true);
-          }
-        } catch (e) {
-          reset();
+        const organization = {
+          name: biz[0].name,
+          email: biz[0].email,
+          address: biz[0].address,
+          taxNumber: biz[0].taxNumber,
+        };
+        setError(false);
+        data.role = 'BUSINESS_STAFF';
+        data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
+        data.organization = organization;
+        console.log('Data', data);
+        const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
+        const response = await axios.post(url, data, {
+          headers: headersList,
+        });
+        if (response.status === 201) {
+          enqueueSnackbar('Thêm thành công');
+          router.push(paths.dashboard.user.listAuditors);
+        } else {
           setErrorMsg('Thêm thất bại');
           setError(true);
         }
-
+      } catch (e) {
+        reset();
+        setErrorMsg('Thêm thất bại');
+        setError(true);
+      }
     },
     [currentUser, enqueueSnackbar, reset, router, date]
   );

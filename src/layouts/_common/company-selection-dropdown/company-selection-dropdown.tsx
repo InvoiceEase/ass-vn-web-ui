@@ -2,9 +2,9 @@
 
 import { memo, useEffect, useState } from 'react';
 // @mui
+import { MenuItem, OutlinedInput, Select } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { MenuItem, OutlinedInput, Select } from '@mui/material';
 import { setSelectedBusiness } from 'src/redux/slices/business';
 import { getMails } from 'src/redux/slices/mail';
 import { useDispatch, useSelector } from 'src/redux/store';
@@ -51,7 +51,7 @@ function CompanySelectionDropdown() {
 
   useEffect(() => {
     setSelectedCompany(businesses.byId[8]);
-    sessionStorage.setItem('selectedBusinessID',JSON.stringify(selectedCompany));
+    sessionStorage.setItem('selectedBusinessID', JSON.stringify(selectedCompany));
     getBusinessesName();
   }, [businesses]);
 
@@ -67,12 +67,12 @@ function CompanySelectionDropdown() {
         flexShrink: 0,
       }}
     >
-      <InputLabel>Company</InputLabel>
+      <InputLabel>Doanh nghiệp</InputLabel>
       <Select
-        name='company'
+        name="company"
         // multiple
-        label="Company"
-        input={<OutlinedInput label="Company" />}
+        label="Doanh nghiệp"
+        input={<OutlinedInput label="Doanh nghiệp" />}
         value={selectedBusiness?.name}
         // onChange={handleFilterService}
         // input={<OutlinedInput label="Business" />}
