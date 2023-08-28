@@ -61,7 +61,7 @@ const TABLE_HEAD = [
   { id: 'representPersonName', label: 'Người đại diện', width: 180 },
   { id: 'taxNumber', label: 'Mã số thuế', width: 180 },
   { id: 'invoiceReceivedEmail', label: 'Mail nhận hóa đơn', width: 100 },
-  //  { id: 'status', label: 'Cần kiểm duyệt viên', width: 100 },
+  { id: 'status', label: 'Trạng thái', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -69,6 +69,7 @@ const defaultFilters = {
   name: '',
   email: '',
   representPersonName: '',
+  status: 'All',
 };
 
 export default function BusinessListView() {
@@ -81,6 +82,7 @@ export default function BusinessListView() {
   const settings = useSettingsContext();
 
   const router = useRouter();
+  const bizStatus = ['All', 'Active', 'Banned'];
 
   const confirm = useBoolean();
   const _businessList = useSelector((state) => state.business.businessAdmin);
@@ -120,33 +122,37 @@ export default function BusinessListView() {
   );
 
   const handleDeleteRow = useCallback(
-    async (id: string) => {
-      // const resetedUser = _userList.filter((item) => item.id === id);
-      // const token = sessionStorage.getItem('token');
-      // const accessToken: string = `Bearer ${token}`;
-      // const headersList = {
-      //   accept: '*/*',
-      //   Authorization: accessToken,
-      // };
-      // try {
-      //   const req = {
-      //     version: 0,
-      //     // userId: Number(resetedUser[0].id),
-      //     // firebaseUserId: resetedUser[0].firebaseUserId,
-      //     status: 'BANNED',
-      //   };
-      //   const response = await axios.put(
-      //     `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/users/status?version=${req.version}&userId=${req.userId}&firebaseUserId=${req.firebaseUserId}&status=${req.status}`,
-      //     {},
-      //     { headers: headersList }
-      //   );
-      //   if (response.status === 200) {
-      //     enqueueSnackbar('Đã vô hiệu hóa người dùng thành công');
-      //     router.replace(paths.dashboard.user.list);
-      //   }
-      // } catch (e) {
-      //   confirm.onFalse();
-      // }
+    async (id: string, isActive: boolean) => {
+      const resetedBusiness = _businessList.filter((item) => item.id === id);
+      const token = sessionStorage.getItem('token');
+      const accessToken: string = `Bearer ${token}`;
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+      try {
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/api/v1/businesses/${Number(
+            resetedBusiness[0].id
+          )}/status`,
+          {
+            version: 0,
+            // firebaseUserId: resetedUser[0].firebaseUserId,
+            status: isActive ? 'ACTIVE' : 'BANNED',
+          },
+          { headers: headersList }
+        );
+        if (response.status === 200) {
+          const msgSts = isActive
+            ? 'Đã kích hoạt doanh nghiệp thành công'
+            : 'Đã vô hiệu hóa doanh nghiệp thành công';
+          enqueueSnackbar(msgSts);
+          dispatch(getBusinessesAdmin());
+        }
+      } catch (e) {
+        enqueueSnackbar('Vô hiệu hóa thất bại', { action: 'error' });
+        confirm.onFalse();
+      }
     },
     [dataInPage.length, table, tableData]
   );
@@ -237,6 +243,40 @@ export default function BusinessListView() {
           </Button> */}
         </Stack>
         <Card>
+          <Tabs
+            value={filters.status}
+            onChange={handleFilterStatus}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+              display: 'flex',
+              position: 'static',
+            }}
+          >
+            {bizStatus.map((tab) => (
+              <Tab
+                key={tab}
+                iconPosition="end"
+                value={tab}
+                label={tab}
+                icon={
+                  <Label
+                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
+                    color={
+                      (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
+                    }
+                  >
+                    {tab === 'All' && _businessList.length}
+                    {tab === 'Active' &&
+                      _businessList.filter((biz) => biz.status === 'Active').length}
+
+                    {tab === 'Banned' &&
+                      _businessList.filter((biz) => biz.status === 'Banned').length}
+                  </Label>
+                }
+              />
+            ))}
+          </Tabs>
           <BusinessTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -304,7 +344,8 @@ export default function BusinessListView() {
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => handleSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id, false)}
+                        onActiveRow={() => handleDeleteRow(row.id, true)}
                         onEditRow={() => handleEditRow(row.id)}
                         onResetRow={() => handeResetRow(row.id)}
                       />
@@ -368,7 +409,7 @@ function applyFilter({
   comparator: (a: any, b: any) => number;
   filters: IBusinessTableFiltersAdmin;
 }) {
-  const { name } = filters;
+  const { name, status } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
@@ -386,6 +427,9 @@ function applyFilter({
         biz.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         biz.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
+  }
+  if (status !== 'All') {
+    inputData = inputData.filter((user) => user.status === status);
   }
 
   return inputData;

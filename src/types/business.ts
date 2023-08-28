@@ -21,6 +21,7 @@ export type IBusinessAdmin = {
   declarationPeriod: number;
   businessTypeId: number;
   domainBusinessId:number;
+  status: string;
 };
 
 export type IBusiness= {
@@ -57,7 +58,7 @@ export type IBusinessTableFiltersAdmin = {
   name: string;
   email: string;
   representPersonName: string;
-  // status: string;
+  status: string;
 };
 export type IBusinessTypesState = {
   byId: Record<string, IBusinessType>;

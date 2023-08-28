@@ -29,6 +29,7 @@ type Props = {
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
   onResetRow: VoidFunction;
+  onActiveRow: VoidFunction;
 };
 
 export default function BusinessTableRow({
@@ -38,17 +39,32 @@ export default function BusinessTableRow({
   onSelectRow,
   onDeleteRow,
   onResetRow,
+  onActiveRow,
 }: Props) {
-  const { id, name, email, taxNumber, invoiceReceivedEmail, representPersonName, needAudit } = row;
+  const {
+    id,
+    name,
+    email,
+    taxNumber,
+    invoiceReceivedEmail,
+    representPersonName,
+    needAudit,
+    status,
+  } = row;
 
   const confirm = useBoolean();
-
+  const confirmActive = useBoolean();
   const quickEdit = useBoolean();
 
   const popover = usePopover();
-  const handleDelete = () => {
-    confirm.onFalse();
-    onDeleteRow();
+  const handleDelete = (isActive: boolean) => {
+    if (isActive) {
+      confirmActive.onFalse();
+      onActiveRow();
+    } else {
+      confirm.onFalse();
+      onDeleteRow();
+    }
   };
   return (
     <>
@@ -81,6 +97,19 @@ export default function BusinessTableRow({
           </Label>
         </TableCell> */}
 
+        <TableCell>
+          <Label
+            variant="soft"
+            color={
+              (status === 'Active' && 'success') ||
+              // (status === 'PENDING' && 'warning') ||
+              (status === 'Banned' && 'error') ||
+              'default'
+            }
+          >
+            {status}
+          </Label>
+        </TableCell>
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -112,16 +141,29 @@ export default function BusinessTableRow({
           <Iconify icon="solar:pen-bold" />
           Chỉnh sửa
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Vô hiệu hóa
-        </MenuItem>
+        {status !== 'Banned' ? (
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Vô hiệu hóa
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={() => {
+              confirmActive.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'success.main' }}
+          >
+            <Iconify icon="fontisto:checkbox-active" />
+            Kích hoạt
+          </MenuItem>
+        )}
       </CustomPopover>
 
       <ConfirmDialog
@@ -130,8 +172,19 @@ export default function BusinessTableRow({
         title="Vô hiệu hóa"
         content="Bạn vẫn muốn vô hiệu hóa doanh nghiệp này?"
         action={
-          <Button variant="contained" color="error" onClick={() => alert('cac, cho xin 50')}>
+          <Button variant="contained" color="error" onClick={() => handleDelete(false)}>
             Vô hiệu hóa
+          </Button>
+        }
+      />
+      <ConfirmDialog
+        open={confirmActive.value}
+        onClose={confirmActive.onFalse}
+        title="Kích hoạt"
+        content="Bạn muốn kích hoạt doanh nghiệp này?"
+        action={
+          <Button variant="contained" color="success" onClick={() => handleDelete(true)}>
+            Kích hoạt
           </Button>
         }
       />

@@ -88,7 +88,7 @@ export default function UserListView() {
   const [filters, setFilters] = useState(defaultFilters);
   const [tableData, setTableData] = useState(_userList);
   const [role, setRole] = useState(['']);
-  const [userStatus, setUserStatus] = useState(['']);
+  const userStatus = ['All','Active', 'Banned'];
   useEffect(() => {
     setTableData(_userList);
     const userRole: string[] = [];
@@ -97,12 +97,8 @@ export default function UserListView() {
       if (!userRole.includes(item.roleName)) {
         userRole.push(item.roleName);
       }
-      if (!userSts.includes(item.status)) {
-        userSts.push(item.status);
-      }
     });
     setRole(userRole);
-    setUserStatus(userSts);
   }, [_userList]);
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -165,6 +161,7 @@ export default function UserListView() {
           // table.onUpdatePageDeleteRow(dataInPage.length);
         }
       } catch (e) {
+        enqueueSnackbar('Vô hiệu hóa thất bại', { action: 'error' });
         confirm.onFalse();
       }
     },
