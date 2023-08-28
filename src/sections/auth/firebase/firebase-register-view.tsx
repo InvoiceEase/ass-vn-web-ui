@@ -100,7 +100,7 @@ export default function FirebaseRegisterView() {
         const body = {
           email: data.email,
           phoneNumber: `+84${data.phoneNumber.substring(1)}`,
-          fullName: `${data.firstName} ${data.lastName}`,
+          userFullName: `${data.firstName} ${data.lastName}`,
           password: data.password,
           role: mappingRole(userRole),
           organization: {
