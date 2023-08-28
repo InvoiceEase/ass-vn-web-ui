@@ -180,7 +180,7 @@ export default function OverviewAppView() {
           title={
             roleCode?.includes(RoleCodeEnum.Admin)
               ? 'Thống kê tài nguyên lưu trữ ở hệ thống'
-              : 'Thống kê hóa đơn'
+              : 'Thống kê giá trị hóa đơn'
           }
           chart={{
             categories: roleCode?.includes(RoleCodeEnum.Admin) ? monthsAdmin : months,
