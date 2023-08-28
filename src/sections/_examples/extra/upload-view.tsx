@@ -156,12 +156,12 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
       });
     } else if (mail) {
       files.forEach((f, index) => {
-        data.append(`file${index + 1}`, f);
+        data.append(`files`, f);
       });
       data.append('mailId', mail?.id ?? '');
       data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
       data.append('emailAddress', mail?.mailFrom ?? '');
-      data.append('messageType', MessageType.MAIL);
+      data.append('messageType', MessageType.UPLOAD_MAIL);
     } else {
       files.forEach((f, index) => {
         data.append(`file${index + 1}`, f);
@@ -170,7 +170,7 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
     setLoading(true);
-    const urlUp = 'https://accountant-support-system.site/ass-admin/api/v1/files';
+    const urlUp = 'https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles';
     const urlComp =
       'https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare';
     const config = {
