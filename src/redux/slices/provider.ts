@@ -114,22 +114,21 @@ export function addProvider(data: any) {
     };
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.provider.list}`,
-        {},
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.provider.create}`,
+        {
+          version: 0,
+          businessId,
+          name: data?.name || '',
+          engName: data?.engName || '',
+          shortName: data?.shortName || '',
+          address: data?.address || '',
+          email: data?.email || '',
+          website: data?.website || '',
+          phoneNumber: data?.phoneNumber || '',
+          taxNumber: data?.taxNumber || '',
+        },
         {
           headers: headersList,
-          params: {
-            version: 0,
-            businessId,
-            name: data?.name || '',
-            engName: data?.engName || '',
-            shortName: data?.shortName || '',
-            address: data?.address || '',
-            email: data?.email || '',
-            website: data?.website || '',
-            phoneNumber: data?.phoneNumber || '',
-            taxNumber: data?.taxNumber || '',
-          },
         }
       );
     } catch (error) {
