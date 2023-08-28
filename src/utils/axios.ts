@@ -67,5 +67,6 @@ export const API_ENDPOINTS = {
   },
   dashboard: {
     businesses: '/api/v1/dashboard/businesses/',
+    admin: '/api/v1/dashboard/admin/',
   },
 };

@@ -6,12 +6,22 @@ export type IDashboardState = {
 export type IBusinessDashboardState = {
   totalInvoices: string;
   totalInvoicesPerMonthDashboardList: number[];
-  quarter: string;
-  totalTaxAmountNumber: string;
-  totalTaxAmountNumberStatus: string;
+  totalTaxAmountIncome: ITotalTaxAmountIncome;
+  totalTaxAmountOutcome: ITotalTaxAmountOutcome;
   months: string[];
   incomeInvoicesTotal: number[];
   outcomeInvoicesTotal: number[];
+};
+
+export type IAdminDashboardState = {
+  totalUsers: string;
+  totalBusinesses: string;
+  totalAuditors: string;
+  monthsAdmin: string[];
+  totalNumInvoices: number[];
+  totalNumMails: number[];
+  topBusinesses: ITopBusiness[];
+  topAuditors: ITopAuditor[];
 };
 
 export type ITotalInvoicesPerMonthList = {
@@ -29,4 +39,32 @@ export type IOutcomeInvoices = {
   sumTotalPrice: string;
 };
 
-export type IAdminDashboardState = {};
+export type ITotalTaxAmountIncome = {
+  quarter: string;
+  totalTaxAmountNumber: string;
+};
+
+export type ITotalTaxAmountOutcome = {
+  quarter: string;
+  totalTaxAmountNumber: string;
+};
+
+export type INumMails = {
+  month: string;
+  totalMails: string;
+};
+
+export type INumInvoices = {
+  month: string;
+  totalInvoices: string;
+};
+
+export type ITopBusiness = {
+  name: string;
+  count: number;
+};
+
+export type ITopAuditor = {
+  name: string;
+  count: number;
+};

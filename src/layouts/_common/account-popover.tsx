@@ -46,10 +46,10 @@ const OPTIONS_MANAGER = [
   //   label: 'Cá nhân',
   //   linkTo: paths.dashboard.user.profile,
   // },
-  {
-    label: 'Thông tin cá nhân',
-    linkTo: paths.dashboard.business.account,
-  },
+  // {
+  //   label: 'Thông tin cá nhân',
+  //   linkTo: paths.dashboard.business.account,
+  // },
   {
     label: 'Thông tin doanh nghiệp',
     linkTo: paths.dashboard.user.account,

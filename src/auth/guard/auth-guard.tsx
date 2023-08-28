@@ -84,7 +84,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
               // router.prefetch(paths.dashboard.root);
             } else if (resp.data.role.includes(RoleCodeEnum.Admin)) {
               // router.prefetch(paths.dashboard.user.list);
-              router.push(paths.dashboard.user.list);
+              router.push(paths.dashboard.root);
             }
           } else {
             router.push('');

@@ -1,14 +1,14 @@
 import { m } from 'framer-motion';
 // @mui
-import { alpha, useTheme } from '@mui/material/styles';
+import Card, { CardProps } from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
+import { alpha, useTheme } from '@mui/material/styles';
 // components
-import Image from 'src/components/image';
 import { MotionContainer, varFade } from 'src/components/animate';
-import Carousel, { CarouselDots, CarouselArrows, useCarousel } from 'src/components/carousel';
+import { CarouselArrows, CarouselDots, useCarousel } from 'src/components/carousel';
+import Image from 'src/components/image';
 
 // ----------------------------------------------------------------------
 
@@ -39,11 +39,11 @@ export default function AppFeatured({ list, ...other }: Props) {
 
   return (
     <Card {...other}>
-      <Carousel ref={carousel.carouselRef} {...carousel.carouselSettings}>
+      {/* <Carousel ref={carousel.carouselRef} {...carousel.carouselSettings}>
         {list.map((app, index) => (
           <CarouselItem key={app.id} item={app} active={index === carousel.currentIndex} />
         ))}
-      </Carousel>
+      </Carousel> */}
 
       <CarouselArrows
         onNext={carousel.onNext}

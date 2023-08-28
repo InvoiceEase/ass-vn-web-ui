@@ -1,24 +1,23 @@
 import orderBy from 'lodash/orderBy';
 // @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
 import Card, { CardProps } from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 // utils
 import { fShortenNumber } from 'src/utils/format-number';
 // components
+import { Avatar } from '@mui/material';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type ItemProps = {
-  id: string;
   name: string;
-  avatarUrl: string;
-  totalFavorites: number;
+  count: number;
+  avatarUrl?: string;
 };
 
 interface Props extends CardProps {
@@ -34,7 +33,7 @@ export default function AppTopAuthors({ title, subheader, list, ...other }: Prop
 
       <Stack spacing={3} sx={{ p: 3 }}>
         {orderBy(list, ['totalFavorites'], ['desc']).map((author, index) => (
-          <AuthorItem key={author.id} author={author} index={index} />
+          <AuthorItem author={author} index={index} />
         ))}
       </Stack>
     </Card>
@@ -51,7 +50,9 @@ type AuthorItemProps = {
 function AuthorItem({ author, index }: AuthorItemProps) {
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <Avatar alt={author.name} src={author.avatarUrl} />
+      <Avatar alt="avatar" src={author.avatarUrl}>
+        {author.name.charAt(0)}
+      </Avatar>
 
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="subtitle2">{author.name}</Typography>
@@ -66,7 +67,7 @@ function AuthorItem({ author, index }: AuthorItemProps) {
           }}
         >
           <Iconify icon="solar:heart-bold" width={14} sx={{ mr: 0.5 }} />
-          {fShortenNumber(author.totalFavorites)}
+          {fShortenNumber(author.count)}
         </Typography>
       </Box>
 

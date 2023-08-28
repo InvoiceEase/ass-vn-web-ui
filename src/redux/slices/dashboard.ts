@@ -3,19 +3,35 @@ import axios from 'axios';
 import {
   IDashboardState,
   IIncomeInvoices,
+  INumInvoices,
+  INumMails,
   IOutcomeInvoices,
   ITotalInvoicesPerMonthList,
 } from 'src/types/dashboard';
 import { API_ENDPOINTS } from 'src/utils/axios';
 
 const initialState: IDashboardState = {
-  adminDashboard: {},
+  adminDashboard: {
+    totalUsers: '',
+    totalBusinesses: '',
+    totalAuditors: '',
+    monthsAdmin: [],
+    totalNumInvoices: [],
+    totalNumMails: [],
+    topBusinesses: [],
+    topAuditors: [],
+  },
   businessDashboard: {
     totalInvoices: '0',
     totalInvoicesPerMonthDashboardList: [],
-    quarter: '',
-    totalTaxAmountNumber: '',
-    totalTaxAmountNumberStatus: '',
+    totalTaxAmountIncome: {
+      quarter: '',
+      totalTaxAmountNumber: '',
+    },
+    totalTaxAmountOutcome: {
+      quarter: '',
+      totalTaxAmountNumber: '',
+    },
     months: [],
     incomeInvoicesTotal: [],
     outcomeInvoicesTotal: [],
@@ -38,7 +54,7 @@ const slice = createSlice({
         totalInvoicesPerMonthDashboardList: totalInvoicesList,
       };
     },
-    getSumTaxAmount(state, action) {
+    getSumTaxAmountIncome(state, action) {
       const { quarter, totalTaxAmountNumber } = action.payload;
       //   const totalInvoicesList: number[] = [];
       //   totalInvoicesPerMonthDashboardList.forEach((element: ITotalInvoicesPerMonthList) => {
@@ -46,15 +62,17 @@ const slice = createSlice({
       //   });
       state.businessDashboard = {
         ...state.businessDashboard,
-        quarter,
-        totalTaxAmountNumber,
+        totalTaxAmountIncome: {
+          quarter,
+          totalTaxAmountNumber,
+        },
       };
     },
-    getSumTaxAmountStatus(state, action) {
-      const { totalTaxAmountNumber } = action.payload;
+    getSumTaxAmountOutcome(state, action) {
+      const { quarter, totalTaxAmountNumber } = action.payload;
       state.businessDashboard = {
         ...state.businessDashboard,
-        totalTaxAmountNumberStatus: totalTaxAmountNumber,
+        totalTaxAmountOutcome: { quarter, totalTaxAmountNumber },
       };
     },
     getTotalPrice(state, action) {
@@ -74,6 +92,52 @@ const slice = createSlice({
         months,
         incomeInvoicesTotal,
         outcomeInvoicesTotal,
+      };
+    },
+    getTotalStat(state, action) {
+      const { totalUsers, totalBusinesses, totalAuditors } = action.payload;
+      state.adminDashboard = {
+        ...state.adminDashboard,
+        totalUsers,
+        totalBusinesses,
+        totalAuditors,
+      };
+    },
+    getNumMails(state, action) {
+      const { totalMailsPerMonth } = action.payload;
+      const months: string[] = [];
+      const totalNumMails: number[] = [];
+      totalMailsPerMonth.forEach((element: INumMails) => {
+        months.push(element.month);
+        totalNumMails.push(+element.totalMails);
+      });
+      state.adminDashboard = {
+        ...state.adminDashboard,
+        monthsAdmin: months,
+        totalNumMails,
+      };
+    },
+    getNumInvoices(state, action) {
+      const { totalInvoicesPerMonthDashboardList } = action.payload;
+      const totalNumInvoices: number[] = [];
+      totalInvoicesPerMonthDashboardList.forEach((element: INumInvoices) => {
+        totalNumInvoices.push(+element.totalInvoices);
+      });
+      state.adminDashboard = {
+        ...state.adminDashboard,
+        totalNumInvoices,
+      };
+    },
+    getTopAuditors(state, action) {
+      state.adminDashboard = {
+        ...state.adminDashboard,
+        topAuditors: action.payload,
+      };
+    },
+    getTopBusinesses(state, action) {
+      state.adminDashboard = {
+        ...state.adminDashboard,
+        topBusinesses: action.payload,
       };
     },
   },
@@ -106,7 +170,7 @@ export function getTotalInvoices(businessId: string | null = '0') {
   };
 }
 
-export function getSumTaxAmount(businessId: string | null = '0') {
+export function getSumTaxAmountIncome(businessId: string | null = '0') {
   return async (dispatch: Dispatch) => {
     const token = sessionStorage.getItem('token');
 
@@ -119,19 +183,19 @@ export function getSumTaxAmount(businessId: string | null = '0') {
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.businesses}${businessId}/sumTaxAmount`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.businesses}${businessId}/sumTaxAmount/income`,
         {
           headers: headersList,
         }
       );
-      dispatch(slice.actions.getSumTaxAmount(response.data));
+      dispatch(slice.actions.getSumTaxAmountIncome(response.data));
     } catch (error) {
       console.log(error);
     }
   };
 }
 
-export function getSumTaxAmountStatus(businessId: string | null = '0') {
+export function getSumTaxAmountOutcome(businessId: string | null = '0') {
   return async (dispatch: Dispatch) => {
     const token = sessionStorage.getItem('token');
 
@@ -144,12 +208,12 @@ export function getSumTaxAmountStatus(businessId: string | null = '0') {
 
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.businesses}${businessId}/sumTaxAmount/status`,
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.businesses}${businessId}/sumTaxAmount/outcome`,
         {
           headers: headersList,
         }
       );
-      dispatch(slice.actions.getSumTaxAmountStatus(response.data));
+      dispatch(slice.actions.getSumTaxAmountOutcome(response.data));
     } catch (error) {
       console.log(error);
     }
@@ -175,6 +239,131 @@ export function getTotalPrice(businessId: string | null = '0') {
         }
       );
       dispatch(slice.actions.getTotalPrice(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function getTotalStat() {
+  return async (dispatch: Dispatch) => {
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.admin}totalStat`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getTotalStat(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function getNumInvoices() {
+  return async (dispatch: Dispatch) => {
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.admin}eInvoices`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getNumInvoices(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function getNumMails() {
+  return async (dispatch: Dispatch) => {
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.admin}mails`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getNumMails(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function getTopAuditors() {
+  return async (dispatch: Dispatch) => {
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.admin}topThreeAudits`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getTopAuditors(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function getTopBusinesses() {
+  return async (dispatch: Dispatch) => {
+    const token = sessionStorage.getItem('token');
+
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.dashboard.admin}topThreeInvoices`,
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getTopBusinesses(response.data));
     } catch (error) {
       console.log(error);
     }

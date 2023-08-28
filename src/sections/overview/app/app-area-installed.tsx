@@ -1,15 +1,12 @@
 import { ApexOptions } from 'apexcharts';
-import { useCallback, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import Card, { CardProps } from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import { useTheme } from '@mui/material/styles';
 // components
 import Chart, { useChart } from 'src/components/chart';
 import { usePopover } from 'src/components/custom-popover';
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +17,6 @@ interface Props extends CardProps {
     categories?: string[];
     colors?: string[][];
     series: {
-      year: string;
       data: {
         name: string;
         data: number[];
@@ -45,7 +41,7 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }: 
 
   const popover = usePopover();
 
-  const [seriesData, setSeriesData] = useState('2019');
+  // const [seriesData, setSeriesData] = useState();
 
   const chartOptions = useChart({
     colors: colors.map((colr) => colr[1]),
@@ -64,48 +60,22 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }: 
     ...options,
   });
 
-  const handleChangeSeries = useCallback(
-    (newValue: string) => {
-      popover.onClose();
-      setSeriesData(newValue);
-    },
-    [popover]
-  );
+  // const handleChangeSeries = useCallback(
+  //   (newValue: string) => {
+  //     popover.onClose();
+  //     setSeriesData(newValue);
+  //   },
+  //   [popover]
+  // );
 
   return (
     <>
       <Card {...other}>
-        <CardHeader
-          title={title}
-          subheader={subheader}
-          action={
-            <ButtonBase
-              onClick={popover.onOpen}
-              sx={{
-                pl: 1,
-                py: 0.5,
-                pr: 0.5,
-                borderRadius: 1,
-                typography: 'subtitle2',
-                bgcolor: 'background.neutral',
-              }}
-            >
-              {seriesData}
-
-              <Iconify
-                width={16}
-                icon={popover.open ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
-                sx={{ ml: 0.5 }}
-              />
-            </ButtonBase>
-          }
-        />
+        <CardHeader title={title} subheader={subheader} />
 
         {series.map((item) => (
-          <Box key={item.year} sx={{ mt: 3, mx: 3 }}>
-            {item.year === seriesData && (
-              <Chart dir="ltr" type="line" series={item.data} options={chartOptions} height={364} />
-            )}
+          <Box sx={{ mt: 3, mx: 3 }}>
+            <Chart dir="ltr" type="line" series={item.data} options={chartOptions} height={364} />
           </Box>
         ))}
       </Card>

@@ -1,7 +1,7 @@
 // @mui
-import { useTheme, alpha } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import Stack, { StackProps } from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 // theme
 import { bgGradient } from 'src/theme/css';
 
@@ -27,6 +27,7 @@ export default function AppWelcome({ title, description, action, img, ...other }
           endColor: alpha(theme.palette.primary.main, 0.2),
         }),
         height: { md: 1 },
+        width: '100vw',
         borderRadius: 2,
         position: 'relative',
         color: 'primary.darker',
