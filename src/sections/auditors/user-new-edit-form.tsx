@@ -64,7 +64,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const [defaultBiz, setDefaultBiz] = useState(businesses);
   useEffect(() => {
     dispatch(getBusinesses());
-    setDefaultBiz(businesses);
+    // setDefaultBiz(businesses);
   }, []);
   const [error, setError] = useState(false);
   const [deleteComp, setDeleteComp] = useState('');
@@ -137,9 +137,8 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
       };
       try {
         const orgId = sessionStorage.getItem('orgId') ?? '';
-        const bizLst = defaultBiz.allIds.map((businessId) => defaultBiz.byId[businessId]);
+        const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
         const biz = bizLst.filter((item) => item.id.localeCompare(orgId) === 0);
-        console.log('Organization', biz);
 
         const organization = {
           name: biz[0].name,
@@ -151,7 +150,6 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         data.role = 'BUSINESS_STAFF';
         data.phoneNumber = `+84${data.phoneNumber.substring(1)}`;
         data.organization = organization;
-        console.log('Data', data);
         const url = `${process.env.NEXT_PUBLIC_BE_ADMIN_API}/auth`;
         const response = await axios.post(url, data, {
           headers: headersList,
