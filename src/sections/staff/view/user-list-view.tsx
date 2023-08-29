@@ -47,7 +47,7 @@ import { useSnackbar } from 'notistack';
 import { getAuditorForBusiness } from 'src/redux/slices/auditor';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
-import UserTableRow from 'src/sections/auditors/user-table-row';
+import UserTableRow from 'src/sections/staff/user-table-row';
 import UserTableToolbar from 'src/sections/staff/user-table-toolbar';
 
 const TABLE_HEAD = [
