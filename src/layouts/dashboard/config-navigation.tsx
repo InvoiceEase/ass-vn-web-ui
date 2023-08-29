@@ -604,6 +604,7 @@ export function useNavData(role: string | null = 'ADMIN') {
         items: [
           { title: t('Nhà cung cấp'), path: paths.dashboard.provider.root, icon: ICONS.order },
           { title: t('Nhân viên'), path: paths.dashboard.user.listAuditors, icon: ICONS.user },
+          { title: t('Kiểm duyệt viên'), path: paths.dashboard.user.listStaff, icon: ICONS.user },
         ],
       },
     ],

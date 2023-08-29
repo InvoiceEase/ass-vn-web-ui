@@ -44,14 +44,11 @@ import {
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
-import { getStaffForBusiness } from 'src/redux/slices/auditor';
+import { getAuditorForBusiness } from 'src/redux/slices/auditor';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
-import UserTableFiltersResult from '../user-table-filters-result';
-import UserTableRow from '../user-table-row';
-import UserTableToolbar from '../user-table-toolbar';
-import { RouterLink } from 'src/routes/components';
-
+import UserTableRow from 'src/sections/auditors/user-table-row';
+import UserTableToolbar from 'src/sections/staff/user-table-toolbar';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 300 },
@@ -70,9 +67,9 @@ const defaultFilters = {
 
 export default function AuditorsListView() {
   const dispatch = useDispatch();
-  const businessId = sessionStorage.getItem('orgId') ?? '';
+  const businessId = sessionStorage.getItem('orgId') ?? 0;
   useEffect(() => {
-    dispatch(getStaffForBusiness('','',0,businessId));
+    dispatch(getAuditorForBusiness(+businessId));
   }, []);
   const table = useTable();
 
@@ -230,73 +227,13 @@ export default function AuditorsListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-          <Typography sx={{ mb: 5, flexGrow: 1 }} variant="h4">
-            Quản lí nhân viên
-          </Typography>
-          <Button
-            sx={{ mb: 5 }}
-            component={RouterLink}
-            href={paths.dashboard.user.newAuditor}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            Thêm Nhân Viên
-          </Button>
-        </Stack>
         <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-              display: 'flex',
-              position: 'static',
-            }}
-          >
-            {userStatus.map((tab) => (
-              <Tab
-                key={tab}
-                iconPosition="end"
-                value={tab}
-                label={tab}
-                icon={
-                  <Label
-                    variant={((tab === 'All' || tab === filters.status) && 'filled') || 'soft'}
-                    color={
-                      (tab === 'Active' && 'success') || (tab === 'Banned' && 'error') || 'default'
-                    }
-                  >
-                    {tab === 'All' && _userList.length}
-                    {tab === 'Active' &&
-                      _userList.filter((user) => user.status === 'Active').length}
-
-                    {tab === 'Banned' &&
-                      _userList.filter((user) => user.status === 'Banned').length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs>
           <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
             roleOptions={role}
           />
-
-          {canReset && (
-            <UserTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -352,7 +289,6 @@ export default function AuditorsListView() {
                         onResetRow={() => handeResetRow(row.id)}
                       />
                     ))}
-
                   <TableEmptyRows
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
                   />
