@@ -83,9 +83,7 @@ export default function BusinessTableRow({
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{representPersonName}</TableCell>
         {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{email}</TableCell> */}
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{taxNumber}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {!invoiceReceivedEmail ? email : invoiceReceivedEmail}
-        </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{invoiceReceivedEmail}</TableCell>
         {/* <TableCell>
           <Label
             variant="soft"

@@ -98,7 +98,7 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
     taxNumber: currentBiz?.taxNumber || '',
     email: currentBiz?.email || '',
     logo: currentBiz?.logo || '',
-    invoiceReceivedEmail: currentBiz?.invoiceReceivedEmail || currentBiz?.email,
+    invoiceReceivedEmail: currentBiz?.invoiceReceivedEmail,
     engName: currentBiz?.engName || '',
     representPersonName: currentBiz?.representPersonName || '',
     needAudit: currentBiz?.needAudit || true,
@@ -350,7 +350,7 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
                 />
                 <RHFTextField
                   sx={{ fontWeight: 'bold' }}
-                  disabled={!!currentBiz?.invoiceReceivedEmail}
+                  disabled
                   name="invoiceReceivedEmail"
                   label="Email nhận hóa đơn"
                 />
