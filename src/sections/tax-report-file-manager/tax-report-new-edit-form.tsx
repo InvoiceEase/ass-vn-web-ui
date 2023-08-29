@@ -22,6 +22,7 @@ import FormProvider, { RHFAutocomplete, RHFUploadBox } from 'src/components/hook
 import Iconify from 'src/components/iconify/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { useSelector } from 'src/redux/store';
 import { IFinancialFileInfo, ITaxFileInfo } from 'src/types/report';
 import { ITaxFile } from 'src/types/tax';
@@ -112,6 +113,8 @@ export default function TaxReportNewEditForm(props?: Props) {
 
   const emailAddress = useSelector((state) => state.profile.profileData.email);
   const businessId = sessionStorage.getItem('orgId') ?? '0';
+  const selectedBusinessId = sessionStorage.getItem('selectedBusinessID') ?? '0';
+  const roleCode = sessionStorage.getItem('roleCode') ?? '';
 
   const getReportsByYearAndQuarter = (
     year: string | number | undefined,
@@ -134,7 +137,7 @@ export default function TaxReportNewEditForm(props?: Props) {
     const quarter = dataForm.quarter ? +dataForm.quarter : 0;
     const result: ReportFilesInfo = {
       emailAddress,
-      businessId: +businessId,
+      businessId: roleCode.includes(RoleCodeEnum.Manager) ? +businessId : +selectedBusinessId,
       messageType: props?.year ? 'UPDATE_REPORT' : 'UPLOAD_REPORT',
       taxFileInfoList: [],
       financialFileInfoList: [],

@@ -426,6 +426,7 @@ export default function FileManagerFileDetails({
                 sx={{
                   flexDirection: 'row',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
               >
                 <FileManagerFileItem
@@ -440,7 +441,7 @@ export default function FileManagerFileDetails({
                   size="small"
                   onClick={() => onDownloadFiles(renderFile.cloudFilePath, renderFile.fileName)}
                 >
-                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26, mr: 2 }} />
+                  <Iconify icon="eva:download-outline" sx={{ width: 26, height: 26 }} />
                 </IconButton>
               </Stack>
             </>

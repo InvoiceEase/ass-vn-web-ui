@@ -1,5 +1,6 @@
 import { Dispatch, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
 import { ITaxFile, ITaxState } from 'src/types/tax';
 import { API_ENDPOINTS } from 'src/utils/axios';
 
@@ -76,12 +77,17 @@ export function getTaxFolders() {
       Authorization: accessToken,
     };
 
+    const businessId = sessionStorage.getItem('orgId') ?? '0';
+    const selectedBusinessId = sessionStorage.getItem('selectedBusinessID') ?? '0';
+    const roleCode = sessionStorage.getItem('roleCode') ?? '';
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.financial.folders}`,
         {
           version: 0,
           reportType: 'TAX',
+          businessId: roleCode.includes(RoleCodeEnum.Manager) ? businessId : selectedBusinessId,
         },
         {
           headers: headersList,
@@ -108,14 +114,16 @@ export function getTaxFiles(year: string | undefined, quarter: string) {
       Authorization: accessToken,
     };
 
-    const businessId = sessionStorage.getItem('orgId');
+    const businessId = sessionStorage.getItem('orgId') ?? '0';
+    const selectedBusinessId = sessionStorage.getItem('selectedBusinessID') ?? '0';
+    const roleCode = sessionStorage.getItem('roleCode') ?? '';
 
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.tax.files}`,
         {
           version: 0,
-          businessId: businessId ?? '',
+          businessId: roleCode.includes(RoleCodeEnum.Manager) ? +businessId : +selectedBusinessId,
           year: year ?? '',
         },
         { headers: headersList }
