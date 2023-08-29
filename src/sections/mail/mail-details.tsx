@@ -2,11 +2,8 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 // utils
-import { fDateTime } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -16,11 +13,11 @@ import Markdown from 'src/components/markdown';
 import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
 // types
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FileUpload from 'src/components/file-uploader/file-uploader';
-import { IMail, IMailLabel } from 'src/types/mail';
+import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
-import { useParams, useRouter } from 'src/routes/hook';
+import { IMail, IMailLabel } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
 
@@ -244,7 +241,7 @@ export default function MailDetails({ mail, renderLabel }: Props) {
     sessionStorage.setItem('idInvoice', mail.invoiceId);
     router.push(paths.dashboard.invoice.details(mail.invoiceId));
     // window.open(paths.dashboard.invoice.details(mail.invoiceId), '_blank');
-  }
+  };
   const renderEditor = (
     <Stack
       spacing={2}
@@ -254,25 +251,27 @@ export default function MailDetails({ mail, renderLabel }: Props) {
     >
       <Stack direction="row" alignItems="center">
         <Stack direction="row" alignItems="center" flexGrow={1} />
-        {(!mail.isIncludedPdf || !mail.isIncludedXml) ? <Button
-          variant="contained"
-          color="primary"
-          endIcon={<Iconify icon="solar:export-bold" />}
-          onClick={() => onClickUpload()}
-        >
-          Bổ sung
-        </Button> :
+        {!mail.isIncludedPdf || !mail.isIncludedXml ? (
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
-            endIcon={<Iconify icon="ph:eye" />}
-            onClick={onClickViewInvoice}
+            endIcon={<Iconify icon="solar:export-bold" />}
+            onClick={() => onClickUpload()}
           >
-            Xem hoá đơn
+            Bổ sung
           </Button>
-        }
-
-
+        ) : (
+          mail.invoiceId && (
+            <Button
+              variant="outlined"
+              color="primary"
+              endIcon={<Iconify icon="ph:eye" />}
+              onClick={onClickViewInvoice}
+            >
+              Xem hoá đơn
+            </Button>
+          )
+        )}
       </Stack>
     </Stack>
   );

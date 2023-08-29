@@ -146,7 +146,7 @@ export function getMails(businessId: string | null, searchQuery?: string | null,
             businessId,
             search: searchQuery ?? '',
             page: page ?? 0,
-            size: 9999,
+            size: 10,
             sort: [],
           },
         }
@@ -177,10 +177,12 @@ export function getMail(mailId: string) {
         accept: '*/*',
         Authorization: accessToken,
       };
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.details}/${mailId}`,
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.mail.details}/${mailId}`,
         {
-          headers: headersList
-        });
+          headers: headersList,
+        }
+      );
       dispatch(slice.actions.getMailSuccess(response.data.mail));
     } catch (error) {
       console.error(error);
