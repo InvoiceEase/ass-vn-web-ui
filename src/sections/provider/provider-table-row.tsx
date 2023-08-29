@@ -1,6 +1,5 @@
 // @mui
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import ListItemText from '@mui/material/ListItemText';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -44,9 +43,9 @@ export default function ProviderTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+        </TableCell> */}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} /> */}

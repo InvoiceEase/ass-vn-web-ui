@@ -20,15 +20,13 @@ import InvoiceToolbar from './invoice-toolbar';
 
 import { Button, Divider } from '@mui/material';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { useRouter } from 'next/navigation';
 import { InvoiceErrorFieldEnum } from 'src/enums/InvoiceErrorFieldEnum';
 import { updateInvoiceStatus } from 'src/redux/slices/invoices';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { InvoiceStatusConfig } from './InvoiceStatusConfig';
 import InvoiceErrorField from './invoice-error-field';
 import InvoiceInfoField from './invoice-info-field';
-import { RoleCodeEnum } from 'src/enums/RoleCodeEnum';
-import { useRouter } from 'next/navigation';
-import { paths } from 'src/routes/paths';
 
 // @mui
 
@@ -71,7 +69,6 @@ export default function InvoiceDetails({ invoice }: Props) {
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
   }, []);
-
 
   useEffect(() => {
     setCurrentStatus(invoice?.status);
@@ -319,35 +316,35 @@ export default function InvoiceDetails({ invoice }: Props) {
                   </Box>
                 </Stack>
               </Stack>
-              {currentStatus === InvoiceStatusConfig.authenticated.status ||
-                (currentStatus === InvoiceStatusConfig.unauthenticated.status &&
-                  ['Hóa đơn bị thay thế', 'Hóa đơn mới'].includes(invoice?.invoiceCharacter) && (
-                    <Stack
-                      sx={{
-                        position: 'absolute',
-                        flexDirection: 'row',
-                        bottom: 20,
-                        right: 20,
-                      }}
+              {(currentStatus === InvoiceStatusConfig.authenticated.status ||
+                currentStatus === InvoiceStatusConfig.unauthenticated.status) &&
+                ['Hóa đơn bị thay thế', 'Hóa đơn mới'].includes(invoice?.invoiceCharacter) && (
+                  <Stack
+                    sx={{
+                      position: 'absolute',
+                      flexDirection: 'row',
+                      bottom: 20,
+                      right: 20,
+                    }}
+                  >
+                    <Button
+                      sx={{ mr: 2 }}
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
                     >
-                      <Button
-                        sx={{ mr: 2 }}
-                        variant="outlined"
-                        color="error"
-                        onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
-                      >
-                        Không duyệt
-                      </Button>
-                      <Button
-                        sx={{ mr: 2 }}
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
-                      >
-                        Duyệt
-                      </Button>
-                    </Stack>
-                  ))}
+                      Không duyệt
+                    </Button>
+                    <Button
+                      sx={{ mr: 2 }}
+                      variant="contained"
+                      color="success"
+                      onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
+                    >
+                      Duyệt
+                    </Button>
+                  </Stack>
+                )}
             </Stack>
             <Stack spacing={1} direction="column">
               <Label

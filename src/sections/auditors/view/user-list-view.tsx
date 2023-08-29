@@ -8,12 +8,9 @@ import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
-import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 
 // routes
@@ -27,7 +24,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
-import Label from 'src/components/label';
 import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
 import {
@@ -46,12 +42,11 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { getStaffForBusiness } from 'src/redux/slices/auditor';
 import { useDispatch, useSelector } from 'src/redux/store';
+import { RouterLink } from 'src/routes/components';
 import { IAuditor } from 'src/types/auditor';
 import UserTableFiltersResult from '../user-table-filters-result';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
-import { RouterLink } from 'src/routes/components';
-
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', width: 300 },
@@ -72,7 +67,7 @@ export default function AuditorsListView() {
   const dispatch = useDispatch();
   const businessId = sessionStorage.getItem('orgId') ?? '';
   useEffect(() => {
-    dispatch(getStaffForBusiness('','',0,businessId));
+    dispatch(getStaffForBusiness('', '', 0, businessId));
   }, []);
   const table = useTable();
 
@@ -245,7 +240,7 @@ export default function AuditorsListView() {
           </Button>
         </Stack>
         <Card>
-          <Tabs
+          {/* <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -278,7 +273,7 @@ export default function AuditorsListView() {
                 }
               />
             ))}
-          </Tabs>
+          </Tabs> */}
           <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}

@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 // @mui
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -104,9 +103,9 @@ export default function ProviderTableToolbar({
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </Stack>
 

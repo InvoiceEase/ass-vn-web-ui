@@ -1,11 +1,8 @@
 // @mui
-import { Theme, SxProps } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import { SxProps, Theme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +44,7 @@ export default function TableHeadCustom({
   return (
     <TableHead sx={sx}>
       <TableRow>
-        {onSelectAllRows && (
+        {/* {onSelectAllRows && (
           <TableCell padding="checkbox">
             {/* <Checkbox
               indeterminate={!!numSelected && numSelected < rowCount}
@@ -56,8 +53,8 @@ export default function TableHeadCustom({
                 onSelectAllRows(event.target.checked)
               }
             /> */}
-          </TableCell>
-        )}
+        {/* </TableCell> */}
+        {/* )} */}
 
         {headLabel.map((headCell) => (
           <TableCell

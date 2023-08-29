@@ -241,7 +241,12 @@ export default function FirebaseRegisterView() {
       <RHFTextField name="nameOrg" label="Organization Name" />
       <RHFTextField name="emailOrg" label="Email address" />
       <RHFTextField name="address" label="Address" />
-      <RHFTextField name="taxNumber" type="number" label="Tax Number" />
+      <RHFTextField
+        name="taxNumber"
+        type="number"
+        label="Tax Number"
+        inputProps={{ maxLength: 10 }}
+      />
       <LoadingButton
         fullWidth
         color="inherit"

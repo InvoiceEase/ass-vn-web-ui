@@ -3,21 +3,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
-import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import Iconify from 'src/components/iconify/iconify';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 
 // utils
 // routes
@@ -27,18 +23,15 @@ import { paths } from 'src/routes/paths';
 import { IUserItem } from 'src/types/profile';
 // assets
 // components
-import { Alert, InputAdornment } from '@mui/material';
+import { Alert } from '@mui/material';
 import axios from 'axios';
-import FormProvider, { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useSnackbar } from 'src/components/snackbar';
 import { CustomFile } from 'src/components/upload';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { getBusinesses } from 'src/redux/slices/business';
-import { useDispatch, useSelector } from 'src/redux/store';
-import { IAuditor } from 'src/types/auditor';
-import { IBusiness, IBusinessAdmin } from 'src/types/business';
-import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
-import { Container } from '@mui/system';
+import { useDispatch } from 'src/redux/store';
+import { IBusinessAdmin } from 'src/types/business';
 
 // ----------------------------------------------------------------------
 
@@ -353,10 +346,11 @@ export default function BusinessNewEditForm({ currentBiz, isView }: Props) {
                   disabled={!!isView}
                   name="taxNumber"
                   label="Mã số thuế"
+                  inputProps={{ maxLength: 10 }}
                 />
                 <RHFTextField
                   sx={{ fontWeight: 'bold' }}
-                  disabled={!!isView}
+                  disabled={!!currentBiz?.invoiceReceivedEmail}
                   name="invoiceReceivedEmail"
                   label="Email nhận hóa đơn"
                 />

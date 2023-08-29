@@ -114,7 +114,7 @@ export default function AccountView() {
     async (data: FormValuesProps) => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 500));
-        enqueueSnackbar('Update success!');
+        enqueueSnackbar('Cập nhật thành công!');
         console.info('DATA', data);
       } catch (error) {
         console.error(error);

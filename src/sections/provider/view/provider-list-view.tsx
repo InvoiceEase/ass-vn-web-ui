@@ -52,8 +52,8 @@ import ProviderTableToolbar from '../provider-table-toolbar';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Nhà cung cấp' },
-  { id: 'phoneNumber', label: 'Số điện thoại', width: 180 },
+  { id: 'name', label: 'Nhà cung cấp', width: 500 },
+  { id: 'phoneNumber', label: 'Số điện thoại', width: 280 },
   { id: 'taxCode', label: 'MST', width: 220 },
   { id: 'address', label: 'Địa chỉ', width: 100 },
   { id: '' },

@@ -1,18 +1,15 @@
 import { useCallback, useState } from 'react';
 // @mui
-import Checkbox from '@mui/material/Checkbox';
-import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 
 // types
 import { IUserTableFiltersAdmin, IUserTableFilterValue } from 'src/types/profile';
 // components
-import { Autocomplete, OutlinedInput } from '@mui/material';
+import { Autocomplete } from '@mui/material';
 import { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
 import CompanySelectionDropdown from 'src/layouts/_common/company-selection-dropdown/company-selection-dropdown';
@@ -96,8 +93,7 @@ export default function UserTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-
-        <FormControl
+        {/* <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 200 },
@@ -117,12 +113,12 @@ export default function UserTableToolbar({
           >
             {roleOptions.map((item) => (
               <MenuItem key={item} value={item}>
-                {/* <Checkbox disableRipple size="small" checked={filters.role.includes(item)} /> */}
+                <Checkbox disableRipple size="small" checked={filters.role.includes(item)} />
                 {item}
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField

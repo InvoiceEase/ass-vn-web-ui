@@ -87,7 +87,7 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
         await new Promise((resolve) => setTimeout(resolve, 500));
         reset();
         onClose();
-        enqueueSnackbar('Update success!');
+        enqueueSnackbar('Cập nhật thành công!');
         console.info('DATA', data);
       } catch (error) {
         console.error(error);

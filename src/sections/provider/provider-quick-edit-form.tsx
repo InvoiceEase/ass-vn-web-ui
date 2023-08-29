@@ -71,7 +71,7 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
         await dispatch(getProviders());
         reset();
         onClose();
-        enqueueSnackbar('Update success!');
+        enqueueSnackbar('Cập nhật thành công!');
         console.info('DATA', data);
       } catch (error) {
         console.error(error);
@@ -91,7 +91,7 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
       }}
     >
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Quick Update</DialogTitle>
+        <DialogTitle>Chỉnh sửa nhanh</DialogTitle>
 
         <DialogContent>
           <Box
@@ -112,10 +112,10 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
               ))}
             </RHFSelect> */}
 
-            <RHFTextField name="taxNumber" label="Tax Number" />
-            <RHFTextField name="name" label="Full Name" />
-            <RHFTextField name="email" label="Email Address" />
-            <RHFTextField name="phoneNumber" label="Phone Number" />
+            <RHFTextField name="taxNumber" label="Mã số thuế" inputProps={{ maxLength: 10 }} />
+            <RHFTextField name="name" label="Tên đầy đủ" />
+            <RHFTextField name="email" label="Địa chỉ Email" />
+            <RHFTextField name="phoneNumber" label="Số điện thoại" />
 
             {/* <RHFAutocomplete
               name="country"
@@ -147,7 +147,7 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
 
             <RHFTextField name="state" label="State/Region" />
             <RHFTextField name="city" label="City" /> */}
-            <RHFTextField name="address" label="Address" />
+            <RHFTextField name="address" label="Địa chỉ" />
             {/* <RHFTextField name="zipCode" label="Zip/Code" /> */}
             {/* <RHFTextField name="company" label="Company" /> */}
             {/* <RHFTextField name="role" label="Role" /> */}
@@ -156,11 +156,11 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
 
         <DialogActions>
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            Huỷ bỏ
           </Button>
 
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Update
+            Cập nhật
           </LoadingButton>
         </DialogActions>
       </FormProvider>

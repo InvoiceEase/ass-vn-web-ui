@@ -49,9 +49,9 @@ export default function UserTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          {/* <Checkbox checked={selected} onClick={onSelectRow} /> */}
-        </TableCell>
+        {/* <TableCell padding="checkbox">
+          <Checkbox checked={selected} onClick={onSelectRow} />
+        </TableCell> */}
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemText

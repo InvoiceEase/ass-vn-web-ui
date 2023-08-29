@@ -222,7 +222,7 @@ export default function UserNewEditForm({ currentProvider }: Props) {
               <RHFTextField name="email" label="Email" />
               <RHFTextField name="website" label="Website" />
               <RHFTextField name="phoneNumber" label="Số điện thoại" />
-              <RHFTextField name="taxNumber" label="Mã số thuế" />
+              <RHFTextField name="taxNumber" label="Mã số thuế" inputProps={{ maxLength: 10 }} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
