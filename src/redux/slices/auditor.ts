@@ -38,7 +38,12 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export function getAuditors(status?: string | null, searchQuery?: string | null, page?: number) {
+export function getAuditors(
+  status?: string | null,
+  searchQuery?: string | null,
+  page?: number,
+  businessId?: string | null
+) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getAuditorsStart());
     const token = sessionStorage.getItem('token');
@@ -54,6 +59,7 @@ export function getAuditors(status?: string | null, searchQuery?: string | null,
       size: 9999,
       sort: [],
       status: status ?? '',
+      businessId: businessId ?? '',
       roles: [],
     };
     try {
@@ -72,7 +78,7 @@ export function getAuditors(status?: string | null, searchQuery?: string | null,
   };
 }
 
-export function getAuditorsForBusiness(businessId: number) {
+export function getAuditorForBusiness(businessId: number) {
   return async (dispatch: Dispatch) => {
     dispatch(slice.actions.getAuditorsStart());
     const token = sessionStorage.getItem('token');
@@ -95,3 +101,46 @@ export function getAuditorsForBusiness(businessId: number) {
     }
   };
 }
+
+export function getStaffForBusiness(
+  status?: string | null,
+  searchQuery?: string | null,
+  page?: number,
+  businessId?: string | null
+) {
+  return async (dispatch: Dispatch) => {
+    dispatch(slice.actions.getAuditorsStart());
+    const token = sessionStorage.getItem('token');
+    const accessToken: string = `Bearer ${token}`;
+
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    const param = {
+      search: searchQuery ?? '',
+      page: page ?? 0,
+      size: 9999,
+      sort: [],
+      status: status ?? '',
+      businessId: businessId ?? '',
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${
+          API_ENDPOINTS.users.list
+        }?roles=AUDITOR&roles=BUSINESS_STAFF&search=${searchQuery ?? ''}&page=${
+          page ?? 0
+        }&size=9999&status=${status ?? ''}&businessId=${businessId ?? ''}`,
+        {},
+        {
+          headers: headersList,
+        }
+      );
+      dispatch(slice.actions.getAuditorsSuccess(response.data.content));
+    } catch (error) {
+      dispatch(slice.actions.getAuditorsFailure(error));
+    }
+  };
+}
+
