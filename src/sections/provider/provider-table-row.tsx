@@ -135,11 +135,11 @@ export default function ProviderTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Xoá"
+        content="Bạn có chắc chắn muốn xoá?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Xoá
           </Button>
         }
       />

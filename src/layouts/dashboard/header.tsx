@@ -86,7 +86,7 @@ export default function Header({ onOpenNav }: Props) {
         <Searchbar />
       ) : ( */}
       {businesses.allIds.length > 0 &&
-        sessionStorage.getItem('roleCode')?.includes(RoleCodeEnum.Admin) && (
+        sessionStorage.getItem('roleCode')?.includes(RoleCodeEnum.Staff) && (
           <CompanySelectionDropdown />
         )}
       {/* )} */}

@@ -38,10 +38,13 @@ import {
   useTable,
 } from 'src/components/table';
 //
+import axios from 'axios';
+import { useSnackbar } from 'src/components/snackbar';
 import { getProviders } from 'src/redux/slices/provider';
 import { useDispatch, useSelector } from 'src/redux/store';
 import ProviderTableRow from 'src/sections/provider/provider-table-row';
 import { IProvider } from 'src/types/provider';
+import { API_ENDPOINTS } from 'src/utils/axios';
 import ProviderTableToolbar from '../provider-table-toolbar';
 
 // ----------------------------------------------------------------------
@@ -65,6 +68,7 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function ProviderListView() {
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getProviders());
@@ -117,11 +121,38 @@ export default function ProviderListView() {
   );
 
   const handleDeleteRow = useCallback(
-    (id: string) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
+    async (id: string) => {
+      const token = sessionStorage.getItem('token');
+      const orgId = sessionStorage.getItem('orgId');
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
+      const accessToken: string = `Bearer ${token}`;
+
+      const headersList = {
+        accept: '*/*',
+        Authorization: accessToken,
+      };
+
+      try {
+        const response = await axios.delete(
+          `${process.env.NEXT_PUBLIC_BE_ADMIN_API}${API_ENDPOINTS.provider.update}/${id}`,
+          {
+            headers: headersList,
+            data: {
+              businessId: orgId,
+            },
+          }
+        );
+        if (response.status === 200) {
+          const deleteRow = tableData.filter((row) => row.id !== id);
+          setTableData(deleteRow);
+
+          table.onUpdatePageDeleteRow(dataInPage.length);
+        }
+        enqueueSnackbar('Xoá nhà cung cấp thành công!');
+      } catch (error) {
+        enqueueSnackbar('Xoá nhà cung cấp thất bại!', { variant: 'error' });
+        console.error(error);
+      }
     },
     [dataInPage.length, table, tableData]
   );
