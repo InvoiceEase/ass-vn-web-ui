@@ -99,7 +99,7 @@ const slice = createSlice({
     readMail(state, action) {
       const mail = action.payload;
 
-      state.mails.byId[mail.id] = mail;
+      state.mails.byId[mail.id] = { ...state.mails.byId[mail.id], isRead: mail.isRead };
     },
   },
 });
