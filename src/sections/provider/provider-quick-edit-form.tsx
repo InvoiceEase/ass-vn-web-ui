@@ -43,7 +43,7 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
     address: Yup.string().required('Address is required'),
-    taxNumber1: Yup.string().required('Tax Number is required'),
+    taxNumber: Yup.string().required('Tax Number is required'),
   });
 
   const defaultValues = {
@@ -51,7 +51,7 @@ export default function ProviderQuickEditForm({ currentProvider, open, onClose }
     email: currentProvider?.email || '',
     phoneNumber: currentProvider?.phoneNumber || '',
     address: currentProvider?.address || '',
-    taxNumber1: currentProvider?.taxNumber || '',
+    taxNumber: currentProvider?.taxNumber || '',
   };
   const methods = useForm<FormValuesProps>({
     resolver: yupResolver(NewProviderSchema),
