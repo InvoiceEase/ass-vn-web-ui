@@ -160,7 +160,7 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
       });
       data.append('mailId', mail?.id ?? '');
       data.append('attachmentFolderPath', mail?.attachmentFolderPath ?? '');
-      data.append('emailAddress', mail?.mailFrom ?? '');
+      data.append('emailAddress', mail?.mailTo ?? '');
       data.append('messageType', MessageType.UPLOAD_MAIL);
     } else {
       files.forEach((f, index) => {

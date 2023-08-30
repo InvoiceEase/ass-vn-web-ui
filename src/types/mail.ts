@@ -34,6 +34,7 @@ export type IMail = {
   modifiedAt: string;
   version: number;
   mailFrom: string;
+  mailTo?: string;
   subject: string;
   body: string;
   receivedDate: string;
