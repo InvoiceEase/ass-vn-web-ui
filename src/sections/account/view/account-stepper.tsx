@@ -42,7 +42,7 @@ function AccountStepper() {
   const isUpdateSuccess = useSelector((state) => state.profile.isUpdateSuccess);
 
   const newUserData = useSelector((state) => state.profile.newProfileData);
-
+  const {invoiceReceivedEmail} = useSelector((state) => state.profile.profileData);
   const showSnackBar = useCallback(() => {
     if (isUpdateSuccess) {
       dispatch(setFormStep(true));
@@ -56,7 +56,12 @@ function AccountStepper() {
     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if (index === steps.length - 1) {
       await dispatch(updateProfileData(newUserData));
-      isShowDialog.onToggle();
+
+      if (!invoiceReceivedEmail) {
+        if (newUserData.invoiceReceivedEmail !== invoiceReceivedEmail) {
+          isShowDialog.setValue(true);
+        }
+      }
       dispatch(setFormStep(true));
     } else {
       dispatch(setFormStep(true));
