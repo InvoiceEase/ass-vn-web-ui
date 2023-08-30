@@ -43,9 +43,9 @@ export default function ProviderTableRow({
   return (
     <>
       <TableRow hover selected={selected}>
-        {/* <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell> */}
+        <TableCell padding="checkbox">
+          {/* <Checkbox checked={selected} onClick={onSelectRow} /> */}
+        </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           {/* <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} /> */}
