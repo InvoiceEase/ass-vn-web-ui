@@ -108,13 +108,13 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
 
   const getInvoicessCallback = useCallback(async () => {
     await dispatch(
-      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', true)
+      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', isInputInvoice)
     );
   }, [dispatch]);
 
   useEffect(() => {
     dispatch(
-      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', true)
+      getInvoices(roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '', isInputInvoice)
     );
   }, [getInvoicessCallback, orgId, selectedBusinessID]);
   const theme = useTheme();
@@ -429,7 +429,7 @@ export default function InvoiceListView({ isInputInvoice }: { isInputInvoice: bo
         dispatch(
           getInvoices(
             roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId ?? '',
-            true
+            isInputInvoice
           )
         );
       } else {
