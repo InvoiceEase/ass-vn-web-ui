@@ -170,10 +170,11 @@ export default function UploadView({ mail, onClickCancel, isUploadInvoice }: Pro
     const token = sessionStorage.getItem('token');
     const accessToken: string = `Bearer ${token}`;
     setLoading(true);
+    const businessId = roleCode?.includes(RoleCodeEnum.Auditor) ? selectedBusinessID : orgId;
     const urlUp =
       'https://us-central1-accountant-support-system.cloudfunctions.net/uploadInvoiceFiles';
     const urlComp =
-      'https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare';
+      `https://accountant-support-system.site/ass-admin/api/v1/files/invoices/compare/${businessId}`;
     const config = {
       method: 'post',
       maxBodyLength: Infinity,
