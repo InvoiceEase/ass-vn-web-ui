@@ -8,7 +8,7 @@ export type IBusinessAdmin = {
   name: string;
   address: string;
   website: null;
-  taxNumber: null;
+  taxNumber: string;
   email: string;
   logo: null;
   invoiceReceivedEmail: string;

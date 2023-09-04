@@ -32,6 +32,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { getBusinesses } from 'src/redux/slices/business';
 import { useDispatch, useSelector } from 'src/redux/store';
 import { IAuditor } from 'src/types/auditor';
+import {IBusinessAdmin } from 'src/types/business';
 
 // ----------------------------------------------------------------------
 
@@ -42,10 +43,10 @@ interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
   password: string;
   auditorBiz: string;
   organization: {
-    name: string;
-    email: string;
-    address: string;
-    taxNumber: string;
+    name: string | undefined;
+    email: string | undefined;
+    address: string | undefined;
+    taxNumber: string | undefined;
   };
 }
 
@@ -60,11 +61,29 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
   const dispatch = useDispatch();
   const DEFAULT_DATE = new Date();
 
-  const businesses = useSelector((state) => state.business.businesses);
-  const [defaultBiz, setDefaultBiz] = useState(businesses);
+  const [defaultBiz, setDefaultBiz] = useState<IBusinessAdmin>();
+
+  const getBizInfo = async () => {
+    const token = sessionStorage.getItem('token');
+    const accessToken: string = `Bearer ${token}`;
+    const bizId = sessionStorage.getItem('orgId');
+    const headersList = {
+      accept: '*/*',
+      Authorization: accessToken,
+    };
+    try {
+      const response = await axios.get(
+        `https://accountant-support-system.site/ass-admin/api/v1/businesses/${bizId}`,
+        { headers: headersList }
+      );
+      setDefaultBiz(response.data);
+    } catch (e) {
+      console.log('Error', e);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getBusinesses());
-    // setDefaultBiz(businesses);
+    getBizInfo();
   }, []);
   const [error, setError] = useState(false);
   const [deleteComp, setDeleteComp] = useState('');
@@ -136,15 +155,11 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
         Authorization: accessToken,
       };
       try {
-        const orgId = sessionStorage.getItem('orgId') ?? '';
-        const bizLst = businesses.allIds.map((businessId) => businesses.byId[businessId]);
-        const biz = bizLst.filter((item) => item.id.localeCompare(orgId) === 0);
-
         const organization = {
-          name: biz[0].name,
-          email: biz[0].email,
-          address: biz[0].address,
-          taxNumber: biz[0].taxNumber,
+          name: defaultBiz?.name,
+          email: defaultBiz?.email,
+          address: defaultBiz?.address,
+          taxNumber: defaultBiz?.taxNumber,
         };
         setError(false);
         data.role = 'BUSINESS_STAFF';
@@ -162,8 +177,11 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
           setError(true);
         }
       } catch (e) {
+        const msgError = e.response.data.message;
         reset();
-        setErrorMsg('Thêm thất bại');
+        setErrorMsg(
+          msgError === 'PHONE_NUMBER_ALREADY_EXISTS' ? 'Số điện thoại đã tồn tại' : 'Thêm thất bại'
+        );
         setError(true);
       }
     },
@@ -228,7 +246,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     if (!currentUser) {
       return 'Thêm nhân viên';
     }
-    return 'Đăng ký kiểm duyệt viên';
+    return '';
   };
   return (
     <>
@@ -312,67 +330,7 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
                     }}
                   />
                 )}
-                {currentUser && !isView && (
-                  <>
-                    <RHFAutocomplete
-                      sx={{ fontWeight: 'bold' }}
-                      name="businessId"
-                      label="Công ty"
-                      options={businesses.allIds.map(
-                        (businessId) => businesses.byId[businessId].name
-                      )}
-                      getOptionLabel={(option) => option.toString()}
-                      isOptionEqualToValue={(option, value) => option === value}
-                      renderOption={(props, option) => <li {...props}>{option}</li>}
-                    />
-                    <DatePicker
-                      defaultValue={new Date()}
-                      value={date}
-                      onChange={(value) => setDate(value ?? new Date())}
-                      disablePast
-                      closeOnSelect
-                      label="Ngày kết thúc hợp đồng"
-                    />
-                  </>
-                )}
-                {/* {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                  isView &&
-                  defaultBizAud.length >= 1 &&
-                  defaultBizAud[0] !== defaultBizForAuditor[0] && (
-                    <Stack sx={{ display: 'flex' }}>
-                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Công ty đã đăng ký
-                      </Typography>
-                      <List>
-                        {defaultBizAud.map((item) => (
-                          <ListItem disablePadding>
-                            <Iconify width={33} icon="mdi:dot" />
-                            <ListItemText secondary={` ${item.name}`} />
-                            <ListItemButton
-                              sx={{ maxWidth: 50, maxHeight: 50 }}
-                              onClick={() => handleConfirmDeleteComp(item.name)}
-                            >
-                              <Iconify
-                                width={50}
-                                height={100}
-                                color="red"
-                                icon="solar:trash-bin-trash-bold"
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Stack>
-                  )} */}
-                {/* {currentUser?.roleName === 'Kiểm duyệt viên' &&
-                  isView &&
-                  defaultBizAud.length < 1 && (
-                    <Stack sx={{ display: 'flex' }}>
-                      <Typography variant="h5" sx={{ mt: 2, flexGrow: 1 }}>
-                        Chưa đăng ký công ty
-                      </Typography>
-                    </Stack>
-                  )} */}
+
               </Box>
               <Stack
                 direction="row-reverse"
