@@ -63,28 +63,25 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
 
   const [defaultBiz, setDefaultBiz] = useState<IBusinessAdmin>();
 
-  const getBizInfo = async () => {
-    const token = sessionStorage.getItem('token');
-    const accessToken: string = `Bearer ${token}`;
-    const bizId = sessionStorage.getItem('orgId');
-    const headersList = {
-      accept: '*/*',
-      Authorization: accessToken,
-    };
-    try {
-      const response = await axios.get(
-        `https://accountant-support-system.site/ass-admin/api/v1/businesses/${bizId}`,
-        { headers: headersList }
-      );
-      setDefaultBiz(response.data);
-    } catch (e) {
-      console.log('Error', e);
-    }
-  };
+  // const getBizInfo = async () => {
+  //   const token = sessionStorage.getItem('token');
+  //   const accessToken: string = `Bearer ${token}`;
 
-  useEffect(() => {
-    getBizInfo();
-  }, []);
+  //   const headersList = {
+  //     accept: '*/*',
+  //     Authorization: accessToken,
+  //   };
+  //   try {
+  //     const response = await axios.get(
+  //       `https://accountant-support-system.site/ass-admin/api/v1/businesses/${bizId}`,
+  //       { headers: headersList }
+  //     );
+  //     setDefaultBiz(response.data);
+  //   } catch (e) {
+  //     console.log('Error', e);
+  //   }
+  // };
+
   const [error, setError] = useState(false);
   const [deleteComp, setDeleteComp] = useState('');
   const [onLoad, setOnload] = useState(false);
@@ -150,16 +147,22 @@ export default function UserNewEditForm({ currentUser, isView }: Props) {
     async (data: FormValuesProps) => {
       const token = sessionStorage.getItem('token');
       const accessToken: string = `Bearer ${token}`;
+      const bizId = sessionStorage.getItem('orgId');
       const headersList = {
         accept: '*/*',
         Authorization: accessToken,
       };
       try {
+        const responseBiz = await axios.get(
+          `https://accountant-support-system.site/ass-admin/api/v1/businesses/${bizId}`,
+          { headers: headersList }
+        );
+        const orgResp = responseBiz.data;
         const organization = {
-          name: defaultBiz?.name,
-          email: defaultBiz?.email,
-          address: defaultBiz?.address,
-          taxNumber: defaultBiz?.taxNumber,
+          name: orgResp.name,
+          email: orgResp.email,
+          address: orgResp.address,
+          taxNumber: orgResp.taxNumber,
         };
         setError(false);
         data.role = 'BUSINESS_STAFF';
