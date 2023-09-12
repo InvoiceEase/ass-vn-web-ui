@@ -15,8 +15,8 @@ env:
   IMAGE_NAME: ghcr.io/invoiceease/${{ github.event.repository.name }}
   ENV_DEPLOY: dev
   GCP_PROJECT_KEY: ${{ secrets.GCP_PROJECT_KEY }}
-  CLUSTER_NAME: ass-super-cluster
-  CLUSTER_REGION: asia-east1
+  CLUSTER_NAME: ass-cluster
+  CLUSTER_REGION: us-central1-c
   GRGIT_USER: ${{ github.actor }}
   GRGIT_PASS: ${{ secrets.TOKEN }}
 jobs:
