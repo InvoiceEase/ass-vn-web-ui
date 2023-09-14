@@ -1,4 +1,4 @@
-import CancelIcon from '@mui/icons-material/Cancel';
+import WarningIcon from '@mui/icons-material/Warning';
 import { Stack, Typography } from '@mui/material';
 import { InvoiceErrorFieldEnum } from 'src/enums/InvoiceErrorFieldEnum';
 
@@ -32,8 +32,8 @@ const mapErrorFieldMessage = (type: string) => {
 export default function InvoiceErrorField({ type }: Props) {
   return (
     <Stack direction="row" sx={{ mb: 1 }}>
-      <CancelIcon color="error" fontSize="small" sx={{ mr: 1 }} />
-      <Typography variant="body1" color="#B71D18">
+      <WarningIcon color="warning" fontSize="small" sx={{ mr: 1 }} />
+      <Typography variant="body1" color="#FFAB00">
         {mapErrorFieldMessage(type)}
       </Typography>
     </Stack>
