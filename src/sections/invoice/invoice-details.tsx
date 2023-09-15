@@ -237,6 +237,8 @@ export default function InvoiceDetails({ invoice }: Props) {
     dispatch(updateInvoiceStatus(invoice, status));
   };
 
+  const isShowAuthenButton = (currentStatus === InvoiceStatusConfig.unauthenticated.status && invoice?.invoiceCharacter === 'Hóa đơn mới' && !invoice?.isInComeInvoice) || (currentStatus === InvoiceStatusConfig.authenticated.status && invoice?.isInComeInvoice) || (['Hóa đơn bị thay thế', 'Hoá đơn điều chỉnh'].includes(invoice?.invoiceCharacter))
+
   return (
     <>
       <InvoiceToolbar
@@ -316,9 +318,7 @@ export default function InvoiceDetails({ invoice }: Props) {
                   </Box>
                 </Stack>
               </Stack>
-              {(currentStatus === InvoiceStatusConfig.authenticated.status ||
-                currentStatus === InvoiceStatusConfig.unauthenticated.status) &&
-                ['Hóa đơn bị thay thế', 'Hóa đơn mới'].includes(invoice?.invoiceCharacter) && (
+              {isShowAuthenButton && (
                   <Stack
                     sx={{
                       position: 'absolute',
