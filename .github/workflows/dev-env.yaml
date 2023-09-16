@@ -102,14 +102,16 @@ jobs:
       - name: Generate discord_notification.json
         if: ${{ always() }}
         run: |
-          bash generate_discord_notification.sh "${JOB_STATUS}" "${GITHUB_EVENT_NAME}" "${GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP}" "${GITHUB_EVENT_PULL_REQUEST_UPDATED_AT}" "${GITHUB_EVENT_HEAD_COMMIT_URL}" "${GITHUB_EVENT_PULL_REQUEST_HTML_URL}"
+          bash generate_discord_notification.sh "${JOB_STATUS}" "${GITHUB_EVENT_NAME}" "${GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP}" "${GITHUB_EVENT_PULL_REQUEST_UPDATED_AT}" "${GITHUB_EVENT_HEAD_COMMIT_URL}" "${GITHUB_EVENT_PULL_REQUEST_HTML_URL}" "${GITHUB_COMMIT_MESSAGE}" "${GITHUB_REPO_NAME}"
         env:
           JOB_STATUS: ${{ job.status }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_EVENT_HEAD_COMMIT_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
           GITHUB_EVENT_PULL_REQUEST_UPDATED_AT: ${{ github.event.pull_request.updated_at }}
           GITHUB_EVENT_HEAD_COMMIT_URL: ${{ github.event.head_commit.url }}
-          GITHUB_EVENT_PULL_REQUEST_HTML_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_EVENT_PULL_REQUEST_HTML_URL: ${{ github.event.pull_request.html_url }}\
+          GITHUB_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          GITHUB_REPO_NAME: ${{ github.repository }}
 
       - name: Send notification to Discord
         if: ${{ always() }}

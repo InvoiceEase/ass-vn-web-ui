@@ -18,6 +18,9 @@ GITHUB_EVENT_HEAD_COMMIT_URL=$5
 # Get the GitHub event pull request HTML URL from the environment
 GITHUB_EVENT_PULL_REQUEST_HTML_URL=$6
 
+GITHUB_COMMIT_MESSAGE=$7
+GITHUB_REPO_NAME=$8
+
 # Set the description and color based on the job status
 if [ "$JOB_STATUS" == "success" ]; then
   DESCRIPTION="The deployment runs successfully"
@@ -38,13 +41,21 @@ fi
 
 # Generate the discord_notification.json file
 echo '{
-  "content": "Deployment status for <@&1013668275755954256>",
+  "content": "Deployment status for <@&1087630107537059880>",
   "embeds": [
     {
       "title": "Deployment Status",
       "description": "'${DESCRIPTION}'",
       "color": "'${COLOR}'",
       "fields": [
+        {
+          "name": "Repository",
+          "value": "'${GITHUB_REPO_NAME}'"
+        },
+        {
+          "name": "Commit Message",
+          "value": "'${GITHUB_COMMIT_MESSAGE}'"
+        },
         {
           "name": "Timestamp",
           "value": "'${TIMESTAMP}'"
