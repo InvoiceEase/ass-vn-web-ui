@@ -62,9 +62,8 @@ export default function InvoiceDetails({ invoice }: Props) {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const invoicePdfFilePathList = useSelector(
-    (state) => state.invoice.invoiceDetails?.pdfFilePathList
-  );
+  const invoicePdfFilePathList =
+    useSelector((state) => state.invoice.invoiceDetails?.pdfFilePathList) ?? [];
 
   const handleChangeStatus = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentStatus(event.target.value);
@@ -197,7 +196,11 @@ export default function InvoiceDetails({ invoice }: Props) {
     getDownloadURL(starsRef)
       .then((url) => {
         // Insert url into an <img> tag to "download"
-        setInvoicePDFUrl((prevState) => [...prevState, url]);
+        if (invoicePdfFilePathList?.length >= 2) {
+          setInvoicePDFUrl((prevState) => [...prevState, url]);
+        } else {
+          setInvoicePDFUrl((prevState) => [url]);
+        }
       })
       .catch((error) => {
         // A full list of error codes is available at
@@ -237,7 +240,12 @@ export default function InvoiceDetails({ invoice }: Props) {
     dispatch(updateInvoiceStatus(invoice, status));
   };
 
-  const isShowAuthenButton = (currentStatus === InvoiceStatusConfig.unauthenticated.status && invoice?.invoiceCharacter === 'Hóa đơn mới' && !invoice?.isInComeInvoice) || (currentStatus === InvoiceStatusConfig.authenticated.status && invoice?.isInComeInvoice) || (['Hóa đơn bị thay thế', 'Hoá đơn điều chỉnh'].includes(invoice?.invoiceCharacter))
+  const isShowAuthenButton =
+    (currentStatus === InvoiceStatusConfig.unauthenticated.status &&
+      invoice?.invoiceCharacter === 'Hóa đơn mới' &&
+      !invoice?.isInComeInvoice) ||
+    (currentStatus === InvoiceStatusConfig.authenticated.status && invoice?.isInComeInvoice) ||
+    ['Hóa đơn bị thay thế', 'Hoá đơn điều chỉnh'].includes(invoice?.invoiceCharacter);
 
   return (
     <>
@@ -273,9 +281,9 @@ export default function InvoiceDetails({ invoice }: Props) {
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Đơn vị bán hàng
                 </Typography>
-                {invoice?.senderName}
+                Tên đơn vị: {invoice?.senderName}
                 <br />
-                {invoice?.senderAddress}
+                Địa chỉ: {invoice?.senderAddress}
                 <br />
                 MST: {invoice?.senderTaxcode}
                 <br />
@@ -285,9 +293,9 @@ export default function InvoiceDetails({ invoice }: Props) {
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Đơn vị mua hàng
                 </Typography>
-                {invoice?.receiverName}
+                Tên đơn vị: {invoice?.receiverName}
                 <br />
-                {invoice?.receiverAddress}
+                Địa chỉ: {invoice?.receiverAddress}
                 <br />
                 MST: {invoice?.receiverTaxCode}
                 <br />
@@ -319,32 +327,32 @@ export default function InvoiceDetails({ invoice }: Props) {
                 </Stack>
               </Stack>
               {isShowAuthenButton && (
-                  <Stack
-                    sx={{
-                      position: 'absolute',
-                      flexDirection: 'row',
-                      bottom: 20,
-                      right: 20,
-                    }}
+                <Stack
+                  sx={{
+                    position: 'absolute',
+                    flexDirection: 'row',
+                    bottom: 20,
+                    right: 20,
+                  }}
+                >
+                  <Button
+                    sx={{ mr: 2 }}
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
                   >
-                    <Button
-                      sx={{ mr: 2 }}
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleUpdate(InvoiceStatusConfig.unapproved.status)}
-                    >
-                      Không duyệt
-                    </Button>
-                    <Button
-                      sx={{ mr: 2 }}
-                      variant="contained"
-                      color="success"
-                      onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
-                    >
-                      Duyệt
-                    </Button>
-                  </Stack>
-                )}
+                    Không duyệt
+                  </Button>
+                  <Button
+                    sx={{ mr: 2 }}
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleUpdate(InvoiceStatusConfig.approved.status)}
+                  >
+                    Duyệt
+                  </Button>
+                </Stack>
+              )}
             </Stack>
             <Stack spacing={1} direction="column">
               <Label
