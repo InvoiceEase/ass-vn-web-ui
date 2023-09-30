@@ -290,6 +290,7 @@ export default function FileManagerFileDetails({
         // })
         files
           .filter((item) => item.reportType === historyReportType)
+          .reverse()
           .map((renderFile) => (
             <>
               <Divider sx={{ borderStyle: 'dashed' }} />
