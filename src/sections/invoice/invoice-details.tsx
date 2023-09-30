@@ -310,14 +310,15 @@ export default function InvoiceDetails({ invoice }: Props) {
                 </Typography>
                 <Stack direction="row">
                   <Box sx={{ mr: 3 }}>
-                    {invoice?.errorFieldList
-                      ?.split(',')
-                      .map(
-                        (item) =>
-                          item !== InvoiceErrorFieldEnum.TotalPrice && (
-                            <InvoiceErrorField type={item} />
-                          )
-                      )}
+                    {Boolean(invoice?.errorFieldList) &&
+                      invoice?.errorFieldList
+                        ?.split(',')
+                        .map(
+                          (item) =>
+                            item !== InvoiceErrorFieldEnum.TotalPrice && (
+                              <InvoiceErrorField type={item} />
+                            )
+                        )}
                   </Box>
                   <Box>
                     <InvoiceInfoField invoiceSerial={invoice?.invoiceSerial} />
