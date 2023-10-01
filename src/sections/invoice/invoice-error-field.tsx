@@ -9,17 +9,17 @@ interface Props {
 const mapErrorFieldMessage = (type: string) => {
   switch (type) {
     case InvoiceErrorFieldEnum.ReceiverAddress:
-      return 'Địa chỉ bên mua không chính xác';
+      return 'Địa chỉ bên mua chưa chính xác';
     case InvoiceErrorFieldEnum.ReceiverName:
-      return 'Tên bên mua không chính xác';
+      return 'Tên bên mua chưa chính xác';
     case InvoiceErrorFieldEnum.ReceiverTaxCode:
-      return 'MST bên mua không chính xác';
+      return 'MST bên mua chưa chính xác';
     case InvoiceErrorFieldEnum.SenderAddress:
-      return 'Địa chỉ bên bán không chính xác';
+      return 'Địa chỉ bên bán chưa chính xác';
     case InvoiceErrorFieldEnum.SenderName:
-      return 'Tên bên bán không chính xác';
+      return 'Tên bên bán chưa chính xác';
     case InvoiceErrorFieldEnum.SenderTaxCode:
-      return 'MST bên bán không chính xác';
+      return 'MST bên bán chưa chính xác';
     case InvoiceErrorFieldEnum.Spare:
       return 'Hóa đơn không có trên cơ quan thuế';
     case InvoiceErrorFieldEnum.TaxCodeVerified:
